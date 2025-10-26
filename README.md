@@ -13,6 +13,7 @@ A modern e-commerce platform for PC components built with Django, converted from
   - Products
   - Categories
   - Orders
+  - Slideshow & Banners
   - Statistics and reports
 - **Responsive Design**: Mobile-friendly interface with Bootstrap 5
 - **Modern UI**: Clean, professional design with smooth animations
@@ -20,7 +21,7 @@ A modern e-commerce platform for PC components built with Django, converted from
 ## Technology Stack
 
 - **Backend**: Django 5.0+
-- **Database**: MySQL
+- **Database**: SQLite (development) / MySQL (production)
 - **Frontend**: Bootstrap 5, Font Awesome 6, JavaScript/jQuery
 - **Python**: 3.10+
 
@@ -50,14 +51,14 @@ PCbulacan/
 ### Prerequisites
 
 - Python 3.10 or higher
-- MySQL Server
 - pip (Python package manager)
 
 ### Setup Steps
 
-1. **Clone or navigate to the project directory**:
+1. **Clone the repository**:
    ```bash
-   cd "c:\xampp\htdocs\cyberzone - Copy\PCbulacan"
+   git clone https://github.com/JohnCarloGamayo/PCBulacan.git
+   cd PCBulacan
    ```
 
 2. **Create a virtual environment**:
@@ -80,27 +81,16 @@ PCbulacan/
    pip install -r requirements.txt
    ```
 
-5. **Create MySQL database**:
-   ```sql
-   CREATE DATABASE pcbulacan_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-   ```
-
-6. **Configure environment variables**:
+5. **Configure environment variables**:
    - Copy `.env.example` to `.env`
-   - Update the database settings:
+   - Update the settings as needed:
    ```
-   DB_NAME=pcbulacan_db
-   DB_USER=root
-   DB_PASSWORD=your_password
-   DB_HOST=localhost
-   DB_PORT=3306
    SECRET_KEY=your-secret-key-here
    DEBUG=True
    ```
 
 7. **Run migrations**:
    ```bash
-   python manage.py makemigrations
    python manage.py migrate
    ```
 
@@ -110,19 +100,15 @@ PCbulacan/
    ```
    Follow the prompts to create an admin account.
 
-9. **Collect static files**:
-   ```bash
-   python manage.py collectstatic --noinput
-   ```
-
-10. **Run the development server**:
+9. **Run the development server**:
     ```bash
     python manage.py runserver
     ```
 
-11. **Access the application**:
+10. **Access the application**:
     - Main site: http://localhost:8000
     - Admin panel: http://localhost:8000/admin
+    - Dashboard: http://localhost:8000/dashboard
     - Login with your superuser credentials
 
 ## Usage
@@ -142,9 +128,12 @@ PCbulacan/
 2. **Access Dashboard**: Navigate to `/dashboard/`
 3. **Manage**:
    - Users: Activate/deactivate accounts
-   - Products: Add, edit, delete products
+   - Products: Add, edit, delete products with multiple images
    - Categories: Organize product categories
    - Orders: Update order status
+   - Slideshow: Manage homepage slideshow and banners
+   - Inventory: Track and update stock levels
+   - Delivery Fees: Configure delivery options
 
 ### Django Admin Panel
 
@@ -165,6 +154,7 @@ Access the full Django admin at `/admin/` for complete control over:
 - Product catalog with categories
 - Search and filtering
 - Product ratings and reviews
+- Multiple images per product
 - Featured/New/Sale badges
 
 ### Orders
@@ -172,12 +162,15 @@ Access the full Django admin at `/admin/` for complete control over:
 - Checkout process
 - Order tracking
 - Stock management
+- Payment screenshot upload
 
 ### Dashboard
 - Sales statistics
 - User management
-- Product management
+- Product management with multi-image upload
 - Order management
+- Slideshow management
+- Inventory tracking
 - Reports and analytics
 
 ## Database Models
@@ -191,23 +184,36 @@ Access the full Django admin at `/admin/` for complete control over:
 - Name, description, price
 - Category association
 - Stock tracking
-- Images and badges (featured, new, sale)
+- Multiple images support
+- SKU tracking
+- Ratings and reviews
+
+### ProductImage
+- Multiple images per product
+- Primary image designation
+- Order management
 
 ### Category
 - Product categorization
-- Hierarchical structure
 - Active/inactive status
 
 ### Order & OrderItem
 - Customer information
 - Order items and quantities
 - Payment method
+- Payment screenshot
 - Order status tracking
+- Shipping address
 
 ### Cart & CartItem
 - Session-based cart
 - Quantity management
 - Price calculations
+
+### SlideshowImage
+- Homepage slideshow management
+- Static banner management
+- Order and link support
 
 ## Configuration
 
@@ -217,14 +223,14 @@ Key settings to configure:
 - `SECRET_KEY`: Django secret key (set in .env)
 - `DEBUG`: Debug mode (False in production)
 - `ALLOWED_HOSTS`: Allowed domain names
-- `DATABASES`: MySQL connection settings
+- `DATABASES`: Database connection settings (SQLite by default)
 - `STATIC_URL` & `MEDIA_URL`: Static and media file paths
 
 ### URL Configuration
 
 - `/` - Homepage
 - `/products/` - Product listing
-- `/product/<slug>/` - Product detail
+- `/product/<id>/` - Product detail
 - `/accounts/` - Authentication
 - `/orders/` - Cart and checkout
 - `/dashboard/` - Admin dashboard
@@ -237,20 +243,20 @@ Key settings to configure:
 1. Via Admin Dashboard:
    - Go to `/dashboard/products/`
    - Click "Add Product"
-   - Fill in details and upload image
+   - Fill in details and upload multiple images
+   - Set primary image
 
 2. Via Django Admin:
    - Go to `/admin/products/product/`
    - Click "Add Product"
 
-### Creating Categories
+### Managing Slideshow
 
-1. Via Dashboard:
-   - Go to `/dashboard/categories/`
-   - Click "Add Category"
-
-2. Via Django Admin:
-   - Go to `/admin/products/category/`
+1. Go to `/dashboard/slideshow/`
+2. Add main slideshow images (large carousel)
+3. Add static banner images (small side banners)
+4. Set display order and optional links
+5. Toggle active/inactive status
 
 ## Production Deployment
 
@@ -260,7 +266,7 @@ Before deploying to production:
 2. Configure `ALLOWED_HOSTS`
 3. Use a strong `SECRET_KEY`
 4. Configure static files serving
-5. Set up proper database credentials
+5. Set up proper database (MySQL/PostgreSQL)
 6. Use environment variables for sensitive data
 7. Configure HTTPS/SSL
 8. Set up proper logging
@@ -270,7 +276,7 @@ Before deploying to production:
 ## Troubleshooting
 
 ### Database Connection Issues
-- Verify MySQL is running
+- Verify database settings
 - Check database credentials in `.env`
 - Ensure database exists
 
@@ -283,9 +289,8 @@ Before deploying to production:
 - Reinstall requirements: `pip install -r requirements.txt`
 
 ### Migration Issues
-- Delete migration files (except `__init__.py`)
-- Drop database and recreate
-- Run migrations again
+- Run `python manage.py makemigrations`
+- Run `python manage.py migrate`
 
 ## License
 
@@ -293,7 +298,7 @@ This project is proprietary software for PCBulacan.
 
 ## Support
 
-For support, please contact: info@pcbulacan.com
+For support or inquiries, please create an issue on GitHub.
 
 ## Credits
 
