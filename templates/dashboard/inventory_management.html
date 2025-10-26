@@ -1,0 +1,559 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Inventory Management - PCBulacan{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-light: #3b82f6;
+        --primary-dark: #1d4ed8;
+        --primary-bg: rgba(37, 99, 235, 0.05);
+        --success-color: #10b981;
+        --success-bg: rgba(16, 185, 129, 0.05);
+        --warning-color: #f59e0b;
+        --warning-bg: rgba(245, 158, 11, 0.05);
+        --danger-color: #ef4444;
+        --danger-bg: rgba(239, 68, 68, 0.05);
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --border-radius: 0.75rem;
+        --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+    
+    .inventory-container {
+        padding: 2rem 1rem;
+        max-width: 100vw;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+    
+    .inventory-header { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        color: white;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .inventory-header h1 { 
+        font-size: 2rem; 
+        font-weight: 700; 
+        margin: 0; 
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .inventory-header h1 i {
+        font-size: 2.5rem;
+    }
+    
+    .filter-section { 
+        background-color: white; 
+        border-radius: var(--border-radius); 
+        padding: 1.5rem; 
+        margin-bottom: 2rem; 
+        box-shadow: var(--shadow); 
+        border: 1px solid var(--gray-200); 
+    }
+    
+    .filter-form { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+        gap: 1rem; 
+        align-items: end;
+    }
+    
+    .form-group label { 
+        display: block; 
+        margin-bottom: 0.5rem; 
+        font-weight: 600; 
+        color: var(--gray-700); 
+        font-size: 0.875rem; 
+    }
+    
+    .form-control { 
+        width: 100%; 
+        padding: 0.75rem 1rem; 
+        border: 1px solid var(--gray-300); 
+        border-radius: var(--border-radius); 
+        background-color: var(--gray-50); 
+        color: var(--gray-800); 
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus { 
+        outline: none; 
+        border-color: var(--primary-light); 
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        background-color: white;
+    }
+    
+    .inventory-table-wrapper {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        overflow-x: auto;
+        overflow-y: visible;
+        border: 1px solid var(--gray-200);
+        width: 100%;
+        min-width: 0;
+    }
+    
+    .inventory-table {
+        width: 100%;
+        min-width: 700px;
+        border-collapse: collapse;
+    }
+    @media (max-width: 900px) {
+        .inventory-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+        }
+        .inventory-container {
+            padding: 1rem 0.25rem;
+        }
+        .filter-section {
+            padding: 1rem;
+        }
+        .inventory-table th, .inventory-table td {
+            padding: 0.7rem 0.5rem;
+            font-size: 0.85rem;
+        }
+        .product-image {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .inventory-header {
+            font-size: 1rem;
+            padding: 0.7rem;
+        }
+        .inventory-container {
+            padding: 0.5rem 0.1rem;
+        }
+        .filter-section {
+            padding: 0.5rem;
+        }
+        .inventory-table th, .inventory-table td {
+            padding: 0.4rem 0.2rem;
+            font-size: 0.78rem;
+        }
+        .product-image {
+            width: 32px;
+            height: 32px;
+        }
+    }
+    
+    .inventory-table th, 
+    .inventory-table td { 
+        padding: 1.25rem 1rem; 
+        text-align: left; 
+        border-bottom: 1px solid var(--gray-200); 
+    }
+    
+    .inventory-table th { 
+        background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+        font-weight: 700; 
+        color: var(--gray-800); 
+        font-size: 0.875rem; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .inventory-table tbody tr { 
+        transition: all 0.2s ease;
+    }
+    
+    .inventory-table tbody tr:hover { 
+        background-color: var(--primary-bg);
+        transform: scale(1.001);
+    }
+    
+    .inventory-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .product-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 0.5rem;
+        object-fit: cover;
+        background-color: var(--gray-100);
+        border: 2px solid var(--gray-200);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .product-image:hover {
+        transform: scale(2.5);
+        z-index: 100;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        cursor: pointer;
+    }
+    
+    .product-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .product-name {
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 0.95rem;
+    }
+    
+    .product-meta {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+    }
+    
+    .stock-status { 
+        display: inline-flex; 
+        align-items: center; 
+        padding: 0.5rem 1rem; 
+        border-radius: 9999px; 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .in-stock { 
+        background: linear-gradient(135deg, var(--success-bg), rgba(16, 185, 129, 0.1));
+        color: var(--success-color);
+        border: 1px solid var(--success-color);
+    }
+    
+    .low-stock { 
+        background: linear-gradient(135deg, var(--warning-bg), rgba(245, 158, 11, 0.1));
+        color: var(--warning-color);
+        border: 1px solid var(--warning-color);
+    }
+    
+    .out-of-stock { 
+        background: linear-gradient(135deg, var(--danger-bg), rgba(239, 68, 68, 0.1));
+        color: var(--danger-color);
+        border: 1px solid var(--danger-color);
+    }
+    
+    .stock-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .current-stock {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, var(--primary-bg), rgba(37, 99, 235, 0.08));
+        border-radius: var(--border-radius);
+        border: 1px solid var(--primary-color);
+    }
+    
+    .current-stock-label {
+        font-size: 0.65rem;
+        color: var(--gray-600);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .current-stock-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .stock-update-form {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: var(--gray-50);
+        padding: 0.5rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gray-300);
+    }
+    
+    .add-stock-input { 
+        width: 70px; 
+        padding: 0.625rem; 
+        border: 1px solid var(--gray-300); 
+        border-radius: var(--border-radius); 
+        text-align: center; 
+        font-size: 0.875rem; 
+        font-weight: 600;
+        background-color: white;
+    }
+    
+    .add-stock-input:focus {
+        outline: none;
+        border-color: var(--success-color);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+    
+    .add-stock-btn { 
+        padding: 0.625rem 1rem; 
+        background: linear-gradient(135deg, var(--success-color), #0d9488);
+        color: white; 
+        border: none; 
+        border-radius: var(--border-radius); 
+        font-size: 0.875rem; 
+        font-weight: 600; 
+        cursor: pointer; 
+        transition: all 0.3s ease; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 0.5rem;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+    
+    .add-stock-btn:hover { 
+        background: linear-gradient(135deg, #0d9488, var(--success-color));
+        transform: translateY(-2px); 
+        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .add-stock-btn:active {
+        transform: translateY(0);
+    }
+    
+    .filter-btn {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+    
+    .filter-btn:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+    }
+    
+    .empty-state { 
+        text-align: center; 
+        padding: 4rem 1.5rem; 
+        color: var(--gray-600); 
+    }
+    
+    .empty-state i { 
+        font-size: 4rem; 
+        margin-bottom: 1.5rem; 
+        color: var(--gray-300); 
+    }
+    
+    .empty-state h3 { 
+        font-size: 1.5rem; 
+        font-weight: 700; 
+        margin-bottom: 0.75rem; 
+        color: var(--gray-800); 
+    }
+    
+    .empty-state p { 
+        margin-bottom: 1.5rem; 
+        max-width: 500px; 
+        margin-left: auto; 
+        margin-right: auto;
+        color: var(--gray-600);
+    }
+    
+    .price-tag {
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/admin_sidebar.html' %}
+<div class="admin-content">
+    {% include 'includes/admin_header.html' with page_title="Inventory Management" %}
+    <div class="inventory-container">
+        
+        
+        <div class="filter-section">
+            <form method="get" class="filter-form" id="inventory-filter-form" autocomplete="off">
+                <div class="form-group">
+                    <label for="search"><i class="fas fa-search"></i> Search</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Product name..." value="{{ search }}">
+                </div>
+                <div class="form-group">
+                    <label for="category"><i class="fas fa-tags"></i> Category</label>
+                    <select name="category" id="category" class="form-control">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if category_id|add:'' == cat.id|stringformat:'s' %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="stock_status"><i class="fas fa-box"></i> Stock Status</label>
+                    <select name="stock_status" id="stock_status" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="in_stock" {% if stock_status == 'in_stock' %}selected{% endif %}>In Stock</option>
+                        <option value="low_stock" {% if stock_status == 'low_stock' %}selected{% endif %}>Low Stock (&le;10)</option>
+                        <option value="out_of_stock" {% if stock_status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sort_by"><i class="fas fa-sort"></i> Sort By</label>
+                    <select name="sort_by" id="sort_by" class="form-control">
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name</option>
+                        <option value="stock" {% if sort_by == 'stock' %}selected{% endif %}>Stock</option>
+                        <option value="price" {% if sort_by == 'price' %}selected{% endif %}>Price</option>
+                        <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>Newest</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="filter-btn"><i class="fas fa-filter"></i> Apply Filters</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="inventory-table-wrapper" id="inventory-table-wrapper">
+            <table class="inventory-table">
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function() {
+    // Live search/filter on input/select change
+    $('#inventory-filter-form input, #inventory-filter-form select').on('input change', function() {
+        submitInventoryFilter();
+    });
+
+    function submitInventoryFilter() {
+        var $form = $('#inventory-filter-form');
+        var data = $form.serialize();
+        $.ajax({
+            url: $form.attr('action') || window.location.href,
+            type: 'GET',
+            data: data,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            beforeSend: function() {
+                $('#inventory-table-wrapper').css('opacity', 0.5);
+            },
+            success: function(response) {
+                // Expecting only the table HTML
+                $('#inventory-table-wrapper').html($(response).find('#inventory-table-wrapper').html());
+            },
+            complete: function() {
+                $('#inventory-table-wrapper').css('opacity', 1);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-image"></i> Product</th>
+                        <th><i class="fas fa-tag"></i> Category</th>
+                        <th><i class="fas fa-peso-sign"></i> Price</th>
+                        <th><i class="fas fa-boxes"></i> Current Stock</th>
+                        <th><i class="fas fa-check-circle"></i> Status</th>
+                        <th><i class="fas fa-plus-circle"></i> Add Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if products %}
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                <div class="product-details">
+                                    <div class="product-name">{{ product.name }}</div>
+                                    <div class="product-meta">{{ product.category.name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        {# SKU column removed #}
+                        <td>{{ product.category.name }}</td>
+                        <td><span class="price-tag">₱{{ product.price|floatformat:2 }}</span></td>
+                        <td>
+                            <div class="current-stock">
+                                <span class="current-stock-label">Current</span>
+                                <span class="current-stock-value">{{ product.stock }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if product.stock > 10 %}
+                                <span class="stock-status in-stock"><i class="fas fa-check"></i> In Stock</span>
+                            {% elif product.stock > 0 %}
+                                <span class="stock-status low-stock"><i class="fas fa-exclamation"></i> Low Stock</span>
+                            {% else %}
+                                <span class="stock-status out-of-stock"><i class="fas fa-times"></i> Out of Stock</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'dashboard:inventory_management' %}" class="stock-update-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <input type="number" name="add_stock" min="1" class="add-stock-input" placeholder="Qty" value="1" required>
+                                <button type="submit" class="add-stock-btn"><i class="fas fa-plus"></i> Add</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <h3>No Products Found</h3>
+                                <p>There are no products matching your criteria. Try adjusting your filters or add new products.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

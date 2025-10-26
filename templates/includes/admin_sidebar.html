@@ -1,0 +1,77 @@
+{% load static %}
+<nav class="admin-sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <i class="fas fa-computer"></i>
+            <span>PCBulacan</span>
+        </div>
+    </div>
+    
+    <div class="sidebar-menu">
+        <a href="{% url 'dashboard:home' %}" class="menu-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        
+        <a href="{% url 'dashboard:manage_products' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_products' or request.resolver_match.url_name == 'add_product' or request.resolver_match.url_name == 'edit_product' %}active{% endif %}">
+            <i class="fas fa-box"></i>
+            <span>Products</span>
+        </a>
+        
+        <a href="{% url 'dashboard:manage_slideshow' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_slideshow' %}active{% endif %}">
+            <i class="fas fa-images"></i>
+            <span>Homepage Slideshow</span>
+        </a>
+        
+        <a href="{% url 'dashboard:manage_users' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_users' %}active{% endif %}">
+            <i class="fas fa-users"></i>
+            <span>User Accounts</span>
+        </a>
+        
+        <a href="{% url 'dashboard:manage_orders' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_orders' %}active{% endif %}">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Orders</span>
+        </a>
+        
+        <a href="{% url 'dashboard:inventory_management' %}" class="menu-item {% if request.resolver_match.url_name == 'inventory_management' %}active{% endif %}">
+            <i class="fas fa-warehouse"></i>
+            <span>Inventory</span>
+        </a>
+        
+        <a href="{% url 'dashboard:payment_history' %}" class="menu-item {% if request.resolver_match.url_name == 'payment_history' %}active{% endif %}">
+            <i class="fas fa-receipt"></i>
+            <span>Payment History</span>
+        </a>
+        
+        <a href="{% url 'dashboard:sales_analytics' %}" class="menu-item {% if request.resolver_match.url_name == 'sales_analytics' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Sales Analytics</span>
+        </a>
+        
+        <a href="{% url 'dashboard:manage_delivery_fees' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_delivery_fees' %}active{% endif %}">
+            <i class="fas fa-truck"></i>
+            <span>Delivery Fees</span>
+        </a>
+        
+        <a href="{% url 'dashboard:admin_account' %}" class="menu-item {% if request.resolver_match.url_name == 'admin_account' %}active{% endif %}">
+            <i class="fas fa-user-shield"></i>
+            <span>Admin Account</span>
+        </a>
+    </div>
+    
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name">{{ user.get_full_name }}</div>
+                <div class="user-role">Administrator</div>
+            </div>
+        </div>
+        <a href="{% url 'accounts:logout' %}" class="logout-btn" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </div>
+</nav>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>

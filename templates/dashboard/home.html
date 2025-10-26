@@ -1,0 +1,401 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - PCBulacan{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/admin_sidebar.html' %}
+<div class="admin-content">
+    {% include 'includes/admin_header.html' with page_title="Dashboard" %}
+    <div class="dashboard-wrapper">
+                <div class="dashboard-header-section">
+                    <h1 class="dashboard-title">Dashboard</h1>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-sm" id="refreshDashboard" style="background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0;">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
+                        </button>
+                        <span id="lastUpdated" style="font-size: 0.75rem; color: #64748b;">Last updated: Just now</span>
+                        <div class="date-filter">
+                            <select id="dateRangeFilter">
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="last7days" selected>Last 7 days</option>
+                                <option value="last30days">Last 30 days</option>
+                                <option value="thisMonth">This Month</option>
+                                <option value="lastMonth">Last Month</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon sales">
+                            <i class="fas fa-peso-sign"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Total Sales</h3>
+                            <p class="stat-value">₱{{ total_sales|floatformat:2 }}</p>
+                            <p class="stat-change neutral">{{ date_range|title }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orders">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Total Orders</h3>
+                            <p class="stat-value">{{ total_orders }}</p>
+                            <p class="stat-change neutral">{{ date_range|title }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Pending Orders</h3>
+                            <p class="stat-value">{{ pending_orders }}</p>
+                            <p class="stat-change neutral">Needs attention</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon stock">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Low Stock Items</h3>
+                            <p class="stat-value">{{ low_stock_products|length }}</p>
+                            <p class="stat-change neutral">Below 10 units</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Sales Chart -->
+                    <div class="dashboard-card col-span-6">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-chart-line"></i>
+                                <span>Sales Overview</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Chart -->
+                    <div class="dashboard-card col-span-6">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-chart-pie"></i>
+                                <span>Products by Category</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="dashboard-card col-span-6">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Recent Orders</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentOrdersTable">
+                                        <tr>
+                                            <td colspan="5" style="text-align: center;">
+                                                <div class="loading-spinner"></div> Loading...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Products -->
+                    <div class="dashboard-card col-span-6">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Top Selling Products</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Sold</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="topProductsTable">
+                                        <tr>
+                                            <td colspan="4" style="text-align: center;">
+                                                <div class="loading-spinner"></div> Loading...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<script src="{% static 'js/admin-dashboard.js' %}"></script>
+<script>
+// Dashboard data loading
+document.addEventListener('DOMContentLoaded', function() {
+    const dateRangeFilter = document.getElementById('dateRangeFilter');
+    const refreshButton = document.getElementById('refreshDashboard');
+    const lastUpdated = document.getElementById('lastUpdated');
+    
+    // Sales Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    let salesChart = null;
+    
+    // Category Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryChart = new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_labels|safe }},
+            datasets: [{
+                data: {{ category_data|safe }},
+                backgroundColor: [
+                    '#3b82f6',
+                    '#10b981',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#8b5cf6',
+                    '#ec4899',
+                    '#06b6d4',
+                    '#f97316'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        padding: 15,
+                        boxWidth: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            return label + ': ' + value + ' products';
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Load sales data
+    function loadSalesData(dateRange) {
+        fetch(`/dashboard/api/sales-data/?date_range=${dateRange}`)
+            .then(response => response.json())
+            .then(data => {
+                if (salesChart) {
+                    salesChart.destroy();
+                }
+                
+                salesChart = new Chart(salesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Sales (₱)',
+                            data: data.data,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#3b82f6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return '₱' + context.parsed.y.toLocaleString('en-PH', {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        });
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₱' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error loading sales data:', error));
+    }
+    
+    // Load recent orders
+    function loadRecentOrders() {
+        fetch('/dashboard/api/recent-orders/')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('recentOrdersTable');
+                if (data.orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No orders found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.orders.map(order => `
+                    <tr>
+                        <td><strong>${order.order_number}</strong></td>
+                        <td>${order.customer}</td>
+                        <td>₱${parseFloat(order.amount).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td><span class="badge badge-${getStatusClass(order.status)}">${order.status_display}</span></td>
+                        <td>${order.date}</td>
+                    </tr>
+                `).join('');
+            })
+            .catch(error => {
+                console.error('Error loading recent orders:', error);
+                document.getElementById('recentOrdersTable').innerHTML = '<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error loading orders</td></tr>';
+            });
+    }
+    
+    // Load top products
+    function loadTopProducts(dateRange) {
+        fetch(`/dashboard/api/top-products/?date_range=${dateRange}`)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('topProductsTable');
+                if (data.products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8;">No products sold in this period</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.products.map(product => `
+                    <tr>
+                        <td><strong>${product.name}</strong></td>
+                        <td>${product.category}</td>
+                        <td>${product.sold}</td>
+                        <td>₱${parseFloat(product.revenue).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    </tr>
+                `).join('');
+            })
+            .catch(error => {
+                console.error('Error loading top products:', error);
+                document.getElementById('topProductsTable').innerHTML = '<tr><td colspan="4" style="text-align: center; color: #ef4444;">Error loading products</td></tr>';
+            });
+    }
+    
+    // Helper function for status badge colors
+    function getStatusClass(status) {
+        const statusMap = {
+            'pending': 'warning',
+            'processing': 'info',
+            'shipped': 'primary',
+            'delivered': 'success',
+            'received': 'success',
+            'cancelled': 'danger'
+        };
+        return statusMap[status] || 'secondary';
+    }
+    
+    // Update timestamp
+    function updateTimestamp() {
+        const now = new Date();
+        lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+    }
+    
+    // Refresh all data
+    function refreshDashboard() {
+        const dateRange = dateRangeFilter.value;
+        loadSalesData(dateRange);
+        loadRecentOrders();
+        loadTopProducts(dateRange);
+        updateTimestamp();
+    }
+    
+    // Event listeners
+    dateRangeFilter.addEventListener('change', function() {
+        window.location.href = `?date_range=${this.value}`;
+    });
+    
+    refreshButton.addEventListener('click', refreshDashboard);
+    
+    // Initial load
+    loadSalesData('{{ date_range }}');
+    loadRecentOrders();
+    loadTopProducts('{{ date_range }}');
+    
+    // Auto refresh every 5 minutes
+    setInterval(refreshDashboard, 300000);
+});
+</script>
+{% endblock %}

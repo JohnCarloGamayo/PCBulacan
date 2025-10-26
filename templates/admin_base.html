@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PCBulacan Admin{% endblock %}</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Admin CSS -->
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    
+    <style>
+        body {
+            background: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+        .admin-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            height: 100vh;
+            z-index: 1000;
+            background: #1e293b;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .admin-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+        .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            width: 100%;
+        }
+        .dashboard-wrapper {
+            flex: 1;
+            padding: 2rem 2.5rem;
+            background: #f1f5f9;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+        }
+        
+        /* Sidebar overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+        }
+        
+        @media (max-width: 1200px) {
+            .admin-sidebar {
+                width: 240px;
+            }
+            .admin-content {
+                margin-left: 240px;
+                width: calc(100% - 240px);
+            }
+            .dashboard-wrapper {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .admin-sidebar.active {
+                transform: translateX(0);
+            }
+            .admin-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .dashboard-wrapper {
+                padding: 1rem;
+            }
+            .mobile-menu-toggle {
+                display: flex !important;
+            }
+            .sidebar-overlay {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-wrapper {
+                padding: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-wrapper {
+                padding: 0.5rem;
+            }
+        }
+        
+        /* Landscape orientation adjustments */
+        @media (max-width: 992px) and (orientation: landscape) {
+            .admin-sidebar {
+                width: 220px;
+            }
+            .dashboard-wrapper {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="admin-layout">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- jQuery (if needed) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Chart.js (for dashboard charts) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- SortableJS (for drag and drop) -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

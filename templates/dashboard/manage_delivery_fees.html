@@ -1,0 +1,1030 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Delivery Fees - PCBulacan Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fee-amount, .min-order {
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+    }
+    
+    .status-toggle {
+        cursor: pointer;
+    }
+    
+    .modal {
+        .fee-card {
+            background: linear-gradient(90deg, #f8fafc 0%, #e0e7ff 100%);
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.07);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e0e7ff;
+        }
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        .fee-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal.active {
+        display: block;
+        .fee-card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #2563eb;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    }
+    
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 12px;
+        .fee-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 600px;
+        animation: modalFadeIn 0.3s;
+    }
+    
+    @keyframes modalFadeIn {
+        from {opacity: 0; transform: translateY(-20px);}
+        .stat-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.04);
+            border: 1px solid #e0e7ff;
+            position: relative;
+            min-height: 80px;
+        }
+        .stat-item .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: #a5b4fc;
+            opacity: 0.7;
+        }
+        to {opacity: 1; transform: translateY(0);}
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+        .stat-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+    .modal-header h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+    
+    .close-modal {
+        .dashboard-header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        color: #64748b;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+        .dashboard-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #2563eb;
+            letter-spacing: 0.5px;
+        }
+    .close-modal:hover {
+        color: #ef4444;
+    }
+    
+    .modal-body {
+        margin-bottom: 20px;
+    }
+    
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+        .btn.btn-primary {
+            background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.7rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn.btn-primary:hover {
+            background: linear-gradient(90deg, #1d4ed8 60%, #2563eb 100%);
+            box-shadow: 0 4px 16px rgba(59,130,246,0.12);
+        }
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+        .dashboard-card {
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(59,130,246,0.07);
+            margin-bottom: 2rem;
+            border: 1px solid #e0e7ff;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .form-group label {
+        display: block;
+        table th {
+            background: linear-gradient(90deg, #f8fafc 60%, #e0e7ff 100%);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.85rem 1rem;
+            text-align: left;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #2563eb;
+            border-bottom: 2px solid #e0e7ff;
+        }
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e7ff;
+            font-size: 0.98rem;
+            vertical-align: middle;
+        }
+        table tr {
+            transition: background 0.2s;
+        }
+        table tr:hover td {
+            background-color: #e0e7ff33;
+        }
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+    
+    .days-badge {
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 32px 24px 24px 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(59,130,246,0.13);
+            width: 95%;
+            max-width: 520px;
+            animation: modalFadeIn 0.3s;
+        }
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background-color: rgba(59, 130, 246, 0.1);
+        .modal-header h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #2563eb;
+            letter-spacing: 0.5px;
+        }
+        color: #3b82f6;
+    }
+    
+    .fee-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid #e0e7ff;
+        }
+        margin-bottom: 1.5rem;
+    }
+    
+    .fee-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        margin-bottom: 1rem;
+    }
+    
+    .fee-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .fee-card, .dashboard-card {
+                padding: 1rem 0.5rem;
+            }
+            .modal-content {
+                padding: 18px 8px 12px 8px;
+            }
+            .fee-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        color: #1e293b;
+    }
+    
+    .fee-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-item {
+        background-color: #f8fafc;
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+            <div class="fee-card-header">
+                <h2 class="fee-card-title"><i class="fas fa-chart-bar"></i> Delivery Fee Statistics</h2>
+            </div>
+            <div class="fee-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Locations</span>
+                    <span class="stat-value">{{ total_locations }}</span>
+                    <span class="stat-icon"><i class="fas fa-map-marker-alt"></i></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Active Locations</span>
+                    <span class="stat-value">{{ active_locations }}</span>
+                    <span class="stat-icon"><i class="fas fa-check-circle"></i></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Average Fee</span>
+                    <span class="stat-value">₱{{ avg_fee|floatformat:2 }}</span>
+                    <span class="stat-icon"><i class="fas fa-coins"></i></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Free Delivery Zones</span>
+                    <span class="stat-value">{{ free_delivery_locations }}</span>
+                    <span class="stat-icon"><i class="fas fa-truck"></i></span>
+                </div>
+            </div>
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+    
+    .alert {
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        display: none;
+    }
+    
+    .alert.active {
+        display: block;
+    }
+    
+    .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #065f46;
+    }
+    
+    .alert-error {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #991b1b;
+    }
+    
+    .filters-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .filters {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .form-select {
+        appearance: none;
+        background: linear-gradient(90deg, #f8fafc 60%, #e0e7ff 100%);
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 0.65rem 2.2rem 0.65rem 1rem;
+        font-size: 1rem;
+        color: #2563eb;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(59,130,246,0.04);
+        transition: border-color 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        min-width: 140px;
+        outline: none;
+        position: relative;
+    }
+    .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    .form-select option {
+        color: #1e293b;
+        font-weight: 500;
+    }
+    /* Custom arrow for select */
+    .form-select {
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%232563eb" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7.293 7.293a1 1 0 011.414 0L10 8.586l1.293-1.293a1 1 0 111.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 010-1.414z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 0.8rem center;
+        background-size: 1.2em;
+    }
+    
+    .search-container {
+        flex: 1;
+        min-width: 250px;
+    }
+    
+    .search-container input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    table th {
+        background-color: #f8fafc;
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #64748b;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    table tr:hover td {
+        background-color: #f8fafc;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .status-badge.active {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .status-badge.inactive {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .btn-icon {
+        padding: 0.5rem;
+        border-radius: 8px;
+        background-color: #f3f4f6;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-icon:hover {
+        background-color: #e5e7eb;
+    }
+    
+    .btn-icon.edit:hover {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+    
+    .btn-icon.delete:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .fees-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .fees-table {
+            min-width: 700px;
+        }
+        
+        .modal-content {
+            width: 95%;
+            max-width: 500px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .fees-table {
+            min-width: 600px;
+            font-size: 0.8125rem;
+        }
+        
+        .fees-table th,
+        .fees-table td {
+            padding: 0.625rem 0.5rem;
+        }
+        
+        .page-header {
+            padding: 1rem;
+        }
+        
+        .page-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .modal-content {
+            padding: 1.25rem;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.25rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .fees-table {
+            min-width: 500px;
+            font-size: 0.75rem;
+        }
+        
+        .fees-table th,
+        .fees-table td {
+            padding: 0.5rem 0.375rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8125rem;
+        }
+        
+        .btn-icon {
+            padding: 0.375rem;
+        }
+        
+        .page-header h1 {
+            font-size: 1.25rem;
+        }
+        
+        .form-group label {
+            font-size: 0.8125rem;
+        }
+        
+        .form-control {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/admin_sidebar.html' %}
+<div class="admin-content">
+    {% include 'includes/admin_header.html' with page_title="Delivery Fees" %}
+    <div class="dashboard-wrapper">
+        <div class="dashboard-header-section">
+            <h1 class="dashboard-title">Manage Delivery Fees</h1>
+            <button class="btn btn-primary" id="addFeeBtn">
+                <i class="fas fa-plus"></i> Add New Fee
+            </button>
+        </div>
+        
+        <!-- Alert Messages -->
+        <div id="alertSuccess" class="alert alert-success"></div>
+        <div id="alertError" class="alert alert-error"></div>
+        
+        <!-- Stats Cards -->
+        <div class="fee-card">
+            <div class="fee-card-header">
+                <h2 class="fee-card-title">Delivery Fee Statistics</h2>
+            </div>
+            <div class="fee-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Locations</span>
+                    <span class="stat-value">{{ total_locations }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Active Locations</span>
+                    <span class="stat-value">{{ active_locations }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Average Fee</span>
+                    <span class="stat-value">₱{{ avg_fee|floatformat:2 }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Free Delivery Zones</span>
+                    <span class="stat-value">{{ free_delivery_locations }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="fee-card">
+            <div class="filters-container">
+                <div class="filters">
+                    <select id="stateFilter" class="form-select">
+                        <option value="">All States</option>
+                        {% for state in states %}
+                            <option value="{{ state }}">{{ state }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search city or state...">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Table Card -->
+        <div class="dashboard-card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Fee Amount</th>
+                                <th>Min. Order for Free</th>
+                                <th>Estimated Days</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feesTableBody">
+                            {% for fee in delivery_fees %}
+                            <tr data-id="{{ fee.id }}" data-city="{{ fee.city|lower }}" data-state="{{ fee.state|lower }}" data-status="{% if fee.is_available %}Active{% else %}Inactive{% endif %}">
+                                <td>{{ fee.id }}</td>
+                                <td>{{ fee.city }}</td>
+                                <td>{{ fee.state }}</td>
+                                <td class="fee-amount">₱{{ fee.fee_amount|floatformat:2 }}</td>
+                                <td class="min-order">₱{{ fee.min_order_free_delivery|floatformat:2 }}</td>
+                                <td><span class="days-badge">{{ fee.estimated_days }}</span></td>
+                                <td>
+                                    <span class="status-badge status-toggle {% if fee.is_available %}active{% else %}inactive{% endif %}" data-id="{{ fee.id }}">
+                                        {% if fee.is_available %}Active{% else %}Inactive{% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn-icon edit edit-fee" data-id="{{ fee.id }}" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon delete delete-fee" data-id="{{ fee.id }}" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 2rem; color: #64748b;">
+                                    No delivery fees found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Fee Modal -->
+<div id="feeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Add New Delivery Fee</h2>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="feeForm">
+                {% csrf_token %}
+                <input type="hidden" id="feeId" name="fee_id" value="">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State/Province *</label>
+                        <input type="text" id="state" name="state" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="feeAmount">Fee Amount (₱) *</label>
+                        <input type="number" id="feeAmount" name="fee_amount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="minOrder">Min. Order for Free Delivery (₱)</label>
+                        <input type="number" id="minOrder" name="min_order" step="0.01" min="0" value="0">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estimatedDays">Estimated Delivery *</label>
+                        <input type="text" id="estimatedDays" name="estimated_days" placeholder="e.g., 3-5 days" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" name="status" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveBtn">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h2>Confirm Deletion</h2>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this delivery fee? This action cannot be undone.</p>
+            <input type="hidden" id="deleteId">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="cancelDeleteBtn">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const feeModal = document.getElementById('feeModal');
+    const deleteModal = document.getElementById('deleteModal');
+    const addFeeBtn = document.getElementById('addFeeBtn');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const modalTitle = document.getElementById('modalTitle');
+    const feeForm = document.getElementById('feeForm');
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    // Show alert message
+    function showAlert(message, type) {
+        const alertId = type === 'success' ? 'alertSuccess' : 'alertError';
+        const alertEl = document.getElementById(alertId);
+        alertEl.textContent = message;
+        alertEl.classList.add('active');
+        
+        setTimeout(() => {
+            alertEl.classList.remove('active');
+        }, 3000);
+    }
+    
+    // Open add fee modal
+    addFeeBtn.addEventListener('click', function() {
+        modalTitle.textContent = 'Add New Delivery Fee';
+        feeForm.reset();
+        document.getElementById('feeId').value = '';
+        feeModal.classList.add('active');
+    });
+    
+    // Close modals
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            feeModal.classList.remove('active');
+            deleteModal.classList.remove('active');
+        });
+    });
+    
+    cancelBtn.addEventListener('click', () => feeModal.classList.remove('active'));
+    cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.remove('active'));
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === feeModal) feeModal.classList.remove('active');
+        if (event.target === deleteModal) deleteModal.classList.remove('active');
+    });
+    
+    // Edit fee
+    document.querySelectorAll('.edit-fee').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const feeId = this.getAttribute('data-id');
+            modalTitle.textContent = 'Edit Delivery Fee';
+            document.getElementById('feeId').value = feeId;
+            
+            // Fetch fee data
+            fetch(`/dashboard/delivery-fees/edit/${feeId}/`, {
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('city').value = data.city;
+                document.getElementById('state').value = data.state;
+                document.getElementById('feeAmount').value = data.fee_amount;
+                document.getElementById('minOrder').value = data.min_order;
+                document.getElementById('estimatedDays').value = data.estimated_days;
+                document.getElementById('status').value = data.status;
+                feeModal.classList.add('active');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error loading fee data', 'error');
+            });
+        });
+    });
+    
+    // Delete fee
+    document.querySelectorAll('.delete-fee').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const feeId = this.getAttribute('data-id');
+            document.getElementById('deleteId').value = feeId;
+            deleteModal.classList.add('active');
+        });
+    });
+    
+    // Toggle status
+    document.querySelectorAll('.status-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const feeId = this.getAttribute('data-id');
+            const currentStatus = this.textContent.trim();
+            const newStatus = currentStatus === 'Active' ? '0' : '1';
+            
+            const formData = new FormData();
+            formData.append('status', newStatus);
+            
+            fetch(`/dashboard/delivery-fees/toggle/${feeId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error updating status', 'error');
+            });
+        });
+    });
+    
+    // Save changes
+    saveBtn.addEventListener('click', function() {
+        const formData = new FormData(feeForm);
+        const feeId = document.getElementById('feeId').value;
+        const url = feeId ? `/dashboard/delivery-fees/edit/${feeId}/` : '/dashboard/delivery-fees/add/';
+        
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                feeModal.classList.remove('active');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showAlert(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Error saving delivery fee', 'error');
+        });
+    });
+    
+    // Confirm delete
+    confirmDeleteBtn.addEventListener('click', function() {
+        const feeId = document.getElementById('deleteId').value;
+        
+        fetch(`/dashboard/delivery-fees/delete/${feeId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                deleteModal.classList.remove('active');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showAlert(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Error deleting delivery fee', 'error');
+        });
+    });
+    
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        applyFilters();
+    });
+    
+    // Filter functionality
+    const stateFilter = document.getElementById('stateFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const stateValue = stateFilter.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        
+        const rows = document.querySelectorAll('#feesTableBody tr[data-id]');
+        
+        rows.forEach(row => {
+            const city = row.dataset.city;
+            const state = row.dataset.state;
+            const status = row.dataset.status;
+            
+            let showRow = true;
+            
+            if (searchTerm && !city.includes(searchTerm) && !state.includes(searchTerm)) {
+                showRow = false;
+            }
+            
+            if (stateValue && state !== stateValue) {
+                showRow = false;
+            }
+            
+            if (statusValue && status !== statusValue) {
+                showRow = false;
+            }
+            
+            row.style.display = showRow ? '' : 'none';
+        });
+    }
+    
+    stateFilter.addEventListener('change', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+});
+</script>
+{% endblock %}

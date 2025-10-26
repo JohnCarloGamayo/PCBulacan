@@ -1,0 +1,293 @@
+{% load static %}
+
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <!-- Logo -->
+            <a href="{% url 'products:home' %}" class="logo">
+                <i class="fas fa-desktop"></i> <span class="logo-text">PCBulacan</span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="main-nav desktop-nav">
+                <ul>
+                    <li><a href="{% url 'products:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                    <li><a href="{% url 'products:list' %}" class="{% if request.resolver_match.url_name == 'list' %}active{% endif %}">Products</a></li>
+                    <li><a href="#" class="">Deals</a></li>
+                    <li><a href="#" class="">Support</a></li>
+                </ul>
+            </nav>
+
+            <!-- Search Bar -->
+            <div class="search-bar desktop-search">
+                <div class="search-autocomplete">
+                    <form action="{% url 'products:list' %}" method="get" id="desktop-search-form">
+                        <div class="search-input-wrapper">
+                            <div class="search-input">
+                                <i class="fas fa-search"></i>
+                                <input type="search" name="search" id="desktop-search-input" placeholder="Search for products..." autocomplete="off">
+                                <span class="search-clear" id="desktop-search-clear">&times;</span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="search-suggestions" id="desktop-search-suggestions"></div>
+                </div>
+            </div>
+
+            <!-- Desktop Action Buttons -->
+            <div class="action-buttons desktop-actions">
+                <button class="icon-btn">
+                    <i class="fas fa-heart"></i>
+                </button>
+                
+                {% if user.is_authenticated %}
+                <!-- Notification Button with Hover Dropdown -->
+                <div class="notification-container">
+                    <button class="icon-btn notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" style="display:none">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <a href="#">See All</a>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="notification-loading">
+                                <i class="fas fa-spinner fa-spin"></i> Loading...
+                            </div>
+                        </div>
+                        <div class="notification-footer">
+                            <a href="#" id="markAllRead">Mark all as read</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="icon-btn dropdown-toggle">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-header">My Account</div>
+                        <a href="{% url 'accounts:account' %}">Account</a>
+                        {% if user.is_staff %}
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'dashboard:home' %}">Dashboard</a>
+                        {% endif %}
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'accounts:logout' %}">Sign out</a>
+                    </div>
+                </div>
+                <button class="icon-btn cart-btn">
+                    <a href="{% url 'orders:cart' %}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">{{ cart_count|default:0 }}</span>
+                    </a>
+                </button>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">Login</a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-sm">Sign Up</a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="mobile-menu-toggle">
+                <button class="menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar -->
+        <div class="search-bar mobile-search">
+            <div class="search-autocomplete">
+                <form action="{% url 'products:list' %}" method="get" id="mobile-search-form">
+                    <div class="search-input-wrapper">
+                        <div class="search-input">
+                            <i class="fas fa-search"></i>
+                            <input type="search" name="search" id="mobile-search-input" placeholder="Search for products..." autocomplete="off">
+                            <span class="search-clear" id="mobile-search-clear">&times;</span>
+                        </div>
+                    </div>
+                </form>
+                <div class="search-suggestions" id="mobile-search-suggestions"></div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{% url 'products:home' %}" class="active">Home</a></li>
+                    <li><a href="{% url 'products:list' %}">Products</a></li>
+                    <li><a href="#">Deals</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </nav>
+            {% if user.is_authenticated %}
+            <div class="mobile-actions">
+                <a href="{% url 'accounts:profile' %}" class="btn btn-outline btn-sm">
+                    <i class="fas fa-user"></i> Account
+                </a>
+                <a href="#" class="btn btn-outline btn-sm">
+                    <i class="fas fa-bell"></i> Notifications <span class="mobile-notification-count"></span>
+                </a>
+                <a href="{% url 'orders:cart' %}" class="btn btn-outline btn-sm">
+                    <i class="fas fa-shopping-cart"></i> Cart ({{ cart_count|default:0 }})
+                </a>
+            </div>
+            <div class="mobile-logout">
+                <a href="{% url 'accounts:logout' %}" class="btn btn-outline btn-sm btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </a>
+            </div>
+            {% else %}
+            <div class="mobile-actions">
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.menu-btn');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    
+    if (menuBtn) {
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+        });
+    }
+    
+    // Dropdown toggles
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = this.parentElement;
+            dropdown.classList.toggle('active');
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.dropdown.active').forEach(dropdown => {
+            dropdown.classList.remove('active');
+        });
+    });
+    
+    // Initialize search autocomplete for desktop and mobile
+    initSearchAutocomplete('desktop');
+    initSearchAutocomplete('mobile');
+    
+    function initSearchAutocomplete(device) {
+        const searchInput = document.getElementById(`${device}-search-input`);
+        const searchSuggestions = document.getElementById(`${device}-search-suggestions`);
+        const searchForm = document.getElementById(`${device}-search-form`);
+        const searchClear = document.getElementById(`${device}-search-clear`);
+        
+        if (!searchInput) return;
+        
+        let debounceTimer;
+        
+        // Listen for input in search box
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            // Show/hide clear button
+            if (searchClear) {
+                searchClear.style.display = query.length > 0 ? 'block' : 'none';
+            }
+            
+            // Clear previous timer
+            clearTimeout(debounceTimer);
+            
+            // If query is empty, hide suggestions
+            if (query.length < 1) {
+                searchSuggestions.style.display = 'none';
+                return;
+            }
+            
+            // Debounce the API call
+            debounceTimer = setTimeout(function() {
+                fetchSuggestions(query);
+            }, 200);
+        });
+        
+        // Clear search input
+        if (searchClear) {
+            searchClear.addEventListener('click', function() {
+                searchInput.value = '';
+                searchSuggestions.style.display = 'none';
+                searchClear.style.display = 'none';
+                searchInput.focus();
+            });
+        }
+        
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                searchSuggestions.style.display = 'none';
+            }
+        });
+        
+        // Fetch suggestions from backend
+        function fetchSuggestions(query) {
+            fetch(`/api/search-suggestions/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear previous suggestions
+                    searchSuggestions.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        // No suggestions found
+                        searchSuggestions.innerHTML = `
+                            <div class="no-suggestions">
+                                No products found for "${query}"
+                            </div>
+                        `;
+                    } else {
+                        // Create suggestion elements
+                        data.forEach(productName => {
+                            const suggestion = document.createElement('div');
+                            suggestion.className = 'search-suggestion';
+                            suggestion.innerHTML = highlightMatch(productName, query);
+                            
+                            // Add click event to search for this product
+                            suggestion.addEventListener('click', function() {
+                                searchInput.value = productName;
+                                searchForm.submit();
+                            });
+                            
+                            searchSuggestions.appendChild(suggestion);
+                        });
+                    }
+                    
+                    // Show suggestions
+                    searchSuggestions.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching search suggestions:', error);
+                });
+        }
+        
+        // Highlight matching text in suggestions
+        function highlightMatch(text, query) {
+            const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+            return text.replace(regex, '<strong>$1</strong>');
+        }
+        
+        // Escape special characters for regex
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+    }
+});
+</script>
