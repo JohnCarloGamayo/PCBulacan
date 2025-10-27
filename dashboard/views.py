@@ -1330,3 +1330,220 @@ def manage_slideshow(request):
     }
     
     return render(request, 'dashboard/manage_slideshow.html', context)
+
+
+@staff_member_required
+def manage_deals(request):
+    """Manage deals and promotions"""
+    from products.models import Deal, Product
+    from django.utils import timezone
+    
+    deals = Deal.objects.all().order_by('-created_at')
+    
+    # Update deal statuses based on dates
+    now = timezone.now()
+    for deal in deals:
+        if deal.status == 'scheduled' and deal.start_date <= now:
+            deal.status = 'active'
+            deal.save()
+        elif deal.status == 'active' and deal.end_date < now:
+            deal.status = 'expired'
+            deal.save()
+    
+    # Filter by status
+    status_filter = request.GET.get('status')
+    if status_filter:
+        deals = deals.filter(status=status_filter)
+    
+    # Get all products for the modal
+    products = Product.objects.filter(is_active=True).order_by('name')
+    
+    context = {
+        'deals': deals,
+        'products': products,
+        'status_filter': status_filter,
+    }
+    
+    return render(request, 'dashboard/manage_deals_modal.html', context)
+
+
+@staff_member_required
+def add_deal(request):
+    """Add a new deal via AJAX"""
+    from products.models import Deal, Product
+    from django.utils import timezone
+    import json
+    
+    if request.method == 'POST':
+        try:
+            title = request.POST.get('title')
+            description = request.POST.get('description', '')
+            deal_type = request.POST.get('deal_type')
+            discount_percentage = request.POST.get('discount_percentage')
+            discount_amount = request.POST.get('discount_amount')
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date')
+            is_featured = request.POST.get('is_featured') == 'on'
+            badge_text = request.POST.get('badge_text', '')
+            max_uses = request.POST.get('max_uses')
+            product_ids = request.POST.getlist('products')
+            
+            if title and deal_type and start_date and end_date and product_ids:
+                deal = Deal.objects.create(
+                    title=title,
+                    description=description,
+                    deal_type=deal_type,
+                    discount_percentage=discount_percentage if discount_percentage else None,
+                    discount_amount=discount_amount if discount_amount else None,
+                    start_date=start_date,
+                    end_date=end_date,
+                    is_featured=is_featured,
+                    badge_text=badge_text,
+                    max_uses=max_uses if max_uses else None,
+                    status='draft',
+                    created_by=request.user
+                )
+                
+                if 'banner_image' in request.FILES:
+                    deal.banner_image = request.FILES['banner_image']
+                    deal.save()
+                
+                # Add products to deal
+                deal.products.set(Product.objects.filter(id__in=product_ids))
+                
+                return JsonResponse({'success': True, 'message': f'Deal "{title}" created successfully!'})
+            else:
+                return JsonResponse({'success': False, 'error': 'Please fill in all required fields.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@staff_member_required
+def edit_deal(request, deal_id):
+    """Edit an existing deal via AJAX"""
+    from products.models import Deal, Product
+    import json
+    
+    try:
+        deal = Deal.objects.get(id=deal_id)
+    except Deal.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Deal not found'})
+    
+    if request.method == 'POST':
+        try:
+            deal.title = request.POST.get('title', deal.title)
+            deal.description = request.POST.get('description', '')
+            deal.deal_type = request.POST.get('deal_type', deal.deal_type)
+            deal.discount_percentage = request.POST.get('discount_percentage') or None
+            deal.discount_amount = request.POST.get('discount_amount') or None
+            deal.start_date = request.POST.get('start_date', deal.start_date)
+            deal.end_date = request.POST.get('end_date', deal.end_date)
+            deal.is_featured = request.POST.get('is_featured') == 'on'
+            deal.badge_text = request.POST.get('badge_text', '')
+            deal.max_uses = request.POST.get('max_uses') or None
+            deal.status = request.POST.get('status', deal.status)
+            
+            if 'banner_image' in request.FILES:
+                deal.banner_image = request.FILES['banner_image']
+            
+            product_ids = request.POST.getlist('products')
+            if product_ids:
+                deal.products.set(Product.objects.filter(id__in=product_ids))
+            
+            deal.save()
+            return JsonResponse({'success': True, 'message': f'Deal "{deal.title}" updated successfully!'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@staff_member_required
+def get_deal(request, deal_id):
+    """Get deal data for AJAX editing"""
+    from products.models import Deal
+    import json
+    
+    try:
+        deal = Deal.objects.get(id=deal_id)
+        
+        data = {
+            'id': deal.id,
+            'title': deal.title,
+            'description': deal.description,
+            'deal_type': deal.deal_type,
+            'discount_percentage': str(deal.discount_percentage) if deal.discount_percentage else '',
+            'discount_amount': str(deal.discount_amount) if deal.discount_amount else '',
+            'start_date': deal.start_date.strftime('%Y-%m-%d') if deal.start_date else '',
+            'end_date': deal.end_date.strftime('%Y-%m-%d') if deal.end_date else '',
+            'badge_text': deal.badge_text or '',
+            'max_uses': deal.max_uses if deal.max_uses else '',
+            'is_featured': deal.is_featured,
+            'status': deal.status,
+            'banner_image': deal.banner_image.url if deal.banner_image else '',
+            'product_ids': list(deal.products.values_list('id', flat=True))
+        }
+        
+        return JsonResponse(data)
+    except Deal.DoesNotExist:
+        return JsonResponse({'error': 'Deal not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@staff_member_required
+def delete_deal(request, deal_id):
+    """Delete a deal"""
+    from products.models import Deal
+    
+    if request.method == 'POST':
+        deal = get_object_or_404(Deal, id=deal_id)
+        title = deal.title
+        deal.delete()
+        messages.success(request, f'Deal "{title}" deleted successfully!')
+    
+    return redirect('dashboard:manage_deals')
+
+
+@staff_member_required
+def toggle_deal_status(request, deal_id):
+    """Toggle deal active/draft status"""
+    from products.models import Deal
+    
+    if request.method == 'POST':
+        deal = get_object_or_404(Deal, id=deal_id)
+        
+        if deal.status == 'active':
+            deal.status = 'draft'
+            status_text = 'deactivated'
+        elif deal.status == 'draft':
+            deal.status = 'active'
+            status_text = 'activated'
+        else:
+            messages.error(request, 'Can only toggle between active and draft status.')
+            return redirect('dashboard:manage_deals')
+        
+        deal.save()
+        messages.success(request, f'Deal "{deal.title}" {status_text} successfully!')
+    
+    return redirect('dashboard:manage_deals')
+
+
+@staff_member_required
+def apply_deal(request, deal_id):
+    """Apply deal discounts to products"""
+    from products.models import Deal
+    
+    if request.method == 'POST':
+        deal = get_object_or_404(Deal, id=deal_id)
+        
+        try:
+            deal.apply_to_products()
+            messages.success(request, f'Deal "{deal.title}" applied to {deal.products.count()} products successfully!')
+        except Exception as e:
+            messages.error(request, f'Error applying deal: {str(e)}')
+    
+    return redirect('dashboard:manage_deals')
+

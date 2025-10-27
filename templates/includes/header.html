@@ -13,8 +13,8 @@
                 <ul>
                     <li><a href="{% url 'products:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
                     <li><a href="{% url 'products:list' %}" class="{% if request.resolver_match.url_name == 'list' %}active{% endif %}">Products</a></li>
-                    <li><a href="#" class="">Deals</a></li>
-                    <li><a href="#" class="">Support</a></li>
+                    <li><a href="{% url 'products:deals' %}" class="{% if request.resolver_match.url_name == 'deals' %}active{% endif %}">Deals</a></li>
+                    <li><a href="{% url 'products:support' %}" class="{% if request.resolver_match.url_name == 'support' %}active{% endif %}">Support</a></li>
                 </ul>
             </nav>
 
@@ -36,10 +36,6 @@
 
             <!-- Desktop Action Buttons -->
             <div class="action-buttons desktop-actions">
-                <button class="icon-btn">
-                    <i class="fas fa-heart"></i>
-                </button>
-                
                 {% if user.is_authenticated %}
                 <!-- Notification Button with Hover Dropdown -->
                 <div class="notification-container">
@@ -118,10 +114,10 @@
         <div class="mobile-menu">
             <nav class="main-nav">
                 <ul>
-                    <li><a href="{% url 'products:home' %}" class="active">Home</a></li>
-                    <li><a href="{% url 'products:list' %}">Products</a></li>
-                    <li><a href="#">Deals</a></li>
-                    <li><a href="#">Support</a></li>
+                    <li><a href="{% url 'products:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                    <li><a href="{% url 'products:list' %}" class="{% if request.resolver_match.url_name == 'list' %}active{% endif %}">Products</a></li>
+                    <li><a href="{% url 'products:deals' %}" class="{% if request.resolver_match.url_name == 'deals' %}active{% endif %}">Deals</a></li>
+                    <li><a href="{% url 'products:support' %}" class="{% if request.resolver_match.url_name == 'support' %}active{% endif %}">Support</a></li>
                 </ul>
             </nav>
             {% if user.is_authenticated %}
@@ -289,5 +285,171 @@ document.addEventListener('DOMContentLoaded', function() {
             return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
     }
+    
+    // Notification System
+    {% if user.is_authenticated %}
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const notificationList = document.getElementById('notificationList');
+    const notificationCount = document.querySelector('.notification-count');
+    const markAllReadBtn = document.getElementById('markAllRead');
+    
+    let isNotificationOpen = false;
+    
+    // Fetch notifications on page load
+    fetchNotifications();
+    
+    // Refresh notifications every 30 seconds
+    setInterval(fetchNotifications, 30000);
+    
+    // Toggle notification dropdown
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            isNotificationOpen = !isNotificationOpen;
+            notificationDropdown.style.display = isNotificationOpen ? 'block' : 'none';
+            
+            if (isNotificationOpen) {
+                fetchNotifications();
+            }
+        });
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (isNotificationOpen && !notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
+            isNotificationOpen = false;
+            notificationDropdown.style.display = 'none';
+        }
+    });
+    
+    // Fetch notifications from API
+    function fetchNotifications() {
+        fetch('/accounts/api/notifications/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Notifications data:', data); // Debug log
+                if (data.success) {
+                    updateNotificationCount(data.unread_count);
+                    displayNotifications(data.notifications);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching notifications:', error);
+                // Hide loading indicator
+                const loadingDiv = document.querySelector('.notification-loading');
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+                // Show error message
+                notificationList.innerHTML = `
+                    <div class="notification-empty">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Failed to load notifications</p>
+                    </div>
+                `;
+            });
+    }
+    
+    // Update notification count badge
+    function updateNotificationCount(count) {
+        if (count > 0) {
+            notificationCount.textContent = count > 99 ? '99+' : count;
+            notificationCount.style.display = 'flex';
+        } else {
+            notificationCount.style.display = 'none';
+        }
+    }
+    
+    // Display notifications in dropdown
+    function displayNotifications(notifications) {
+        if (notifications.length === 0) {
+            notificationList.innerHTML = `
+                <div class="notification-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No notifications yet</p>
+                </div>
+            `;
+            return;
+        }
+        
+        notificationList.innerHTML = '';
+        notifications.forEach(notif => {
+            const notifElement = document.createElement('div');
+            notifElement.className = `notification-item ${notif.is_read ? 'read' : 'unread'}`;
+            notifElement.innerHTML = `
+                <div class="notification-icon ${notif.type}">
+                    <i class="${notif.icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${notif.title}</div>
+                    <div class="notification-message">${notif.message}</div>
+                    <div class="notification-time">${notif.time_ago}</div>
+                </div>
+            `;
+            
+            // Mark as read and redirect when clicked
+            notifElement.addEventListener('click', function() {
+                markAsRead(notif.id);
+                if (notif.link && notif.link !== '#') {
+                    window.location.href = notif.link;
+                }
+            });
+            
+            notificationList.appendChild(notifElement);
+        });
+    }
+    
+    // Mark notification as read
+    function markAsRead(notificationId) {
+        fetch(`/accounts/api/notifications/${notificationId}/read/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateNotificationCount(data.unread_count);
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notification as read:', error);
+        });
+    }
+    
+    // Mark all notifications as read
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            fetch('/accounts/api/notifications/mark-all-read/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateNotificationCount(0);
+                    fetchNotifications();
+                }
+            })
+            .catch(error => {
+                console.error('Error marking all notifications as read:', error);
+            });
+        });
+    }
+    {% endif %}
 });
 </script>

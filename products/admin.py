@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Slide, ProductReview, ProductImage
+from .models import Category, Product, Slide, ProductReview, ProductImage, Deal
 
 
 @admin.register(Category)
@@ -48,4 +48,44 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_display = ('product', 'order', 'is_primary', 'created_at')
     list_filter = ('is_primary', 'created_at')
     search_fields = ('product__name',)
-    list_editable = ('order', 'is_primary')
+
+
+@admin.register(Deal)
+class DealAdmin(admin.ModelAdmin):
+    list_display = ('title', 'deal_type', 'status', 'discount_display', 'start_date', 'end_date', 'is_featured', 'product_count')
+    list_filter = ('deal_type', 'status', 'is_featured', 'created_at')
+    search_fields = ('title', 'description')
+    list_editable = ('status', 'is_featured')
+    filter_horizontal = ('products',)
+    readonly_fields = ('current_uses', 'created_at', 'updated_at')
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'description', 'badge_text', 'banner_image', 'is_featured')
+        }),
+        ('Discount Configuration', {
+            'fields': ('deal_type', 'discount_percentage', 'discount_amount')
+        }),
+        ('Validity & Usage', {
+            'fields': ('start_date', 'end_date', 'status', 'max_uses', 'current_uses')
+        }),
+        ('Products', {
+            'fields': ('products',)
+        }),
+        ('Metadata', {
+            'fields': ('created_by', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def discount_display(self, obj):
+        return obj.get_discount_display()
+    discount_display.short_description = 'Discount'
+    
+    def product_count(self, obj):
+        return obj.products.count()
+    product_count.short_description = 'Products'
+    
+    def save_model(self, request, obj, form, change):
+        if not change:  # If creating new deal
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)

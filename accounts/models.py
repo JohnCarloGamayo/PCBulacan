@@ -112,3 +112,37 @@ class PasswordResetCode(models.Model):
         """Check if code is still valid (not expired and not used)"""
         from django.utils import timezone
         return not self.is_used and self.expires_at > timezone.now()
+
+
+class Notification(models.Model):
+    """Model for user notifications"""
+    NOTIFICATION_TYPES = [
+        ('new_product', 'New Product'),
+        ('order_update', 'Order Update'),
+        ('new_deal', 'New Deal'),
+        ('order_shipped', 'Order Shipped'),
+        ('order_delivered', 'Order Delivered'),
+        ('system', 'System Notification'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    link = models.CharField(max_length=500, blank=True, null=True)  # URL to redirect when clicked
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Optional references to related objects
+    product_id = models.IntegerField(blank=True, null=True)
+    order_id = models.IntegerField(blank=True, null=True)
+    deal_id = models.IntegerField(blank=True, null=True)
+    
+    class Meta:
+        db_table = 'notifications'
+        verbose_name = 'Notification'
+        verbose_name_plural = 'Notifications'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.title}"

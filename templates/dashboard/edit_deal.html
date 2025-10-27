@@ -1,0 +1,526 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block title %}Edit Deal - PCBulacan Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .deal-form-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title i {
+        color: #3498db;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.1);
+    }
+    
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #e0e0e0;
+    }
+    
+    .form-check-input:checked {
+        background-color: #3498db;
+        border-color: #3498db;
+    }
+    
+    .product-selection {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+    }
+    
+    .product-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        transition: background 0.3s;
+        margin-bottom: 8px;
+    }
+    
+    .product-item:hover {
+        background: #f8f9fa;
+    }
+    
+    .product-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    
+    .product-info {
+        flex: 1;
+    }
+    
+    .product-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 4px;
+    }
+    
+    .product-price {
+        color: #27ae60;
+        font-weight: 600;
+    }
+    
+    .discount-input-group {
+        display: flex;
+        gap: 15px;
+        align-items: end;
+    }
+    
+    .discount-input-group > div {
+        flex: 1;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1.05rem;
+    }
+    
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #2980b9, #21618c);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-cancel {
+        background: #95a5a6;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.05rem;
+    }
+    
+    .btn-cancel:hover {
+        background: #7f8c8d;
+        transform: translateY(-2px);
+    }
+    
+    .image-preview {
+        max-width: 300px;
+        margin-top: 10px;
+        border-radius: 8px;
+    }
+    
+    .help-text {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+    }
+    
+    .search-products {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        width: 100%;
+    }
+    
+    .select-all-btn {
+        background: #3498db;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+    
+    .current-banner {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    @media (max-width: 992px) {
+        .deal-form-container {
+            padding: 20px;
+        }
+        
+        .dashboard-header-section {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem;
+        }
+        
+        .btn-cancel {
+            align-self: flex-start;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .deal-form-container {
+            padding: 15px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+        }
+        
+        .discount-input-group {
+            flex-direction: column;
+        }
+        
+        .product-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .product-info {
+            text-align: center;
+        }
+        
+        .current-banner img {
+            max-width: 100%;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .deal-form-container {
+            padding: 10px;
+        }
+        
+        .btn-submit, .btn-cancel {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/admin_sidebar.html' %}
+<div class="admin-content">
+    {% include 'includes/admin_header.html' with page_title="Edit Deal" %}
+    <div class="dashboard-wrapper">
+        <div class="dashboard-header-section" style="margin-bottom: 2rem;">
+            <h1 class="dashboard-title"><i class="fas fa-edit me-2"></i>Edit Deal: {{ deal.title }}</h1>
+            <a href="{% url 'dashboard:manage_deals' %}" class="btn-cancel" style="text-decoration: none;">
+                <i class="fas fa-arrow-left me-2"></i>Back to Deals
+            </a>
+        </div>
+    
+    <div class="deal-form-container">
+        <form method="POST" enctype="multipart/form-data" id="dealForm">
+            {% csrf_token %}
+            
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Basic Information
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="title" class="form-label">Deal Title *</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ deal.title }}" required>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="badge_text" class="form-label">Badge Text</label>
+                        <input type="text" class="form-control" id="badge_text" name="badge_text" value="{{ deal.badge_text }}" placeholder="e.g., HOT DEAL">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3">{{ deal.description }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="banner_image" class="form-label">Banner Image</label>
+                    {% if deal.banner_image %}
+                    <div class="current-banner">
+                        <label style="font-weight: 600; color: #555; margin-bottom: 8px;">Current Banner:</label>
+                        <img src="{{ deal.banner_image.url }}" alt="Current banner" style="max-width: 300px; display: block; border-radius: 8px;">
+                    </div>
+                    {% endif %}
+                    <input type="file" class="form-control mt-2" id="banner_image" name="banner_image" accept="image/*" onchange="previewImage(event)">
+                    <img id="imagePreview" class="image-preview" style="display: none;" alt="New banner preview">
+                    <div class="help-text">Upload a new banner image to replace the current one (recommended: 1200x400px)</div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" {% if deal.is_featured %}checked{% endif %}>
+                            <label class="form-check-label" for="is_featured">
+                                <strong>Featured Deal</strong> - Display prominently
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="draft" {% if deal.status == 'draft' %}selected{% endif %}>Draft</option>
+                            <option value="active" {% if deal.status == 'active' %}selected{% endif %}>Active</option>
+                            <option value="scheduled" {% if deal.status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                            <option value="expired" {% if deal.status == 'expired' %}selected{% endif %}>Expired</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Discount Settings -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-percent"></i>
+                    Discount Configuration
+                </h3>
+                
+                <div class="mb-3">
+                    <label for="deal_type" class="form-label">Deal Type *</label>
+                    <select class="form-select" id="deal_type" name="deal_type" required onchange="toggleDiscountFields()">
+                        <option value="percentage" {% if deal.deal_type == 'percentage' %}selected{% endif %}>Percentage Discount</option>
+                        <option value="fixed" {% if deal.deal_type == 'fixed' %}selected{% endif %}>Fixed Amount Discount</option>
+                        <option value="bogo" {% if deal.deal_type == 'bogo' %}selected{% endif %}>Buy One Get One (BOGO)</option>
+                        <option value="bundle" {% if deal.deal_type == 'bundle' %}selected{% endif %}>Bundle Deal</option>
+                    </select>
+                </div>
+                
+                <div class="discount-input-group">
+                    <div id="percentageField" style="display: {% if deal.deal_type == 'percentage' %}block{% else %}none{% endif %};">
+                        <label for="discount_percentage" class="form-label">Discount Percentage</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" min="1" max="100" step="0.01" value="{{ deal.discount_percentage|default:'' }}">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                    
+                    <div id="amountField" style="display: {% if deal.deal_type == 'fixed' %}block{% else %}none{% endif %};">
+                        <label for="discount_amount" class="form-label">Discount Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₱</span>
+                            <input type="number" class="form-control" id="discount_amount" name="discount_amount" min="1" step="0.01" value="{{ deal.discount_amount|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Date & Usage Settings -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Validity Period & Usage Limits
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="start_date" class="form-label">Start Date *</label>
+                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" value="{{ deal.start_date|date:'Y-m-d\TH:i' }}" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="end_date" class="form-label">End Date *</label>
+                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ deal.end_date|date:'Y-m-d\TH:i' }}" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="max_uses" class="form-label">Maximum Uses</label>
+                        <input type="number" class="form-control" id="max_uses" name="max_uses" min="1" value="{{ deal.max_uses|default:'' }}" placeholder="Leave empty for unlimited">
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Current Usage</label>
+                        <input type="text" class="form-control" value="{{ deal.current_uses }}" readonly style="background: #f8f9fa;">
+                        <div class="help-text">Total number of times this deal has been used</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Selection -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-box"></i>
+                    Select Products
+                </h3>
+                
+                <input type="text" class="search-products" id="searchProducts" placeholder="🔍 Search products..." onkeyup="filterProducts()">
+                
+                <button type="button" class="select-all-btn" onclick="toggleSelectAll()">
+                    <i class="fas fa-check-double"></i> Select All
+                </button>
+                
+                <div class="product-selection" id="productList">
+                    {% for product in products %}
+                    <div class="product-item" data-name="{{ product.name|lower }}">
+                        <input class="form-check-input product-checkbox" type="checkbox" name="products" value="{{ product.id }}" id="product-{{ product.id }}" {% if product.id in selected_product_ids %}checked{% endif %}>
+                        <label for="product-{{ product.id }}" style="display: flex; align-items: center; gap: 12px; flex: 1; cursor: pointer; margin: 0;">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                            {% else %}
+                            <div class="product-image" style="background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-image" style="color: #ccc;"></i>
+                            </div>
+                            {% endif %}
+                            <div class="product-info">
+                                <div class="product-name">{{ product.name }}</div>
+                                <div class="product-price">₱{{ product.price }}</div>
+                            </div>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Submit Buttons -->
+            <div class="d-flex gap-3 justify-content-end">
+                <a href="{% url 'dashboard:manage_deals' %}" class="btn-cancel">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save me-2"></i>Update Deal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleDiscountFields() {
+    const dealType = document.getElementById('deal_type').value;
+    const percentageField = document.getElementById('percentageField');
+    const amountField = document.getElementById('amountField');
+    const percentageInput = document.getElementById('discount_percentage');
+    const amountInput = document.getElementById('discount_amount');
+    
+    percentageField.style.display = 'none';
+    amountField.style.display = 'none';
+    percentageInput.required = false;
+    amountInput.required = false;
+    
+    if (dealType === 'percentage') {
+        percentageField.style.display = 'block';
+        percentageInput.required = true;
+    } else if (dealType === 'fixed') {
+        amountField.style.display = 'block';
+        amountInput.required = true;
+    }
+}
+
+function previewImage(event) {
+    const preview = document.getElementById('imagePreview');
+    const file = event.target.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+function filterProducts() {
+    const searchText = document.getElementById('searchProducts').value.toLowerCase();
+    const products = document.querySelectorAll('.product-item');
+    
+    products.forEach(product => {
+        const productName = product.getAttribute('data-name');
+        if (productName.includes(searchText)) {
+            product.style.display = 'flex';
+        } else {
+            product.style.display = 'none';
+        }
+    });
+}
+
+function toggleSelectAll() {
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = !allChecked;
+    });
+}
+
+document.getElementById('dealForm').addEventListener('submit', function(e) {
+    const startDate = new Date(document.getElementById('start_date').value);
+    const endDate = new Date(document.getElementById('end_date').value);
+    
+    if (endDate <= startDate) {
+        e.preventDefault();
+        alert('End date must be after start date!');
+        return false;
+    }
+    
+    const selectedProducts = document.querySelectorAll('input[name="products"]:checked').length;
+    if (selectedProducts === 0) {
+        e.preventDefault();
+        alert('Please select at least one product for this deal!');
+        return false;
+    }
+});
+</script>
+    </div>
+</div>
+{% endblock %}

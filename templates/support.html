@@ -1,0 +1,1229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Customer Support - PCBulacan{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Support Page Styling */
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --secondary: #8b5cf6;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --border: #e2e8f0;
+    }
+
+    .support-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Hero Section */
+    .support-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 5rem 0 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .support-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+
+    .support-hero-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        color: white;
+    }
+
+    .support-hero h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .support-hero p {
+        font-size: 1.25rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.95;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Search Box */
+    .search-box {
+        max-width: 700px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 1.25rem 4rem 1.25rem 3.5rem;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+        transform: translateY(-2px);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 1.3rem;
+    }
+
+    .search-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-50%) scale(1.05);
+        box-shadow: 0 5px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Quick Links */
+    .quick-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .quick-link {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50px;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .quick-link:hover {
+        background: white;
+        color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    /* Support Categories Grid */
+    .support-categories {
+        padding: 4rem 0;
+        background: var(--light);
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+        text-align: center;
+        font-size: 1.1rem;
+        color: #64748b;
+        margin-bottom: 3rem;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .category-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 2px solid transparent;
+        cursor: pointer;
+    }
+
+    .category-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        border-color: var(--primary);
+    }
+
+    .category-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover .category-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .category-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+
+    .category-card p {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .category-link {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: gap 0.3s ease;
+    }
+
+    .category-link:hover {
+        gap: 0.75rem;
+    }
+
+    /* Contact Methods */
+    .contact-section {
+        padding: 4rem 0;
+        background: white;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .contact-card {
+        background: linear-gradient(135deg, #f8fafc, #ffffff);
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 2px solid var(--border);
+        transition: all 0.3s ease;
+    }
+
+    .contact-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+        transform: translateY(-5px);
+    }
+
+    .contact-card-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+
+    .contact-card p {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .contact-info {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .contact-btn {
+        display: inline-block;
+        padding: 0.875rem 2rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .contact-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    /* FAQ Accordion */
+    .faq-section {
+        padding: 4rem 0;
+        background: var(--light);
+    }
+
+    .faq-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .faq-item {
+        background: white;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .faq-question {
+        padding: 1.75rem 2rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .faq-question:hover {
+        background: var(--light);
+    }
+
+    .faq-question h4 {
+        margin: 0;
+        font-size: 1.15rem;
+        color: var(--dark);
+        font-weight: 600;
+        flex: 1;
+    }
+
+    .faq-icon {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-icon {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+    }
+
+    .faq-answer-content {
+        padding: 0 2rem 1.75rem 2rem;
+        color: #64748b;
+        line-height: 1.8;
+    }
+
+    /* Ticket Form */
+    .ticket-section {
+        padding: 4rem 0;
+        background: white;
+    }
+
+    .ticket-form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border: 2px solid var(--border);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Chat Bot Bubble */
+    .chat-bubble {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        }
+        50% {
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.6);
+            transform: scale(1.05);
+        }
+    }
+
+    .chat-bubble:hover {
+        transform: scale(1.1);
+    }
+
+    /* Chat Widget */
+    .chat-widget {
+        position: fixed;
+        bottom: 6rem;
+        right: 2rem;
+        width: 340px;
+        height: 480px;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        z-index: 999;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        max-height: calc(100vh - 8rem);
+    }
+
+    .chat-widget.active {
+        display: flex;
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .chat-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chat-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .ai-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .chat-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .chat-close:hover {
+        transform: rotate(90deg);
+    }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+        background: var(--light);
+    }
+
+    .chat-message {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        animation: messageSlide 0.3s ease;
+    }
+
+    @keyframes messageSlide {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .chat-message.user {
+        align-items: flex-end;
+    }
+
+    .chat-message.bot {
+        align-items: flex-start;
+    }
+
+    .message-bubble {
+        max-width: 75%;
+        padding: 1rem 1.25rem;
+        border-radius: 18px;
+        line-height: 1.5;
+    }
+
+    .chat-message.user .message-bubble {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .chat-message.bot .message-bubble {
+        background: white;
+        color: var(--dark);
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .message-time {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.5rem;
+    }
+
+    .chat-input-area {
+        padding: 1.25rem;
+        background: white;
+        border-top: 2px solid var(--border);
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .chat-input {
+        flex: 1;
+        padding: 0.875rem 1.25rem;
+        border: 2px solid var(--border);
+        border-radius: 25px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .chat-input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    .chat-send-btn {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .chat-send-btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem 1.25rem;
+        background: white;
+        border-radius: 18px;
+        border-bottom-left-radius: 4px;
+        width: fit-content;
+    }
+
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: #94a3b8;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+        }
+        30% {
+            transform: translateY(-10px);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .support-hero h1 {
+            font-size: 2rem;
+        }
+
+        .support-hero p {
+            font-size: 1rem;
+        }
+
+        .search-box input {
+            padding: 1rem 3rem 1rem 2.5rem;
+            font-size: 1rem;
+        }
+
+        .search-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .categories-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .ticket-form-container {
+            padding: 2rem 1.5rem;
+        }
+
+        .chat-widget {
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            right: 0;
+            border-radius: 0;
+            max-height: 100vh;
+        }
+
+        .chat-bubble {
+            width: 55px;
+            height: 55px;
+            font-size: 1.3rem;
+            bottom: 1rem;
+            right: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="support-hero">
+    <div class="support-container">
+        <div class="support-hero-content">
+            <h1><i class="fas fa-headset"></i> How can we help you?</h1>
+            <p>Get instant answers from FAQs or chat with our AI assistant</p>
+            
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="supportSearch" placeholder="Search for help articles, FAQs, or guides...">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+
+            <div class="quick-links">
+                <a href="#faqs" class="quick-link">
+                    <i class="fas fa-question-circle"></i> FAQs
+                </a>
+                <a href="#contact" class="quick-link">
+                    <i class="fas fa-phone"></i> Contact Us
+                </a>
+                <a href="javascript:void(0)" onclick="toggleChat()" class="quick-link">
+                    <i class="fas fa-robot"></i> AI Assistant
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Support Categories -->
+<section class="support-categories">
+    <div class="support-container">
+        <h2 class="section-title">Browse by Category</h2>
+        <p class="section-subtitle">Find answers quickly in our organized help sections</p>
+
+        <div class="categories-grid">
+            <div class="category-card" onclick="filterFAQ('Orders')">
+                <div class="category-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3>Orders & Shipping</h3>
+                <p>Track orders, shipping info, delivery times, and order modifications</p>
+                <a href="#faqs" class="category-link">
+                    View Articles <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="category-card" onclick="filterFAQ('Returns')">
+                <div class="category-icon">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <h3>Returns & Refunds</h3>
+                <p>Return policy, refund process, and exchange information</p>
+                <a href="#faqs" class="category-link">
+                    View Articles <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="category-card" onclick="filterFAQ('Products')">
+                <div class="category-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h3>Products & Stock</h3>
+                <p>Product details, warranties, availability, and specifications</p>
+                <a href="#faqs" class="category-link">
+                    View Articles <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="category-card" onclick="filterFAQ('Account')">
+                <div class="category-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h3>Account & Security</h3>
+                <p>Login issues, password reset, account settings, and security</p>
+                <a href="#faqs" class="category-link">
+                    View Articles <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="category-card" onclick="filterFAQ('Payment')">
+                <div class="category-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>Payment & Billing</h3>
+                <p>Payment methods, invoices, pricing, and transaction issues</p>
+                <a href="#faqs" class="category-link">
+                    View Articles <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="category-card" onclick="filterFAQ('Technical')">
+                <div class="category-icon">
+                    <i class="fas fa-wrench"></i>
+                </div>
+                <h3>Technical Support</h3>
+                <p>Website issues, compatibility, browser problems, and errors</p>
+                <a href="#faqs" class="category-link">
+                    View Articles <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Methods -->
+<section id="contact" class="contact-section">
+    <div class="support-container">
+        <h2 class="section-title">Get in Touch</h2>
+        <p class="section-subtitle">Choose your preferred way to reach us</p>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-card-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h3>Phone Support</h3>
+                <p>Speak directly with our support team for immediate assistance</p>
+                <div class="contact-info">
+                    <i class="fas fa-phone"></i>
+                    (044) 123-4567
+                </div>
+                <p style="font-size: 0.9rem; color: #94a3b8;">Mon-Sat: 9:00 AM - 6:00 PM</p>
+                <a href="tel:+6344123456" class="contact-btn">
+                    <i class="fas fa-phone"></i> Call Now
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-card-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3>Email Support</h3>
+                <p>Send us a detailed message and we'll respond within 24 hours</p>
+                <div class="contact-info">
+                    <i class="fas fa-envelope"></i>
+                    support@pcbulacan.com
+                </div>
+                <p style="font-size: 0.9rem; color: #94a3b8;">Response time: 24 hours</p>
+                <a href="mailto:support@pcbulacan.com" class="contact-btn">
+                    <i class="fas fa-envelope"></i> Send Email
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-card-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI Chat Assistant</h3>
+                <p>Get instant answers from our AI-powered chat assistant 24/7</p>
+                <div class="contact-info">
+                    <i class="fas fa-clock"></i>
+                    Available 24/7
+                </div>
+                <p style="font-size: 0.9rem; color: #94a3b8;">Instant responses</p>
+                <a href="javascript:void(0)" onclick="toggleChat()" class="contact-btn">
+                    <i class="fas fa-comments"></i> Start Chat
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQs -->
+<section id="faqs" class="faq-section">
+    <div class="support-container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Quick answers to common questions</p>
+
+        <div class="faq-container">
+            <div class="faq-item" data-category="Orders">
+                <div class="faq-question">
+                    <h4>How do I track my order?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        You can track your order by logging into your account and visiting the "My Orders" section. Each order will have a tracking number that you can use to see the real-time status and location of your package. You'll also receive email updates with tracking information.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="Orders">
+                <div class="faq-question">
+                    <h4>How long does shipping take?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Standard shipping takes 3-5 business days within Metro Manila and nearby provinces. For other areas, delivery may take 5-7 business days. Shipping fees vary by location. Use our AI assistant to check delivery time and fees for your specific area.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="Returns">
+                <div class="faq-question">
+                    <h4>What is your return policy?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        We accept returns within 30 days of purchase for most items. Products must be unused, in original packaging, with all accessories and tags attached. Some items like software and opened electronics may not be eligible for return. Please check the product page for specific return information.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="Payment">
+                <div class="faq-question">
+                    <h4>What payment methods do you accept?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        We accept Bank Transfer (BDO, BPI, Metrobank, etc.), GCash, PayMaya, and Cash on Delivery (COD). For bank transfers, please upload your payment screenshot after ordering. COD is available for select locations only.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="Products">
+                <div class="faq-question">
+                    <h4>Are all products brand new and authentic?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, all products sold on PCBulacan are 100% authentic and brand new. We source directly from authorized distributors and manufacturers. Every product comes with an official warranty and original packaging.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="Products">
+                <div class="faq-question">
+                    <h4>Do you offer product warranties?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, all products come with a manufacturer's warranty. The warranty period varies by product and brand, typically ranging from 1 to 3 years. Extended warranty options are also available for select items at checkout.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="Account">
+                <div class="faq-question">
+                    <h4>How do I reset my password?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Click on "Forgot Password" on the login page. Enter your registered email address and we'll send you a secure link to reset your password. The link is valid for 24 hours. If you don't receive the email, check your spam folder or contact support.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="Technical">
+                <div class="faq-question">
+                    <h4>I'm having trouble placing an order. What should I do?</h4>
+                    <div class="faq-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Try clearing your browser cache and cookies, then refresh the page. Make sure you're using an updated browser version. If the problem persists, try using a different browser or device. You can also chat with our AI assistant for immediate help.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chat Bot Bubble -->
+<div class="chat-bubble" onclick="toggleChat()">
+    <i class="fas fa-robot"></i>
+</div>
+
+<!-- Chat Widget -->
+<div class="chat-widget" id="chatWidget">
+    <div class="chat-header">
+        <h3>
+            <i class="fas fa-robot"></i>
+            AI Assistant
+            <span class="ai-badge">BETA</span>
+        </h3>
+        <button class="chat-close" onclick="toggleChat()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <div class="chat-message bot">
+            <div class="message-bubble">
+                Hi! I'm your PCBulacan AI assistant. How can I help you today?
+            </div>
+            <div class="message-time">Just now</div>
+        </div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+        <button class="chat-send-btn" onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+// FAQ Accordion
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', () => {
+        const item = question.parentElement;
+        const isActive = item.classList.contains('active');
+        
+        // Close all FAQs
+        document.querySelectorAll('.faq-item').forEach(faq => {
+            faq.classList.remove('active');
+        });
+        
+        // Open clicked FAQ if it wasn't active
+        if (!isActive) {
+            item.classList.add('active');
+        }
+    });
+});
+
+// Filter FAQs by category
+function filterFAQ(category) {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        if (category === 'all' || item.dataset.category === category) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Scroll to FAQs section
+    document.getElementById('faqs').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Chat Widget Toggle
+function toggleChat() {
+    const chatWidget = document.getElementById('chatWidget');
+    chatWidget.classList.toggle('active');
+}
+
+// Send Chat Message
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addMessage(message, 'user');
+    input.value = '';
+    
+    // Show typing indicator
+    showTyping();
+    
+    // Call AI Chat API
+    fetch('/api/chat/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        removeTyping();
+        // Format response with markdown-style bold text
+        let formattedResponse = data.response;
+        // Convert **text** to <strong>text</strong>
+        formattedResponse = formattedResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Convert line breaks to <br>
+        formattedResponse = formattedResponse.replace(/\n/g, '<br>');
+        addMessage(formattedResponse, 'bot');
+    })
+    .catch(error => {
+        console.error('Chat API Error:', error);
+        removeTyping();
+        addMessage('Sorry, may problema sa connection. Please try again.', 'bot');
+    });
+}
+
+function addMessage(text, type) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${type}`;
+    
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    
+    messageDiv.innerHTML = `
+        <div class="message-bubble">${text}</div>
+        <div class="message-time">${time}</div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function showTyping() {
+    const messagesContainer = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'chat-message bot';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+        <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function removeTyping() {
+    const typing = document.getElementById('typingIndicator');
+    if (typing) typing.remove();
+}
+
+// Enter key to send message
+document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+// Search functionality
+document.getElementById('supportSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('h4').textContent.toLowerCase();
+        const answer = item.querySelector('.faq-answer-content').textContent.toLowerCase();
+        
+        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

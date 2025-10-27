@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, UserAddress
+from .models import User, UserAddress, Notification
 
 
 @admin.register(User)
@@ -38,3 +38,22 @@ class UserAddressAdmin(admin.ModelAdmin):
     list_filter = ('is_primary', 'created_at')
     search_fields = ('user__email', 'address_line1', 'city', 'state')
     ordering = ('-created_at',)
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'notification_type', 'title', 'is_read', 'created_at')
+    list_filter = ('notification_type', 'is_read', 'created_at')
+    search_fields = ('user__email', 'title', 'message')
+    ordering = ('-created_at',)
+    readonly_fields = ('created_at',)
+    
+    actions = ['mark_as_read', 'mark_as_unread']
+    
+    def mark_as_read(self, request, queryset):
+        queryset.update(is_read=True)
+    mark_as_read.short_description = "Mark selected as read"
+    
+    def mark_as_unread(self, request, queryset):
+        queryset.update(is_read=False)
+    mark_as_unread.short_description = "Mark selected as unread"

@@ -592,3 +592,81 @@ def get_order_items_for_rating(request):
             'success': False,
             'message': 'Order not found.'
         })
+
+
+@login_required
+def get_notifications(request):
+    """API endpoint to fetch user notifications"""
+    from .models import Notification
+    from django.utils.timesince import timesince
+    
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:20]
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    
+    notifications_data = []
+    for notif in notifications:
+        # Get icon based on notification type
+        icon_map = {
+            'new_product': 'fas fa-box',
+            'order_update': 'fas fa-shopping-bag',
+            'new_deal': 'fas fa-tags',
+            'order_shipped': 'fas fa-truck',
+            'order_delivered': 'fas fa-check-circle',
+            'system': 'fas fa-info-circle',
+        }
+        
+        notifications_data.append({
+            'id': notif.id,
+            'type': notif.notification_type,
+            'title': notif.title,
+            'message': notif.message,
+            'link': notif.link or '#',
+            'icon': icon_map.get(notif.notification_type, 'fas fa-bell'),
+            'is_read': notif.is_read,
+            'time_ago': timesince(notif.created_at) + ' ago',
+            'created_at': notif.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'notifications': notifications_data,
+        'unread_count': unread_count
+    })
+
+
+@login_required
+@require_POST
+def mark_notification_read(request, notification_id):
+    """Mark a notification as read"""
+    from .models import Notification
+    
+    try:
+        notification = Notification.objects.get(id=notification_id, user=request.user)
+        notification.is_read = True
+        notification.save()
+        
+        unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+        
+        return JsonResponse({
+            'success': True,
+            'unread_count': unread_count
+        })
+    except Notification.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Notification not found.'
+        })
+
+
+@login_required
+@require_POST
+def mark_all_notifications_read(request):
+    """Mark all notifications as read"""
+    from .models import Notification
+    
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    
+    return JsonResponse({
+        'success': True,
+        'unread_count': 0
+    })

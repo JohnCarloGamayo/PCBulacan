@@ -1,0 +1,99 @@
+"""
+Signal handlers for creating notifications
+"""
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
+from datetime import timedelta
+
+from products.models import Product, Deal
+from orders.models import Order
+from .models import Notification, User
+
+
+@receiver(post_save, sender=Product)
+def create_new_product_notification(sender, instance, created, **kwargs):
+    """Create notification when a new product is added"""
+    if created and instance.is_active:
+        # Create notification for all active users
+        users = User.objects.filter(is_active=True, is_staff=False)
+        
+        notifications = []
+        for user in users:
+            notifications.append(
+                Notification(
+                    user=user,
+                    notification_type='new_product',
+                    title=f'New Product: {instance.name}',
+                    message=f'Check out our new product: {instance.name} at ₱{instance.price:,.2f}!',
+                    link=f'/product/{instance.slug}/',
+                    product_id=instance.id
+                )
+            )
+        
+        # Bulk create notifications for efficiency
+        if notifications:
+            Notification.objects.bulk_create(notifications)
+
+
+@receiver(post_save, sender=Deal)
+def create_new_deal_notification(sender, instance, created, **kwargs):
+    """Create notification when a new deal is created or activated"""
+    if (created or instance.status == 'active') and instance.is_active():
+        # Create notification for all active users
+        users = User.objects.filter(is_active=True, is_staff=False)
+        
+        notifications = []
+        for user in users:
+            notifications.append(
+                Notification(
+                    user=user,
+                    notification_type='new_deal',
+                    title=f'New Deal: {instance.title}',
+                    message=f'{instance.description} - {instance.get_discount_display()}',
+                    link='/deals/',
+                    deal_id=instance.id
+                )
+            )
+        
+        # Bulk create notifications for efficiency
+        if notifications:
+            Notification.objects.bulk_create(notifications)
+
+
+@receiver(post_save, sender=Order)
+def create_order_update_notification(sender, instance, created, update_fields, **kwargs):
+    """Create notification when order status changes"""
+    if created:
+        # New order created
+        Notification.objects.create(
+            user=instance.user,
+            notification_type='order_update',
+            title=f'Order {instance.order_number} Received',
+            message=f'We received your order! Total: ₱{instance.total:,.2f}',
+            link=f'/account/',
+            order_id=instance.id
+        )
+    elif update_fields and 'status' in update_fields:
+        # Status was updated
+        status_messages = {
+            'pending': 'Your order is pending confirmation.',
+            'processing': 'Your order is being processed!',
+            'shipped': 'Your order has been shipped! 📦',
+            'delivered': 'Your order has been delivered! 🎉',
+            'received': 'Thank you for confirming receipt!',
+            'cancelled': 'Your order has been cancelled.'
+        }
+        
+        notification_type = 'order_shipped' if instance.status == 'shipped' else \
+                           'order_delivered' if instance.status == 'delivered' else \
+                           'order_update'
+        
+        Notification.objects.create(
+            user=instance.user,
+            notification_type=notification_type,
+            title=f'Order {instance.order_number} Update',
+            message=status_messages.get(instance.status, f'Your order status is now {instance.status}.'),
+            link='/account/',
+            order_id=instance.id
+        )

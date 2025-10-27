@@ -21,6 +21,15 @@ urlpatterns = [
     
     # Slideshow management
     path('slideshow/', views.manage_slideshow, name='manage_slideshow'),
+    
+    # Deals management
+    path('deals/', views.manage_deals, name='manage_deals'),
+    path('deals/add/', views.add_deal, name='add_deal'),
+    path('deals/get/<int:deal_id>/', views.get_deal, name='get_deal'),
+    path('deals/edit/<int:deal_id>/', views.edit_deal, name='edit_deal'),
+    path('deals/delete/<int:deal_id>/', views.delete_deal, name='delete_deal'),
+    path('deals/toggle/<int:deal_id>/', views.toggle_deal_status, name='toggle_deal_status'),
+    path('deals/apply/<int:deal_id>/', views.apply_deal, name='apply_deal'),
 
     # Inventory management
     path('inventory/', views.inventory_management, name='inventory_management'),

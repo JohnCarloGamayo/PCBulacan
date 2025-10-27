@@ -8,11 +8,14 @@ A modern e-commerce platform for PC components built with Django, converted from
 - **Product Management**: Browse, search, and filter products by category
 - **Shopping Cart**: Add products to cart, update quantities, and manage items
 - **Order System**: Complete checkout process with order tracking
+- **Deals Management**: Create and manage promotional deals with discounts
+- **AI Chat Support**: Intelligent customer support that queries database for orders, products, shipping info
 - **Admin Dashboard**: Comprehensive admin interface for managing:
   - Users
   - Products
   - Categories
   - Orders
+  - Deals & Promotions
   - Slideshow & Banners
   - Statistics and reports
 - **Responsive Design**: Mobile-friendly interface with Bootstrap 5
@@ -40,10 +43,12 @@ PCbulacan/
 │   ├── products/       # Product templates
 │   ├── orders/         # Cart and checkout templates
 │   ├── dashboard/      # Admin templates
-│   └── includes/       # Header, footer, etc.
+│   ├── includes/       # Header, footer, etc.
+│   └── support.html    # AI chat support page
 ├── media/              # User-uploaded files
 ├── manage.py           # Django management script
-└── requirements.txt    # Python dependencies
+├── requirements.txt    # Python dependencies
+└── AI_CHAT_SUPPORT.md  # AI chat documentation
 ```
 
 ## Installation

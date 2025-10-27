@@ -177,3 +177,95 @@ class ProductReview(models.Model):
         super().save(*args, **kwargs)
         # Update product's average rating and review count
         self.product.update_rating()
+
+
+class Deal(models.Model):
+    """Deal/Promotion model for managing special offers"""
+    DEAL_TYPE_CHOICES = [
+        ('percentage', 'Percentage Discount'),
+        ('fixed', 'Fixed Amount Discount'),
+        ('bogo', 'Buy One Get One'),
+        ('bundle', 'Bundle Deal'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('active', 'Active'),
+        ('scheduled', 'Scheduled'),
+        ('expired', 'Expired'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    deal_type = models.CharField(max_length=20, choices=DEAL_TYPE_CHOICES, default='percentage')
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, 
+                                             help_text="Percentage discount (0-100)")
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
+                                         help_text="Fixed amount discount")
+    
+    # Products included in the deal
+    products = models.ManyToManyField(Product, related_name='deals', blank=True)
+    
+    # Deal validity
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    
+    # Deal settings
+    is_featured = models.BooleanField(default=False, help_text="Show in featured deals section")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    max_uses = models.PositiveIntegerField(blank=True, null=True, help_text="Maximum number of times this deal can be used")
+    current_uses = models.PositiveIntegerField(default=0)
+    
+    # Deal display
+    banner_image = models.ImageField(upload_to='deals/', blank=True, null=True)
+    badge_text = models.CharField(max_length=50, blank=True, help_text="Custom badge text (e.g., 'HOT DEAL')")
+    
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='created_deals')
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Deal'
+        verbose_name_plural = 'Deals'
+    
+    def __str__(self):
+        return f"{self.title} ({self.get_status_display()})"
+    
+    def is_active(self):
+        """Check if deal is currently active"""
+        from django.utils import timezone
+        now = timezone.now()
+        return (
+            self.status == 'active' and
+            self.start_date <= now <= self.end_date and
+            (self.max_uses is None or self.current_uses < self.max_uses)
+        )
+    
+    def get_discount_display(self):
+        """Get formatted discount string"""
+        if self.deal_type == 'percentage' and self.discount_percentage:
+            return f"{self.discount_percentage}% OFF"
+        elif self.deal_type == 'fixed' and self.discount_amount:
+            return f"₱{self.discount_amount} OFF"
+        elif self.deal_type == 'bogo':
+            return "Buy 1 Get 1 FREE"
+        elif self.deal_type == 'bundle':
+            return "Bundle Deal"
+        return "Special Offer"
+    
+    def apply_to_products(self):
+        """Apply this deal to all associated products"""
+        for product in self.products.all():
+            if self.deal_type == 'percentage' and self.discount_percentage:
+                discount = float(product.price) * (float(self.discount_percentage) / 100)
+                product.old_price = product.price
+                product.price = product.price - discount
+            elif self.deal_type == 'fixed' and self.discount_amount:
+                product.old_price = product.price
+                product.price = max(0, product.price - self.discount_amount)
+            
+            product.on_sale = True
+            product.save()
+

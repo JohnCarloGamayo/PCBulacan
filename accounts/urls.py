@@ -19,4 +19,9 @@ urlpatterns = [
     path('ajax/send-reset-code/', views.send_reset_code, name='send_reset_code'),
     path('ajax/verify-reset-code/', views.verify_reset_code, name='verify_reset_code'),
     path('ajax/reset-password/', views.reset_password, name='reset_password'),
+    
+    # Notification endpoints
+    path('api/notifications/', views.get_notifications, name='get_notifications'),
+    path('api/notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
+    path('api/notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
 ]

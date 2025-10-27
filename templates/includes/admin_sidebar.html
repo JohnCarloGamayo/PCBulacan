@@ -23,6 +23,11 @@
             <span>Homepage Slideshow</span>
         </a>
         
+        <a href="{% url 'dashboard:manage_deals' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_deals' or request.resolver_match.url_name == 'add_deal' or request.resolver_match.url_name == 'edit_deal' %}active{% endif %}">
+            <i class="fas fa-tags"></i>
+            <span>Deals Management</span>
+        </a>
+        
         <a href="{% url 'dashboard:manage_users' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_users' %}active{% endif %}">
             <i class="fas fa-users"></i>
             <span>User Accounts</span>
