@@ -599,6 +599,7 @@ def get_notifications(request):
     """API endpoint to fetch user notifications"""
     from .models import Notification
     from django.utils.timesince import timesince
+    from django.urls import reverse
     
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:20]
     unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
@@ -615,12 +616,23 @@ def get_notifications(request):
             'system': 'fas fa-info-circle',
         }
         
+        # Fix notification link - ensure it's a proper URL
+        link = notif.link or '#'
+        if link and link != '#':
+            # Fix common URL mistakes
+            if link == '/account/':
+                link = reverse('accounts:account')
+            elif link == '/profile/':
+                link = reverse('accounts:profile')
+            elif not link.startswith('/'):
+                link = '/' + link
+        
         notifications_data.append({
             'id': notif.id,
             'type': notif.notification_type,
             'title': notif.title,
             'message': notif.message,
-            'link': notif.link or '#',
+            'link': link,
             'icon': icon_map.get(notif.notification_type, 'fas fa-bell'),
             'is_read': notif.is_read,
             'time_ago': timesince(notif.created_at) + ' ago',

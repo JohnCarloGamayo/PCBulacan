@@ -11,9 +11,8 @@ from orders.models import Order, OrderItem, DeliveryFee
 import re
 
 
-@login_required
 def home_view(request):
-    """Homepage with all products and carousel"""
+    """Homepage with all products and carousel - accessible to everyone"""
     # Get main slideshow images and static banners
     main_slides = SlideshowImage.objects.filter(is_active=True, slide_type='main').order_by('order')
     banner_slides = SlideshowImage.objects.filter(is_active=True, slide_type='banner').order_by('order')[:2]
@@ -29,9 +28,8 @@ def home_view(request):
     return render(request, 'products/home.html', context)
 
 
-@login_required
 def deals_view(request):
-    """Deals page with featured deals and discounted products"""
+    """Deals page with featured deals and discounted products - accessible to everyone"""
     # Get main slideshow images only (no banners)
     main_slides = SlideshowImage.objects.filter(is_active=True, slide_type='main').order_by('order')
     
@@ -398,9 +396,8 @@ def parse_and_respond(message, user):
         }
 
 
-@login_required
 def product_list_view(request):
-    """Display all products with filtering and pagination"""
+    """Display all products with filtering and pagination - accessible to everyone"""
     products = Product.objects.filter(is_active=True)
     categories = Category.objects.filter(is_active=True)
     
@@ -472,9 +469,8 @@ def product_list_view(request):
     return render(request, 'products/product_list.html', context)
 
 
-@login_required
 def product_detail_view(request, slug):
-    """Display single product details"""
+    """Display single product details - accessible to everyone"""
     product = get_object_or_404(Product, slug=slug, is_active=True)
     related_products = Product.objects.filter(
         category=product.category,
@@ -488,9 +484,8 @@ def product_detail_view(request, slug):
     return render(request, 'products/product_detail.html', context)
 
 
-@login_required
 def category_view(request, slug):
-    """Display products by category"""
+    """Display products by category - accessible to everyone"""
     category = get_object_or_404(Category, slug=slug, is_active=True)
     products = Product.objects.filter(category=category, is_active=True)
     
@@ -525,9 +520,8 @@ def search_suggestions(request):
     return JsonResponse(suggestions, safe=False)
 
 
-@login_required
 def product_detail_api(request, product_id):
-    """API endpoint for product details (for modal)"""
+    """API endpoint for product details (for modal) - accessible to everyone"""
     try:
         product = get_object_or_404(Product, id=product_id, is_active=True)
         

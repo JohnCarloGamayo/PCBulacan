@@ -805,7 +805,52 @@
     {% endif %}
 </div>
 
+<!-- Login Required Modal -->
+<div id="loginRequiredModal" class="product-modal" style="display: none;">
+    <div class="product-modal-content" style="max-width: 500px;">
+        <span class="product-modal-close" onclick="closeLoginModal()">&times;</span>
+        <div style="padding: 3rem 2rem; text-align: center;">
+            <div style="font-size: 4rem; color: #2563eb; margin-bottom: 1.5rem;">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 style="font-size: 1.75rem; font-weight: 700; color: #1e3a8a; margin-bottom: 1rem;">
+                Login Required
+            </h2>
+            <p style="color: #64748b; font-size: 1rem; margin-bottom: 2rem; line-height: 1.6;">
+                You need to be logged in to add products to your cart or make a purchase. 
+                Please login to continue or create a new account if you don't have one yet.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="{% url 'accounts:login' %}" class="btn btn-primary" style="text-decoration: none;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary" style="text-decoration: none; background-color: #10b981;">
+                    <i class="fas fa-user-plus"></i>
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    // Check if user is authenticated
+    const isAuthenticated = {{ user.is_authenticated|lower }};
+    
+    // Close login modal
+    function closeLoginModal() {
+        document.getElementById('loginRequiredModal').style.display = 'none';
+    }
+    
+    // Show login modal
+    function showLoginModal() {
+        document.getElementById('loginRequiredModal').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('loginRequiredModal').style.opacity = '1';
+        }, 10);
+    }
+    
     // Slideshow functionality
     let currentSlideIndex = 0;
     const slides = document.querySelectorAll('.slide');
@@ -856,6 +901,12 @@
     });
 
     function addToCart(productId, quantity = 1) {
+        // Check if user is authenticated
+        if (!isAuthenticated) {
+            showLoginModal();
+            return;
+        }
+        
         fetch(`/orders/add-to-cart/${productId}/`, {
             method: 'POST',
             headers: {
