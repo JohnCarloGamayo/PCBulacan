@@ -222,6 +222,10 @@ def add_product(request):
             if not category_id or not name or not price:
                 raise ValueError('Category, Name, and Price are required.')
             
+            # Handle SKU - convert empty string to None for unique constraint
+            sku = request.POST.get('sku', '').strip()
+            sku = sku if sku else None
+            
             category = Category.objects.get(id=category_id)
             product = Product.objects.create(
                 category=category,
@@ -230,7 +234,7 @@ def add_product(request):
                 price=price,
                 old_price=request.POST.get('old_price') or None,
                 stock=stock,
-                sku=request.POST.get('sku', ''),
+                sku=sku,
                 image=request.FILES.get('image'),
                 is_featured=request.POST.get('is_featured') == 'on',
                 is_new=request.POST.get('is_new') == 'on',
@@ -305,13 +309,17 @@ def edit_product(request, product_id):
     
     if request.method == 'POST':
         try:
+            # Handle SKU - convert empty string to None for unique constraint
+            sku = request.POST.get('sku', '').strip()
+            sku = sku if sku else None
+            
             product.category = Category.objects.get(id=request.POST.get('category'))
             product.name = request.POST.get('name')
             product.description = request.POST.get('description', '')
             product.price = request.POST.get('price')
             product.old_price = request.POST.get('old_price') or None
             product.stock = request.POST.get('stock', 0)
-            product.sku = request.POST.get('sku', '')
+            product.sku = sku
             product.is_featured = request.POST.get('is_featured') == 'on'
             product.is_new = request.POST.get('is_new') == 'on'
             product.on_sale = request.POST.get('on_sale') == 'on'
