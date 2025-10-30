@@ -1,6 +1,6 @@
 """
-Fix notification links from /products/ to /product/
-Run this script to fix existing notifications with wrong URLs
+Fix notification links to redirect to products list page
+Run this script to update notification links
 """
 import os
 import django
@@ -11,21 +11,16 @@ django.setup()
 
 from accounts.models import Notification
 
-# Find all notifications with wrong product links
-notifications = Notification.objects.filter(link__startswith='/products/')
+# Find all new_product notifications
+notifications = Notification.objects.filter(notification_type='new_product')
 
 count = notifications.count()
-print(f"Found {count} notifications with wrong links")
+print(f"Found {count} new product notifications")
 
 if count > 0:
-    # Update the links
-    for notif in notifications:
-        # Replace /products/ with /product/
-        notif.link = notif.link.replace('/products/', '/product/', 1)
-        notif.save()
-    
-    print(f"✅ Fixed {count} notification links!")
-    print("Changed from: /products/<slug>/")
-    print("Changed to:   /product/<slug>/")
+    # Update all to point to products list page
+    updated = notifications.update(link='/products/')
+    print(f"✅ Updated {updated} notification links!")
+    print("All new product notifications now redirect to: /products/")
 else:
-    print("✅ No notifications need fixing!")
+    print("✅ No new product notifications found!")

@@ -46,7 +46,7 @@ def create_new_product_notification(sender, instance, created, **kwargs):
                     notification_type='new_product',
                     title=f'New Product: {instance.name}',
                     message=f'Check out our new product: {instance.name} at {price_display}!',
-                    link=f'/product/{instance.slug}/',
+                    link='/products/',
                     product_id=instance.id
                 )
             )
