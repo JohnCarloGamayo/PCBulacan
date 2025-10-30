@@ -33,13 +33,19 @@ def create_new_product_notification(sender, instance, created, **kwargs):
         users = User.objects.filter(is_active=True, is_staff=False)
         
         notifications = []
+        # Format price safely
+        try:
+            price_display = f"₱{float(instance.price):,.2f}"
+        except (ValueError, TypeError):
+            price_display = f"₱{instance.price}"
+        
         for user in users:
             notifications.append(
                 Notification(
                     user=user,
                     notification_type='new_product',
                     title=f'New Product: {instance.name}',
-                    message=f'Check out our new product: {instance.name} at ₱{instance.price:,.2f}!',
+                    message=f'Check out our new product: {instance.name} at {price_display}!',
                     link=f'/products/{instance.slug}/',
                     product_id=instance.id
                 )

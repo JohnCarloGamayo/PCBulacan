@@ -271,9 +271,10 @@ def add_product(request):
             error_details = traceback.format_exc()
             print("Error adding product:")
             print(error_details)  # Log to console without f-string
+            error_message = 'Error adding product: ' + str(e)
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': str(e)})
-            messages.error(request, f'Error adding product: {str(e)}')
+            messages.error(request, error_message)
             return redirect('dashboard:manage_products')
     
     # For non-POST requests (shouldn't happen with AJAX modal)
@@ -363,9 +364,10 @@ def edit_product(request, product_id):
             error_details = traceback.format_exc()
             print("Error editing product:")
             print(error_details)  # Log to console without f-string
+            error_message = 'Error editing product: ' + str(e)
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': str(e)})
-            messages.error(request, f'Error editing product: {str(e)}')
+            messages.error(request, error_message)
         except Exception as e:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': str(e)})
