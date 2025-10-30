@@ -249,11 +249,24 @@ def add_product(request):
                 )
             
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'success': True, 'message': 'Product added successfully'})
+                return JsonResponse({
+                    'success': True, 
+                    'message': 'Product added successfully',
+                    'product': {
+                        'id': product.id,
+                        'name': product.name,
+                        'price': float(product.price),
+                        'stock': product.stock
+                    }
+                })
             
             messages.success(request, f'Product "{product.name}" added successfully!')
             return redirect('dashboard:manage_products')
         except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            print("Error adding product:")
+            print(error_details)  # Log to console without f-string
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': str(e)})
             messages.error(request, f'Error adding product: {str(e)}')
@@ -279,7 +292,7 @@ def edit_product(request, product_id):
                 'id': product.id,
                 'name': product.name,
                 'category_id': product.category.id if product.category else None,
-                'price': str(product.price),
+                'price': float(product.price),
                 'stock': product.stock,
                 'sku': product.sku or '',
                 'description': product.description or '',
@@ -324,10 +337,27 @@ def edit_product(request, product_id):
                     )
             
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'success': True, 'message': 'Product updated successfully'})
+                return JsonResponse({
+                    'success': True, 
+                    'message': 'Product updated successfully',
+                    'product': {
+                        'id': product.id,
+                        'name': product.name,
+                        'price': float(product.price),
+                        'stock': product.stock
+                    }
+                })
             
             messages.success(request, f'Product "{product.name}" updated successfully!')
             return redirect('dashboard:manage_products')
+        except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            print("Error editing product:")
+            print(error_details)  # Log to console without f-string
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': str(e)})
+            messages.error(request, f'Error editing product: {str(e)}')
         except Exception as e:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': str(e)})
