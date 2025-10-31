@@ -1,0 +1,72 @@
+[
+  {
+    "test": "Greeting",
+    "question": "Hello",
+    "status": "PASS",
+    "response_length": 404,
+    "response_preview": "Good evening! 🌙 Magandang gabi! 🌙\n\nWelcome to PCBulacan! I'm your AI shopping assistant. 🤖\n\n**I can "
+  },
+  {
+    "test": "Developer",
+    "question": "Who developed this?",
+    "status": "PASS",
+    "response_length": 404,
+    "response_preview": "Good evening! 🌙 Magandang gabi! 🌙\n\nWelcome to PCBulacan! I'm your AI shopping assistant. 🤖\n\n**I can "
+  },
+  {
+    "test": "Location",
+    "question": "Where is your main branch?",
+    "status": "PASS",
+    "response_length": 364,
+    "response_preview": "📍 **PCBulacan Main Branch Location:**\n\n🏢 **Malolos, Bulacan**\n\nYou can:\n✅ Visit us in person\n✅ Shop "
+  },
+  {
+    "test": "Thanks",
+    "question": "Thank you!",
+    "status": "PASS",
+    "response_length": 151,
+    "response_preview": "You're very welcome! 😊 I'm always here to help with your PC needs. Don't hesitate to ask if you have"
+  },
+  {
+    "test": "GPU Question",
+    "question": "Best GPU for 1440p?",
+    "status": "PASS",
+    "response_length": 214,
+    "response_preview": "Best GPU by resolution:\n\n🎮 **1080p Gaming:**\n• RTX 4060 / RX 7600\n\n🎮 **1440p Gaming:**\n• RTX 4070 / "
+  },
+  {
+    "test": "Tagalog",
+    "question": "Anong oras kayo open?",
+    "status": "PASS",
+    "response_length": 303,
+    "response_preview": "PCBulacan Store Hours:\n\n🕐 **Operating Hours:**\n• Monday - Saturday: 9:00 AM - 7:00 PM\n• Sunday: 10:0"
+  },
+  {
+    "test": "Store Hours",
+    "question": "What are your store hours?",
+    "status": "PASS",
+    "response_length": 127,
+    "response_preview": "Our store operates:\n📅 Monday to Saturday: 9:00 AM - 6:00 PM\n🚫 Closed on Sundays and holidays\n🌐 Shop "
+  },
+  {
+    "test": "Compatibility",
+    "question": "Is my PC compatible?",
+    "status": "PASS",
+    "response_length": 674,
+    "response_preview": "PC Compatibility Check:\n\n🔧 **To check compatibility, I need:**\n\n1. **What part are you adding?**\n   "
+  },
+  {
+    "test": "Future Proof",
+    "question": "How to future-proof my build?",
+    "status": "PASS",
+    "response_length": 745,
+    "response_preview": "I'm here to help you with PCBulacan! 😊\n\nI can answer questions about:\n\n💻 **Products & Availability**"
+  },
+  {
+    "test": "RAM Mix",
+    "question": "Can I mix different RAM brands?",
+    "status": "PASS",
+    "response_length": 550,
+    "response_preview": "Mixing RAM Brands:\n\n⚠️ **Short answer:** Possible but NOT recommended\n\n✅ **Can work if:**\n• Same spe"
+  }
+]
