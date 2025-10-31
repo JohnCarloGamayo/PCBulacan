@@ -1568,6 +1568,7 @@ def toggle_deal_status(request, deal_id):
         deal.save()
         messages.success(request, f'Deal "{deal.title}" {status_text} successfully!')
     
+    
     return redirect('dashboard:manage_deals')
 
 
@@ -1587,3 +1588,103 @@ def apply_deal(request, deal_id):
     
     return redirect('dashboard:manage_deals')
 
+
+# =============== ADMIN NOTIFICATION API ===============
+
+@staff_member_required
+def notifications_json(request):
+    """Get admin notifications as JSON"""
+    from accounts.models import Notification
+    from django.utils.timesince import timesince
+    
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by('-created_at')[:20]
+    
+    notification_list = []
+    for notif in notifications:
+        notification_list.append({
+            'id': notif.id,
+            'type': notif.notification_type,
+            'title': notif.title,
+            'message': notif.message,
+            'link': notif.link or '#',
+            'is_read': notif.is_read,
+            'time': notif.created_at.isoformat(),
+        })
+    
+    unread_count = Notification.objects.filter(
+        user=request.user,
+        is_read=False
+    ).count()
+    
+    return JsonResponse({
+        'success': True,
+        'notifications': notification_list,
+        'unread_count': unread_count
+    })
+
+
+@staff_member_required
+def mark_notification_read(request):
+    """Mark a notification as read"""
+    from accounts.models import Notification
+    
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            notification_id = data.get('notification_id')
+            
+            notification = Notification.objects.get(
+                id=notification_id,
+                user=request.user
+            )
+            notification.is_read = True
+            notification.save()
+            
+            unread_count = Notification.objects.filter(
+                user=request.user,
+                is_read=False
+            ).count()
+            
+            return JsonResponse({
+                'success': True,
+                'unread_count': unread_count
+            })
+        except Notification.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Notification not found'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+@staff_member_required
+def mark_all_notifications_read(request):
+    """Mark all notifications as read"""
+    from accounts.models import Notification
+    
+    if request.method == 'POST':
+        try:
+            Notification.objects.filter(
+                user=request.user,
+                is_read=False
+            ).update(is_read=True)
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'All notifications marked as read'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})

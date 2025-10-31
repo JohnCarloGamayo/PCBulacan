@@ -123,3 +123,174 @@ def create_order_update_notification(sender, instance, created, **kwargs):
                 order_id=instance.id
             )
             print(f"✅ Created notification for order status change: {instance.order_number} ({instance._old_status} → {instance.status})")
+            
+            # Notify admin when order is received
+            if instance.status == 'received':
+                admin_users = User.objects.filter(is_staff=True, is_active=True)
+                for admin in admin_users:
+                    Notification.objects.create(
+                        user=admin,
+                        notification_type='order_update',
+                        title=f'Order Received: {instance.order_number}',
+                        message=f'Customer has confirmed receipt of order {instance.order_number}',
+                        link=f'/dashboard/orders/{instance.order_number}/details/',
+                        order_id=instance.id
+                    )
+                print(f"✅ Notified admins about received order: {instance.order_number}")
+
+
+# Admin Notifications
+
+@receiver(post_save, sender=User)
+def notify_admin_new_user(sender, instance, created, **kwargs):
+    """Notify admin when a new user registers"""
+    if created and not instance.is_staff:
+        admin_users = User.objects.filter(is_staff=True, is_active=True)
+        
+        notifications = []
+        for admin in admin_users:
+            notifications.append(
+                Notification(
+                    user=admin,
+                    notification_type='system',
+                    title='New User Registration',
+                    message=f'{instance.get_full_name() or instance.email} has registered an account',
+                    link='/dashboard/customers/'
+                )
+            )
+        
+        if notifications:
+            Notification.objects.bulk_create(notifications)
+            print(f"✅ Notified {len(notifications)} admins about new user: {instance.email}")
+
+
+@receiver(post_save, sender=Order)
+def notify_admin_new_order(sender, instance, created, **kwargs):
+    """Notify admin when a new order is placed"""
+    if created:
+        admin_users = User.objects.filter(is_staff=True, is_active=True)
+        
+        notifications = []
+        for admin in admin_users:
+            notifications.append(
+                Notification(
+                    user=admin,
+                    notification_type='order_update',
+                    title=f'New Order: {instance.order_number}',
+                    message=f'New order from {instance.user.get_full_name() or instance.user.email} - Total: ₱{instance.total:,.2f}',
+                    link=f'/dashboard/orders/{instance.order_number}/details/',
+                    order_id=instance.id
+                )
+            )
+        
+        if notifications:
+            Notification.objects.bulk_create(notifications)
+            print(f"✅ Notified {len(notifications)} admins about new order: {instance.order_number}")
+
+
+@receiver(post_save, sender=Product)
+def notify_admin_low_stock(sender, instance, **kwargs):
+    """Notify admin when product stock is low (10 or less)"""
+    if instance.stock <= 10 and instance.stock > 0 and instance.is_active:
+        # Check if we already sent a low stock notification recently (within 24 hours)
+        recent_notification = Notification.objects.filter(
+            notification_type='system',
+            product_id=instance.id,
+            title__contains='Low Stock Alert',
+            created_at__gte=timezone.now() - timedelta(hours=24)
+        ).exists()
+        
+        if not recent_notification:
+            admin_users = User.objects.filter(is_staff=True, is_active=True)
+            
+            notifications = []
+            for admin in admin_users:
+                notifications.append(
+                    Notification(
+                        user=admin,
+                        notification_type='system',
+                        title=f'Low Stock Alert: {instance.name}',
+                        message=f'Only {instance.stock} units left in stock!',
+                        link=f'/dashboard/products/',
+                        product_id=instance.id
+                    )
+                )
+            
+            if notifications:
+                Notification.objects.bulk_create(notifications)
+                print(f"⚠️ Notified {len(notifications)} admins about low stock: {instance.name} ({instance.stock} left)")
+
+
+# =============== ADMIN NOTIFICATIONS ===============
+
+@receiver(post_save, sender=User)
+def notify_admin_new_user(sender, instance, created, **kwargs):
+    """Notify admins when a new user registers"""
+    if created and not instance.is_staff:
+        admin_users = User.objects.filter(is_staff=True, is_active=True)
+        
+        notifications = []
+        for admin in admin_users:
+            notifications.append(
+                Notification(
+                    user=admin,
+                    notification_type='new_user',
+                    title='New User Registration',
+                    message=f'{instance.get_full_name() or instance.email} just registered!',
+                    link='/dashboard/customers/',
+                )
+            )
+        
+        if notifications:
+            Notification.objects.bulk_create(notifications)
+            print(f"✅ Notified {len(notifications)} admins about new user: {instance.email}")
+
+
+@receiver(post_save, sender=Order)
+def notify_admin_new_order(sender, instance, created, **kwargs):
+    """Notify admins when a new order is placed"""
+    if created:
+        admin_users = User.objects.filter(is_staff=True, is_active=True)
+        
+        notifications = []
+        for admin in admin_users:
+            notifications.append(
+                Notification(
+                    user=admin,
+                    notification_type='order_update',
+                    title=f'New Order #{instance.order_number}',
+                    message=f'New order from {instance.user.get_full_name() or instance.user.email} - ₱{instance.total:,.2f}',
+                    link=f'/dashboard/orders/',
+                    order_id=instance.id
+                )
+            )
+        
+        if notifications:
+            Notification.objects.bulk_create(notifications)
+            print(f"✅ Notified {len(notifications)} admins about new order: {instance.order_number}")
+
+
+@receiver(post_save, sender=Order)
+def notify_admin_order_received(sender, instance, created, **kwargs):
+    """Notify admins when customer marks order as received"""
+    if not created:
+        # Check if status changed to 'received'
+        if hasattr(instance, '_old_status') and instance._old_status != 'received' and instance.status == 'received':
+            admin_users = User.objects.filter(is_staff=True, is_active=True)
+            
+            notifications = []
+            for admin in admin_users:
+                notifications.append(
+                    Notification(
+                        user=admin,
+                        notification_type='order_delivered',
+                        title=f'Order Received: #{instance.order_number}',
+                        message=f'{instance.user.get_full_name() or instance.user.email} confirmed receipt of order',
+                        link=f'/dashboard/orders/',
+                        order_id=instance.id
+                    )
+                )
+            
+            if notifications:
+                Notification.objects.bulk_create(notifications)
+                print(f"✅ Notified {len(notifications)} admins: Order {instance.order_number} received by customer")

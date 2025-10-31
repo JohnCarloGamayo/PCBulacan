@@ -60,6 +60,11 @@ urlpatterns = [
     # Admin account
     path('admin-account/', views.admin_account, name='admin_account'),
     
+    # Admin notification API endpoints
+    path('notifications/json/', views.notifications_json, name='notifications_json'),
+    path('notifications/mark_read/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/mark_all_read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
+    
     # AJAX endpoints for dashboard
     path('ajax/metrics/', ajax_views.dashboard_metrics, name='ajax_metrics'),
     path('ajax/sales-overview/', ajax_views.dashboard_sales_overview, name='ajax_sales_overview'),

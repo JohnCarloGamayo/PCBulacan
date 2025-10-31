@@ -122,6 +122,7 @@ class Notification(models.Model):
         ('new_deal', 'New Deal'),
         ('order_shipped', 'Order Shipped'),
         ('order_delivered', 'Order Delivered'),
+        ('new_user', 'New User'),
         ('system', 'System Notification'),
     ]
     
