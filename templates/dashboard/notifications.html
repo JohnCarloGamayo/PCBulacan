@@ -5,149 +5,50 @@
 
 {% block extra_css %}
 <style>
-    .notifications-page {
-        background: #f8fafc;
-        min-height: 100vh;
-    }
-    
-    .notifications-header {
-        background: white;
-        padding: 2rem;
-        border-bottom: 1px solid #e2e8f0;
-        margin-bottom: 2rem;
-    }
-    
-    .page-header {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .page-title {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #0f172a;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    
-    .page-title i {
-        color: #2563eb;
-    }
-    
-    .header-actions {
-        display: flex;
-        gap: 1rem;
-    }
-    
-    .notifications-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem 2rem;
-    }
-    
     .notification-filters {
         display: flex;
-        gap: 0.75rem;
-        margin-bottom: 2rem;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
         flex-wrap: wrap;
-        background: white;
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .filter-btn {
-        padding: 0.75rem 1.5rem;
-        border: 2px solid #e2e8f0;
+        padding: 0.6rem 1.25rem;
+        border: 1px solid #e2e8f0;
         background: white;
-        border-radius: 0.5rem;
+        border-radius: 8px;
         cursor: pointer;
         font-size: 0.875rem;
-        font-weight: 600;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .filter-btn i {
-        font-size: 1rem;
+        font-weight: 500;
+        color: #64748b;
+        transition: all 0.2s ease;
     }
     
     .filter-btn:hover {
         background: #f8fafc;
-        border-color: #2563eb;
-        transform: translateY(-2px);
+        border-color: #cbd5e1;
     }
     
     .filter-btn.active {
-        background: #2563eb;
+        background: #3b82f6;
         color: white;
-        border-color: #2563eb;
-        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    
-    .stat-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-left: 4px solid;
-    }
-    
-    .stat-card.total {
-        border-left-color: #2563eb;
-    }
-    
-    .stat-card.unread {
-        border-left-color: #ef4444;
-    }
-    
-    .stat-card.orders {
-        border-left-color: #10b981;
-    }
-    
-    .stat-card.users {
-        border-left-color: #f59e0b;
-    }
-    
-    .stat-label {
-        font-size: 0.875rem;
-        color: #64748b;
-        margin-bottom: 0.5rem;
-    }
-    
-    .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #0f172a;
+        border-color: #3b82f6;
     }
     
     .notifications-container {
         background: white;
-        border-radius: 0.75rem;
+        border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .notification-item {
-        padding: 2rem;
+        padding: 1.25rem 1.5rem;
         border-bottom: 1px solid #f1f5f9;
         display: flex;
-        gap: 1.5rem;
-        transition: all 0.3s;
-        position: relative;
+        gap: 1rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
     }
     
     .notification-item:last-child {
@@ -155,138 +56,133 @@
     }
     
     .notification-item:hover {
-        background: #f8fafc;
-        transform: translateX(4px);
+        background: #fafbfc;
     }
     
     .notification-item.unread {
-        background: linear-gradient(to right, #eff6ff, #ffffff);
-        border-left: 4px solid #2563eb;
-    }
-    
-    .notification-item.unread::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: linear-gradient(to bottom, #2563eb, #60a5fa);
+        background: #eff6ff;
+        border-left: 3px solid #3b82f6;
     }
     
     .notification-item.unread:hover {
-        background: linear-gradient(to right, #dbeafe, #f8fafc);
+        background: #dbeafe;
     }
     
     .notification-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 1rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        font-size: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 1.125rem;
     }
     
     .notification-icon.order_update {
-        background: linear-gradient(135deg, #2563eb, #60a5fa);
-        color: white;
+        background: #dbeafe;
+        color: #3b82f6;
     }
     
     .notification-icon.new_user {
-        background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-        color: white;
+        background: #dbeafe;
+        color: #0ea5e9;
     }
     
     .notification-icon.order_delivered {
-        background: linear-gradient(135deg, #10b981, #34d399);
-        color: white;
+        background: #d1fae5;
+        color: #10b981;
     }
     
     .notification-icon.system {
-        background: linear-gradient(135deg, #f59e0b, #fbbf24);
-        color: white;
+        background: #fef3c7;
+        color: #f59e0b;
     }
     
     .notification-content {
         flex: 1;
+        min-width: 0;
     }
     
     .notification-header {
         display: flex;
         justify-content: space-between;
-        align-items: start;
-        margin-bottom: 0.5rem;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.375rem;
     }
     
     .notification-title {
         font-weight: 600;
-        color: #0f172a;
-        font-size: 1rem;
+        color: #1e293b;
+        font-size: 0.9375rem;
     }
     
     .notification-time {
         font-size: 0.75rem;
         color: #94a3b8;
+        white-space: nowrap;
     }
     
     .notification-message {
         color: #64748b;
         font-size: 0.875rem;
+        line-height: 1.5;
         margin-bottom: 0.75rem;
     }
     
     .notification-actions {
         display: flex;
-        gap: 0.75rem;
+        gap: 0.5rem;
     }
     
     .btn-view {
-        padding: 0.5rem 1rem;
-        background: #2563eb;
+        padding: 0.4rem 0.875rem;
+        background: #3b82f6;
         color: white;
         border: none;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
+        border-radius: 6px;
+        font-size: 0.8125rem;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.2s;
+        font-weight: 500;
     }
     
     .btn-view:hover {
-        background: #1d4ed8;
+        background: #2563eb;
     }
     
     .btn-mark-read {
-        padding: 0.5rem 1rem;
+        padding: 0.4rem 0.875rem;
         background: #f1f5f9;
         color: #64748b;
         border: none;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
+        border-radius: 6px;
+        font-size: 0.8125rem;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.2s;
+        font-weight: 500;
     }
     
     .btn-mark-read:hover {
         background: #e2e8f0;
+        color: #475569;
     }
     
     .empty-state {
         padding: 4rem 2rem;
         text-align: center;
-        color: #94a3b8;
     }
     
     .empty-state i {
-        font-size: 4rem;
-        color: #e2e8f0;
+        font-size: 3.5rem;
+        color: #cbd5e1;
         margin-bottom: 1rem;
     }
     
     .empty-state p {
-        font-size: 1.125rem;
+        font-size: 1rem;
+        color: #94a3b8;
         margin: 0;
     }
 </style>
@@ -297,17 +193,16 @@
 <div class="admin-content">
     {% include 'includes/admin_header.html' with page_title="All Notifications" %}
     <div class="dashboard-wrapper">
-        <div class="container-fluid py-4">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">
-            <i class="fas fa-bell text-primary me-2"></i>
-            All Notifications
-        </h1>
-        <button class="btn btn-primary" onclick="markAllAsRead()">
-            <i class="fas fa-check-double"></i> Mark All as Read
-        </button>
-    </div>
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h4 mb-1 fw-semibold">Notifications</h1>
+                <p class="text-muted mb-0" style="font-size: 0.875rem;">Manage all your notifications</p>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="markAllAsRead()">
+                <i class="fas fa-check-double me-1"></i> Mark All as Read
+            </button>
+        </div>
     
     <div class="notification-filters">
         <button class="filter-btn active" data-filter="all" onclick="filterNotifications('all')">
@@ -357,7 +252,7 @@
                     <div class="notification-message">{{ notif.message }}</div>
                     
                     <div class="notification-actions">
-                        {% if notif.link and notif.link != '#' %}
+                        {% if notif.link and notif.link != '#' and notif.link != 'null' and notif.link %}
                         <button class="btn-view" onclick="window.location.href='{{ notif.link }}'">
                             <i class="fas fa-external-link-alt"></i> View
                         </button>
@@ -379,7 +274,6 @@
             </div>
         {% endif %}
     </div>
-</div>
 
 <script>
     let currentFilter = 'all';
