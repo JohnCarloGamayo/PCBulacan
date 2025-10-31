@@ -186,5 +186,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'johncarlogamayo@gmail.com'
-EMAIL_HOST_PASSWORD = 'yrtz jyjv uxfa dpts'
+EMAIL_HOST_PASSWORD = 'bkjn xmrx lxhq ydnk'
 DEFAULT_FROM_EMAIL = 'PCBulacan <johncarlogamayo@gmail.com>'
