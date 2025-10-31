@@ -92,27 +92,35 @@ def support_view(request):
 
 @csrf_exempt
 def chat_api(request):
-    """AI Chat API endpoint that queries database"""
+    """AI Chat API endpoint - Enhanced with 74+ Q&A scenarios"""
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
     
     try:
         import json
         data = json.loads(request.body)
-        message = data.get('message', '').strip().lower()
+        message = data.get('message', '').strip()
         
         if not message:
             return JsonResponse({
-                'response': 'Hi! Kumusta! I\'m your AI assistant. Ask me about your orders, products, shipping, or payments!'
+                'response': '👋 Hi! Kumusta! I\'m your AI assistant. Ask me about:\n'
+                            '📦 Orders • 💰 Prices • 🚚 Shipping • 💳 Payment • 🛍️ Products'
             })
         
-        # Parse message for intent
-        response = parse_and_respond(message, request.user if request.user.is_authenticated else None)
-        return JsonResponse(response)
+        # Use enhanced AI response system
+        from ai_training_data import get_ai_response
+        response_text = get_ai_response(message)
+        
+        return JsonResponse({
+            'response': response_text
+        })
         
     except Exception as e:
+        import traceback
+        print(f"Chat API Error: {e}")
+        traceback.print_exc()
         return JsonResponse({
-            'response': 'Sorry, may problema sa system. Please try again or contact support.'
+            'response': 'Sorry, may problema sa system. Please try again or contact support at (044) 123-4567.'
         })
 
 
