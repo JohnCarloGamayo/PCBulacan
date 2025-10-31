@@ -1,5 +1,14 @@
 # AI Chat Support System Documentation
 
+## 🎯 Quick Summary
+**✅ 74 Comprehensive Q&A Pairs** - Covers all aspects of PCBulacan operations  
+**🌐 Bilingual Support** - English & Tagalog  
+**🤖 Smart Keyword Matching** - Intelligent intent detection  
+**📦 Database Integration** - Real-time product, order, and shipping data  
+**⚡ Instant Responses** - 24/7 availability  
+
+---
+
 ## Overview
 The AI Chat Support system provides intelligent, database-connected customer support through natural language processing of user queries.
 
