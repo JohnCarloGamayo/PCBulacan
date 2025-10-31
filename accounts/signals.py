@@ -152,40 +152,16 @@ def notify_admin_new_user(sender, instance, created, **kwargs):
             notifications.append(
                 Notification(
                     user=admin,
-                    notification_type='system',
+                    notification_type='new_user',
                     title='New User Registration',
                     message=f'{instance.get_full_name() or instance.email} has registered an account',
-                    link='/dashboard/customers/'
+                    link='/dashboard/users/'
                 )
             )
         
         if notifications:
             Notification.objects.bulk_create(notifications)
             print(f"✅ Notified {len(notifications)} admins about new user: {instance.email}")
-
-
-@receiver(post_save, sender=Order)
-def notify_admin_new_order(sender, instance, created, **kwargs):
-    """Notify admin when a new order is placed"""
-    if created:
-        admin_users = User.objects.filter(is_staff=True, is_active=True)
-        
-        notifications = []
-        for admin in admin_users:
-            notifications.append(
-                Notification(
-                    user=admin,
-                    notification_type='order_update',
-                    title=f'New Order: {instance.order_number}',
-                    message=f'New order from {instance.user.get_full_name() or instance.user.email} - Total: ₱{instance.total:,.2f}',
-                    link=f'/dashboard/orders/{instance.order_number}/details/',
-                    order_id=instance.id
-                )
-            )
-        
-        if notifications:
-            Notification.objects.bulk_create(notifications)
-            print(f"✅ Notified {len(notifications)} admins about new order: {instance.order_number}")
 
 
 @receiver(post_save, sender=Product)
@@ -221,35 +197,10 @@ def notify_admin_low_stock(sender, instance, **kwargs):
                 print(f"⚠️ Notified {len(notifications)} admins about low stock: {instance.name} ({instance.stock} left)")
 
 
-# =============== ADMIN NOTIFICATIONS ===============
-
-@receiver(post_save, sender=User)
-def notify_admin_new_user(sender, instance, created, **kwargs):
-    """Notify admins when a new user registers"""
-    if created and not instance.is_staff:
-        admin_users = User.objects.filter(is_staff=True, is_active=True)
-        
-        notifications = []
-        for admin in admin_users:
-            notifications.append(
-                Notification(
-                    user=admin,
-                    notification_type='new_user',
-                    title='New User Registration',
-                    message=f'{instance.get_full_name() or instance.email} just registered!',
-                    link='/dashboard/customers/',
-                )
-            )
-        
-        if notifications:
-            Notification.objects.bulk_create(notifications)
-            print(f"✅ Notified {len(notifications)} admins about new user: {instance.email}")
-
-
 @receiver(post_save, sender=Order)
 def notify_admin_new_order(sender, instance, created, **kwargs):
     """Notify admins when a new order is placed"""
-    if created:
+    if created and instance.status == 'pending':
         admin_users = User.objects.filter(is_staff=True, is_active=True)
         
         notifications = []
@@ -260,7 +211,7 @@ def notify_admin_new_order(sender, instance, created, **kwargs):
                     notification_type='order_update',
                     title=f'New Order #{instance.order_number}',
                     message=f'New order from {instance.user.get_full_name() or instance.user.email} - ₱{instance.total:,.2f}',
-                    link=f'/dashboard/orders/',
+                    link='/dashboard/orders/',
                     order_id=instance.id
                 )
             )
@@ -286,7 +237,7 @@ def notify_admin_order_received(sender, instance, created, **kwargs):
                         notification_type='order_delivered',
                         title=f'Order Received: #{instance.order_number}',
                         message=f'{instance.user.get_full_name() or instance.user.email} confirmed receipt of order',
-                        link=f'/dashboard/orders/',
+                        link='/dashboard/orders/',
                         order_id=instance.id
                     )
                 )
