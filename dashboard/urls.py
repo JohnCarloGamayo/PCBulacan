@@ -60,7 +60,8 @@ urlpatterns = [
     # Admin account
     path('admin-account/', views.admin_account, name='admin_account'),
     
-    # Admin notification API endpoints
+    # Admin notifications
+    path('notifications/', views.all_notifications, name='all_notifications'),
     path('notifications/json/', views.notifications_json, name='notifications_json'),
     path('notifications/mark_read/', views.mark_notification_read, name='mark_notification_read'),
     path('notifications/mark_all_read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),

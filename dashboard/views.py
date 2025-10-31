@@ -1592,6 +1592,22 @@ def apply_deal(request, deal_id):
 # =============== ADMIN NOTIFICATION API ===============
 
 @staff_member_required
+def all_notifications(request):
+    """View all notifications page"""
+    from accounts.models import Notification
+    
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by('-created_at')
+    
+    context = {
+        'notifications': notifications,
+        'page_title': 'All Notifications'
+    }
+    return render(request, 'dashboard/notifications.html', context)
+
+
+@staff_member_required
 def notifications_json(request):
     """Get admin notifications as JSON"""
     from accounts.models import Notification
