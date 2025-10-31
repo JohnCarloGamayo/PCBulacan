@@ -567,13 +567,31 @@ def order_details(request, order_number):
 
 @staff_member_required
 def update_order_status(request, order_number):
-    """Update order status"""
+    """Update order status with validation and email notification"""
     order = get_object_or_404(Order, order_number=order_number)
     
     if request.method == 'POST':
         new_status = request.POST.get('new_status')
-        # If status is being changed to shipped, decrease product stock
-        if order.status != 'shipped' and new_status == 'shipped':
+        old_status = order.status
+        
+        # Define valid status transitions
+        valid_transitions = {
+            'pending': ['processing', 'cancelled'],
+            'processing': ['shipped'],
+            'shipped': ['delivered'],
+            'delivered': [],  # Customer confirms to 'received'
+            'cancelled': [],
+            'received': []
+        }
+        
+        # Validate status transition
+        if new_status not in valid_transitions.get(old_status, []):
+            messages.error(request, f'Cannot change status from {old_status} to {new_status}. Invalid transition.')
+            return redirect('dashboard:manage_orders')
+        
+        # If status is being changed to shipped, decrease product stock, mark shipped, then send email with PDF receipt
+        if old_status != 'shipped' and new_status == 'shipped':
+            # Decrease stock
             for item in order.items.all():
                 product = item.product
                 if product.stock >= item.quantity:
@@ -581,9 +599,60 @@ def update_order_status(request, order_number):
                     product.save()
                 else:
                     messages.warning(request, f'Not enough stock for {product.name}. Only {product.stock} left.')
-        order.status = new_status
-        order.save()
-        messages.success(request, f'Order {order.order_number} status updated to {new_status}.')
+                    return redirect('dashboard:manage_orders')
+
+            # Mark order as shipped first so PDF reflects new status
+            order.status = new_status
+            order.save()
+
+            # Send email with PDF receipt
+            try:
+                from django.core.mail import EmailMessage
+                from orders.pdf_generator import generate_order_receipt_pdf
+
+                # Generate PDF (now order.status is 'shipped')
+                pdf_content = generate_order_receipt_pdf(order)
+
+                # Create email
+                subject = f'Your Order #{order.order_number} Has Been Shipped!'
+                message = (
+                    f"Dear {order.full_name},\n\n"
+                    f"Good news — your order is on the way!\n\n"
+                    f"Order Number: #{order.order_number}\n"
+                    f"Total Amount: ₱{order.total:,.2f}\n"
+                    f"Shipping Address: {order.address}, {order.city}, {order.state} {order.zip_code}\n\n"
+                    "We've attached your official receipt to this email.\n"
+                    "You can also check your order status in your account.\n\n"
+                    "Thank you for shopping with PCBulacan!\n"
+                    "Best regards,\nPCBulacan Team"
+                )
+
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email='PCBulacan <johncarlogamayo@gmail.com>',
+                    to=[order.email],
+                )
+
+                # Attach PDF
+                email.attach(
+                    f'PCBulacan_Receipt_{order.order_number}.pdf',
+                    pdf_content,
+                    'application/pdf'
+                )
+
+                # Send email
+                email.send(fail_silently=False)
+                messages.success(request, f'Order {order.order_number} marked as shipped — email with receipt sent to {order.email}.')
+
+            except Exception as e:
+                messages.warning(request, f'Order marked as shipped but failed to send email: {str(e)}')
+
+        else:
+            # Update order status for non-shipped transitions
+            order.status = new_status
+            order.save()
+            messages.success(request, f'Order {order.order_number} status updated to {order.get_status_display()}.')
     
     return redirect('dashboard:manage_orders')
 
