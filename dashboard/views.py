@@ -609,9 +609,13 @@ def update_order_status(request, order_number):
             try:
                 from django.core.mail import EmailMessage
                 from orders.pdf_generator import generate_order_receipt_pdf
+                
+                print(f"DEBUG: Starting email send for order {order.order_number}")
+                print(f"DEBUG: Customer email: {order.email}")
 
                 # Generate PDF (now order.status is 'shipped')
                 pdf_content = generate_order_receipt_pdf(order)
+                print(f"DEBUG: PDF generated successfully, size: {len(pdf_content)} bytes")
 
                 # Create email
                 subject = f'Your Order #{order.order_number} Has Been Shipped!'
@@ -640,12 +644,17 @@ def update_order_status(request, order_number):
                     pdf_content,
                     'application/pdf'
                 )
+                print(f"DEBUG: Email object created with attachment")
 
                 # Send email
-                email.send(fail_silently=False)
+                result = email.send(fail_silently=False)
+                print(f"DEBUG: Email sent! Result: {result}")
                 messages.success(request, f'Order {order.order_number} marked as shipped — email with receipt sent to {order.email}.')
 
             except Exception as e:
+                print(f"DEBUG: Email error: {type(e).__name__}: {e}")
+                import traceback
+                traceback.print_exc()
                 messages.warning(request, f'Order marked as shipped but failed to send email: {str(e)}')
 
         else:
