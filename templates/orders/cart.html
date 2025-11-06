@@ -369,6 +369,13 @@
         border-color: #dc2626;
     }
 
+    .clear-cart-btn:disabled {
+        background-color: #f3f4f6;
+        color: #9ca3af;
+        border-color: #e5e7eb;
+        cursor: not-allowed;
+    }
+
     @media (max-width: 992px) {
         .cart-layout {
             flex-direction: column;
@@ -450,19 +457,71 @@
             });
         });
 
-        // Clear cart functionality
+        // Clear cart functionality - Delete only selected items
         const clearCartBtn = document.getElementById('clear-cart-btn');
         if (clearCartBtn) {
             clearCartBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                if (!confirm('Are you sure you want to clear all items from your cart?')) {
+                // Get selected items
+                const selectedCheckboxes = Array.from(itemCheckboxes).filter(cb => cb.checked);
+                
+                if (selectedCheckboxes.length === 0) {
+                    alert('Please select items to delete.');
                     return;
                 }
                 
-                const form = document.getElementById('clear-cart-form');
-                form.submit();
+                const itemCount = selectedCheckboxes.length;
+                const confirmMessage = itemCount === itemCheckboxes.length 
+                    ? 'Are you sure you want to delete all items from cart?' 
+                    : `Are you sure you want to delete ${itemCount} selected item(s)?`;
+                
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
+                
+                // Delete selected items one by one
+                let deletedCount = 0;
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                selectedCheckboxes.forEach((checkbox, index) => {
+                    const itemId = checkbox.value;
+                    const cartItem = checkbox.closest('.cart-item');
+                    
+                    fetch(`/orders/remove-from-cart/${itemId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            deletedCount++;
+                            cartItem.style.opacity = '0';
+                            
+                            // After all items processed
+                            if (deletedCount === selectedCheckboxes.length) {
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 300);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
             });
+        }
+
+        // Enable/disable delete button based on selection
+        function updateDeleteButton() {
+            const hasSelectedItems = Array.from(itemCheckboxes).some(cb => cb.checked);
+            if (clearCartBtn) {
+                clearCartBtn.disabled = !hasSelectedItems;
+            }
         }
 
         // Quantity controls (existing logic)
@@ -565,6 +624,7 @@
                     checkbox.checked = this.checked;
                 });
                 updateOrderSummary();
+                updateDeleteButton();
             });
         }
         // Individual checkbox logic
@@ -578,6 +638,7 @@
                     selectAllCheckbox.checked = true;
                 }
                 updateOrderSummary();
+                updateDeleteButton();
             });
         });
 
@@ -616,6 +677,7 @@
 
         // Initial summary state
         updateOrderSummary();
+        updateDeleteButton();
     });
 </script>
 {% endblock %}
@@ -657,13 +719,10 @@
                             <input type="checkbox" id="select-all" class="cart-checkbox">
                             <label for="select-all" class="select-all-label">Select All Items</label>
                         </div>
-                        <form method="post" action="{% url 'orders:clear_cart' %}" id="clear-cart-form" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="button" id="clear-cart-btn" class="clear-cart-btn">
-                                <i class="fas fa-trash-alt"></i>
-                                Clear Cart
-                            </button>
-                        </form>
+                        <button type="button" id="clear-cart-btn" class="clear-cart-btn" disabled>
+                            <i class="fas fa-trash-alt"></i>
+                            Delete Selected
+                        </button>
                     </div>
                     {% for item in cart.items.all %}
                     <div class="cart-item">
