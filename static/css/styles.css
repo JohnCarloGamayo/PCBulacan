@@ -1,7 +1,7 @@
 /* PCBulacan Main Styles */
 
 :root {
-    --primary-color: #1e3a8a;
+    --primary-color: #048400;
     --secondary-color: #3b82f6;
     --success-color: #22c55e;
     --danger-color: #ef4444;
@@ -62,7 +62,7 @@ body {
 
 .logo i {
     font-size: 1.75rem;
-    color: #10b981;
+    color: #048400;
 }
 
 .logo-text {
@@ -94,7 +94,7 @@ body {
 
 .main-nav a {
     text-decoration: none;
-    color: #1e40af;
+    color: #048400;
     font-weight: 600;
     padding: 0.5rem 1rem;
     border-radius: 6px;
@@ -104,7 +104,7 @@ body {
 
 .main-nav a:hover,
 .main-nav a.active {
-    color: #1e40af;
+    color: #048400;
     background-color: #eff6ff;
 }
 
@@ -248,7 +248,7 @@ body {
 
 .icon-btn:hover {
     background-color: #f3f4f6;
-    color: #1e40af;
+    color: #048400;
 }
 
 .icon-btn a {
@@ -261,7 +261,7 @@ body {
 
 /* Cart Button Specific */
 .cart-btn {
-    color: #1e40af;
+    color: #048400;
 }
 
 .cart-btn:hover {
@@ -272,8 +272,8 @@ body {
     position: absolute;
     top: -2px;
     right: -2px;
-    background: #3b82f6;
-    color: white;
+    background: #08fe01;
+    color: #1e293b;
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -342,7 +342,7 @@ body {
 }
 
 .dropdown-menu a:hover {
-    background: linear-gradient(90deg, #eff6ff 0%, #dbeafe 100%);
+    background: linear-gradient(90deg, #c8e9c7 0%, white 100%);
     color: var(--primary-color);
     padding-left: 1.5rem;
 }
@@ -546,14 +546,14 @@ body {
 
 .notification-footer a {
     font-size: 14px;
-    color: #2563eb;
+    color: #048400;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s;
 }
 
 .notification-footer a:hover {
-    color: #1d4ed8;
+    color: #035d00;
 }
 
 .no-notifications {
@@ -598,9 +598,18 @@ body {
     font-weight: 600;
 }
 
-.btn-primary:hover {
-    background: #2563eb;
-    border-color: #2563eb;
+/* .btn-check:checked+.btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active, */
+:not(.btn-check)+.btn:active {
+    background: #035d00;
+    border-color: #035d00;
+}
+
+:not(.btn-check)+.btn:active {
+    background: #035d00;
+    border-color: #035d00;
 }
 
 .btn-sm {
@@ -659,6 +668,7 @@ body {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -720,28 +730,29 @@ body {
 
 /* Mobile Responsive */
 @media (max-width: 992px) {
+
     .desktop-nav,
     .desktop-search,
     .desktop-actions {
         display: none !important;
     }
-    
+
     .mobile-menu-toggle {
         display: block;
     }
-    
+
     .mobile-search {
         display: block;
     }
-    
+
     .header-content {
         gap: 1rem;
     }
-    
+
     .logo {
         font-size: 1.5rem;
     }
-    
+
     .logo i {
         font-size: 1.75rem;
     }
@@ -751,15 +762,15 @@ body {
     .site-header {
         padding: 1rem 0;
     }
-    
+
     .logo {
         font-size: 1.25rem;
     }
-    
+
     .logo i {
         font-size: 1.5rem;
     }
-    
+
     .search-input input {
         padding: 0.75rem 2.5rem 0.75rem 2.5rem;
         font-size: 0.9rem;
@@ -832,7 +843,7 @@ body {
 
 /* Footer Styles */
 .footer {
-    background-color: var(--dark-color);
+    background: radial-gradient(circle at 30% 70%, rgba(155, 236, 0, 0.2) 0%, transparent 40%), radial-gradient(circle at 80% 23%, rgba(22, 163, 74, 0.15) 0%, transparent 70%), #0d0d0d;
     color: #fff;
     padding: 3rem 0 1rem;
     margin-top: 3rem;
@@ -951,7 +962,7 @@ body {
 }
 
 .auth-form .btn-primary:hover {
-    background-color: #1e40af;
+    background-color: #035d00;
 }
 
 .auth-form a {
@@ -991,8 +1002,8 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #1e40af;
-    border-color: #1e40af;
+    background-color: #035d00;
+    border-color: #035d00;
 }
 
 .btn-success {
@@ -1029,17 +1040,17 @@ body {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .top-bar-left,
     .top-bar-right {
         margin-bottom: 0.5rem;
     }
-    
+
     .products-grid {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 1rem;
     }
-    
+
     .section-header h2 {
         font-size: 2rem;
     }
@@ -1049,7 +1060,7 @@ body {
     .products-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .product-card {
         max-width: 100%;
     }

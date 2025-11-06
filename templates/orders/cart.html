@@ -7,211 +7,515 @@
 <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 <style>
     /* Cart Page Styles (CyberZone-inspired, PCBulacan branding) */
-    .page-header { background-color: #f1f5f9; padding: 2rem 0; margin-bottom: 2rem; border-radius: 12px; text-align: center; }
-    .page-title { font-size: 2rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem; }
-    .breadcrumb { display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #64748b; }
-    .breadcrumb a { color: #2563eb; transition: all 0.3s ease; }
-    .breadcrumb a:hover { color: #1d4ed8; }
-    .breadcrumb-separator { color: #94a3b8; }
-    .cart-layout { display: flex; flex-direction: row; gap: 2rem; margin-bottom: 3rem; }
-    .cart-items { flex: 2; }
-    .cart-summary { flex: 1; }
-    .cart-container { background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 2rem; }
-    .cart-empty { text-align: center; padding: 3rem 0; }
-    .cart-empty-icon { font-size: 4rem; color: #e2e8f0; margin-bottom: 1rem; }
-    .cart-empty-text { font-size: 1.25rem; color: #64748b; margin-bottom: 1.5rem; }
-    .cart-empty-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #2563eb; color: white; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; }
-    .cart-empty-button:hover { background-color: #1d4ed8; }
-    .cart-item { display: flex; align-items: center; padding: 1.5rem 0; border-bottom: 1px solid #e2e8f0; }
-    .cart-item:last-child { border-bottom: none; }
-    .cart-item-image { width: 100px; height: 100px; border-radius: 8px; overflow: hidden; background-color: #f8fafc; margin-right: 1.5rem; display: flex; align-items: center; justify-content: center; }
-    .cart-item-image img { max-width: 90%; max-height: 90%; object-fit: contain; }
-    .cart-item-details { flex: 1; }
-    .cart-item-name { font-weight: 600; color: #1e3a8a; margin-bottom: 0.5rem; font-size: 1.1rem; }
-    .cart-item-price { color: #64748b; margin-bottom: 0.5rem; font-size: 0.95rem; }
-    .cart-item-actions { display: flex; align-items: center; gap: 1rem; }
-    .quantity-control { display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
-    .quantity-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background-color: #f1f5f9; color: #64748b; border: none; cursor: pointer; transition: all 0.2s ease; }
-    .quantity-btn:hover { background-color: #e2e8f0; color: #1e3a8a; }
-    .quantity-input { width: 40px; height: 32px; text-align: center; border: none; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; font-size: 0.875rem; }
-    .cart-action-btn { padding: 0.5rem; border-radius: 6px; background-color: #f1f5f9; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; border: none; }
-    .cart-action-btn:hover { background-color: #e2e8f0; color: #1e3a8a; }
-    .cart-action-btn.remove { color: #ef4444; }
-    .cart-action-btn.remove:hover { background-color: #fee2e2; }
-    .cart-item-total { font-weight: 600; color: #1e3a8a; font-size: 1.1rem; text-align: right; min-width: 100px; }
-    .cart-summary-container { background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.5rem; position: sticky; top: 2rem; }
-    .cart-summary-title { font-size: 1.25rem; font-weight: 600; color: #1e3a8a; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0; }
-    .cart-summary-items { margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto; }
-    .cart-summary-item { display: flex; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed #e2e8f0; color: #64748b; font-size: 0.9rem; }
-    .cart-summary-item:last-child { border-bottom: none; }
-    .cart-summary-item-name { max-width: 70%; }
-    .cart-summary-row { display: flex; justify-content: space-between; margin-bottom: 1rem; color: #64748b; }
-    .cart-summary-row.total { font-weight: 600; color: #1e3a8a; font-size: 1.1rem; padding-top: 1rem; margin-top: 1rem; border-top: 1px solid #e2e8f0; }
-    .checkout-button { width: 100%; padding: 1rem; background-color: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
-    .checkout-button:hover { background-color: #1d4ed8; }
-    .checkout-button:disabled { background-color: #94a3b8; cursor: not-allowed; }
-    .continue-shopping { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; color: #2563eb; font-weight: 500; transition: all 0.3s ease; }
-    .continue-shopping:hover { color: #1d4ed8; }
-    .cart-error { background-color: #fee2e2; color: #b91c1c; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; }
-    @media (max-width: 992px) { .cart-layout { flex-direction: column; } .cart-summary-container { position: static; } }
-    @media (max-width: 768px) { .cart-item { flex-direction: column; align-items: flex-start; gap: 1rem; } .cart-item-image { margin-right: 0; } .cart-item-actions { width: 100%; justify-content: space-between; } .cart-item-total { text-align: left; margin-top: 0.5rem; } }
+    .page-header {
+        background-color: #f1f5f9;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #048400;
+        margin-bottom: 0.5rem;
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        color: #64748b;
+    }
+
+    .breadcrumb a {
+        color: #048400;
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumb a:hover {
+        color: #048400;
+    }
+
+    .breadcrumb-separator {
+        color: #94a3b8;
+    }
+
+    .cart-layout {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .cart-items {
+        flex: 2;
+    }
+
+    .cart-summary {
+        flex: 1;
+    }
+
+    .cart-container {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .cart-empty {
+        text-align: center;
+        padding: 3rem 0;
+    }
+
+    .cart-empty-icon {
+        font-size: 4rem;
+        color: #e2e8f0;
+        margin-bottom: 1rem;
+    }
+
+    .cart-empty-text {
+        font-size: 1.25rem;
+        color: #64748b;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-empty-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background-color: #2563eb;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .cart-empty-button:hover {
+        background-color: #1d4ed8;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .cart-item-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #f8fafc;
+        margin-right: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cart-item-image img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+    }
+
+    .cart-item-details {
+        flex: 1;
+    }
+
+    .cart-item-name {
+        font-weight: 600;
+        color: #1e3a8a;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .cart-item-price {
+        color: #64748b;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .cart-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .quantity-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f1f5f9;
+        color: #64748b;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+        background-color: #e2e8f0;
+        color: #1e3a8a;
+    }
+
+    .quantity-input {
+        width: 40px;
+        height: 32px;
+        text-align: center;
+        border: none;
+        border-left: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        font-size: 0.875rem;
+    }
+
+    .cart-action-btn {
+        padding: 0.5rem;
+        border-radius: 6px;
+        background-color: #f1f5f9;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .cart-action-btn:hover {
+        background-color: #e2e8f0;
+        color: #1e3a8a;
+    }
+
+    .cart-action-btn.remove {
+        color: #ef4444;
+    }
+
+    .cart-action-btn.remove:hover {
+        background-color: #fee2e2;
+    }
+
+    .cart-item-total {
+        font-weight: 600;
+        color: #1e3a8a;
+        font-size: 1.1rem;
+        text-align: right;
+        min-width: 100px;
+    }
+
+    .cart-summary-container {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .cart-summary-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e3a8a;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .cart-summary-items {
+        margin-bottom: 1.5rem;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .cart-summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px dashed #e2e8f0;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .cart-summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .cart-summary-item-name {
+        max-width: 70%;
+    }
+
+    .cart-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        color: #64748b;
+    }
+
+    .cart-summary-row.total {
+        font-weight: 600;
+        color: #1e3a8a;
+        font-size: 1.1rem;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .checkout-button {
+        width: 100%;
+        padding: 1rem;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .checkout-button:hover {
+        background-color: #1d4ed8;
+    }
+
+    .checkout-button:disabled {
+        background-color: #94a3b8;
+        cursor: not-allowed;
+    }
+
+    .continue-shopping {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        color: #2563eb;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .continue-shopping:hover {
+        color: #1d4ed8;
+    }
+
+    .cart-error {
+        background-color: #fee2e2;
+        color: #b91c1c;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 992px) {
+        .cart-layout {
+            flex-direction: column;
+        }
+
+        .cart-summary-container {
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .cart-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .cart-item-image {
+            margin-right: 0;
+        }
+
+        .cart-item-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .cart-item-total {
+            text-align: left;
+            margin-top: 0.5rem;
+        }
+    }
 </style>
 {% endblock %}
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Quantity controls (existing logic)
-    document.querySelectorAll('.quantity-control').forEach(function(control) {
-        const decreaseBtn = control.querySelector('.decrease-btn');
-        const increaseBtn = control.querySelector('.increase-btn');
-        const input = control.querySelector('.quantity-input');
-        const itemId = control.getAttribute('data-item-id');
-        const cartItemTotal = control.closest('.cart-item').querySelector('.cart-item-total');
-        function updateQuantity(newQuantity) {
-            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            fetch(`/orders/update-cart/${itemId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrftoken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `quantity=${newQuantity}`
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                    return;
+    document.addEventListener('DOMContentLoaded', function () {
+        // Quantity controls (existing logic)
+        document.querySelectorAll('.quantity-control').forEach(function (control) {
+            const decreaseBtn = control.querySelector('.decrease-btn');
+            const increaseBtn = control.querySelector('.increase-btn');
+            const input = control.querySelector('.quantity-input');
+            const itemId = control.getAttribute('data-item-id');
+            const cartItemTotal = control.closest('.cart-item').querySelector('.cart-item-total');
+            function updateQuantity(newQuantity) {
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                fetch(`/orders/update-cart/${itemId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `quantity=${newQuantity}`
+                })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!data) return;
+                        if (data.success) {
+                            input.value = newQuantity;
+                            cartItemTotal.textContent = `₱${parseFloat(data.item_total).toFixed(2)}`;
+                        } else if (data.error) {
+                            alert(data.error);
+                        }
+                        updateOrderSummary();
+                    })
+                    .catch(() => {
+                        alert('Error updating cart quantity');
+                    });
+            }
+            decreaseBtn.addEventListener('click', function () {
+                let current = parseInt(input.value);
+                if (current > 1) {
+                    updateQuantity(current - 1);
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (!data) return;
-                if (data.success) {
-                    input.value = newQuantity;
-                    cartItemTotal.textContent = `₱${parseFloat(data.item_total).toFixed(2)}`;
-                } else if (data.error) {
-                    alert(data.error);
+            });
+            increaseBtn.addEventListener('click', function () {
+                let current = parseInt(input.value);
+                updateQuantity(current + 1);
+            });
+        });
+
+        // Selection logic
+        const selectAllCheckbox = document.getElementById('select-all');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const cartSummary = document.getElementById('cartSummary');
+        const selectedItemsContainer = document.getElementById('selected-items-container');
+        const emptySelectionMessage = document.getElementById('empty-selection-message');
+        const totalAmount = document.getElementById('total-amount');
+        const checkoutButton = document.getElementById('checkout-button');
+
+        function updateOrderSummary() {
+            let total = 0;
+            let hasSelectedItems = false;
+            let summaryHTML = '';
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    hasSelectedItems = true;
+                    const name = checkbox.dataset.name;
+                    // Get the latest total price from the cart item DOM
+                    const cartItem = checkbox.closest('.cart-item');
+                    const itemTotalElem = cartItem.querySelector('.cart-item-total');
+                    let price = 0;
+                    if (itemTotalElem) {
+                        price = parseFloat(itemTotalElem.textContent.replace(/[^\d.]/g, ''));
+                    }
+                    total += price;
+                    summaryHTML += `<div class=\"cart-summary-item\"><span class=\"cart-summary-item-name\">${name}</span><span>₱${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>`;
+                }
+            });
+            if (hasSelectedItems) {
+                emptySelectionMessage.style.display = 'none';
+                selectedItemsContainer.innerHTML = summaryHTML;
+                cartSummary.style.display = '';
+                checkoutButton.disabled = false;
+            } else {
+                emptySelectionMessage.style.display = 'block';
+                selectedItemsContainer.innerHTML = emptySelectionMessage.outerHTML;
+                cartSummary.style.display = 'none';
+                checkoutButton.disabled = true;
+            }
+            totalAmount.textContent = `₱${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        // Select all logic
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateOrderSummary();
+            });
+        }
+        // Individual checkbox logic
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                if (!this.checked) {
+                    selectAllCheckbox.checked = false;
+                }
+                const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+                if (allChecked) {
+                    selectAllCheckbox.checked = true;
                 }
                 updateOrderSummary();
-            })
-            .catch(() => {
-                alert('Error updating cart quantity');
+            });
+        });
+
+        // Form validation
+        const checkoutForm = document.getElementById('checkout-form');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', function (e) {
+                if (e.submitter && e.submitter.classList.contains('checkout-button')) {
+                    const hasSelectedItems = Array.from(itemCheckboxes).some(cb => cb.checked);
+                    if (!hasSelectedItems) {
+                        e.preventDefault();
+                        alert('Please select at least one item to checkout.');
+                        return false;
+                    }
+
+                    // Add selected items as hidden inputs
+                    const selectedItems = Array.from(itemCheckboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+
+                    // Remove any existing selected_items inputs
+                    const existingInputs = checkoutForm.querySelectorAll('input[name="selected_items"]');
+                    existingInputs.forEach(input => input.remove());
+
+                    // Add new hidden inputs for selected items
+                    selectedItems.forEach(itemId => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'selected_items';
+                        input.value = itemId;
+                        checkoutForm.appendChild(input);
+                    });
+                }
             });
         }
-        decreaseBtn.addEventListener('click', function() {
-            let current = parseInt(input.value);
-            if (current > 1) {
-                updateQuantity(current - 1);
-            }
-        });
-        increaseBtn.addEventListener('click', function() {
-            let current = parseInt(input.value);
-            updateQuantity(current + 1);
-        });
+
+        // Initial summary state
+        updateOrderSummary();
     });
-
-    // Selection logic
-    const selectAllCheckbox = document.getElementById('select-all');
-    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-    const cartSummary = document.getElementById('cartSummary');
-    const selectedItemsContainer = document.getElementById('selected-items-container');
-    const emptySelectionMessage = document.getElementById('empty-selection-message');
-    const totalAmount = document.getElementById('total-amount');
-    const checkoutButton = document.getElementById('checkout-button');
-
-    function updateOrderSummary() {
-        let total = 0;
-        let hasSelectedItems = false;
-        let summaryHTML = '';
-        itemCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                hasSelectedItems = true;
-                const name = checkbox.dataset.name;
-                // Get the latest total price from the cart item DOM
-                const cartItem = checkbox.closest('.cart-item');
-                const itemTotalElem = cartItem.querySelector('.cart-item-total');
-                let price = 0;
-                if (itemTotalElem) {
-                    price = parseFloat(itemTotalElem.textContent.replace(/[^\d.]/g, ''));
-                }
-                total += price;
-                summaryHTML += `<div class=\"cart-summary-item\"><span class=\"cart-summary-item-name\">${name}</span><span>₱${price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></div>`;
-            }
-        });
-        if (hasSelectedItems) {
-            emptySelectionMessage.style.display = 'none';
-            selectedItemsContainer.innerHTML = summaryHTML;
-            cartSummary.style.display = '';
-            checkoutButton.disabled = false;
-        } else {
-            emptySelectionMessage.style.display = 'block';
-            selectedItemsContainer.innerHTML = emptySelectionMessage.outerHTML;
-            cartSummary.style.display = 'none';
-            checkoutButton.disabled = true;
-        }
-        totalAmount.textContent = `₱${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    }
-
-    // Select all logic
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function() {
-            itemCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-            updateOrderSummary();
-        });
-    }
-    // Individual checkbox logic
-    itemCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (!this.checked) {
-                selectAllCheckbox.checked = false;
-            }
-            const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
-            if (allChecked) {
-                selectAllCheckbox.checked = true;
-            }
-            updateOrderSummary();
-        });
-    });
-
-    // Form validation
-    const checkoutForm = document.getElementById('checkout-form');
-    if (checkoutForm) {
-        checkoutForm.addEventListener('submit', function(e) {
-            if (e.submitter && e.submitter.classList.contains('checkout-button')) {
-                const hasSelectedItems = Array.from(itemCheckboxes).some(cb => cb.checked);
-                if (!hasSelectedItems) {
-                    e.preventDefault();
-                    alert('Please select at least one item to checkout.');
-                    return false;
-                }
-                
-                // Add selected items as hidden inputs
-                const selectedItems = Array.from(itemCheckboxes)
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
-                
-                // Remove any existing selected_items inputs
-                const existingInputs = checkoutForm.querySelectorAll('input[name="selected_items"]');
-                existingInputs.forEach(input => input.remove());
-                
-                // Add new hidden inputs for selected items
-                selectedItems.forEach(itemId => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'selected_items';
-                    input.value = itemId;
-                    checkoutForm.appendChild(input);
-                });
-            }
-        });
-    }
-
-    // Initial summary state
-    updateOrderSummary();
-});
 </script>
 {% endblock %}
 
@@ -253,7 +557,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     {% for item in cart.items.all %}
                     <div class="cart-item">
-                        <input type="checkbox" class="cart-checkbox item-checkbox" value="{{ item.id }}" data-name="{{ item.product.name }}" data-price="{{ item.total_price|floatformat:2 }}" style="margin-right:1rem;">
+                        <input type="checkbox" class="cart-checkbox item-checkbox" value="{{ item.id }}"
+                            data-name="{{ item.product.name }}" data-price="{{ item.total_price|floatformat:2 }}"
+                            style="margin-right:1rem;">
                         <div class="cart-item-image">
                             {% if item.product.image %}
                             <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
@@ -270,7 +576,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly>
                                     <button type="button" class="quantity-btn increase-btn">+</button>
                                 </div>
-                                <form method="post" action="{% url 'orders:remove_from_cart' item.id %}" style="display:inline;">
+                                <form method="post" action="{% url 'orders:remove_from_cart' item.id %}"
+                                    style="display:inline;">
                                     {% csrf_token %}
                                     <button type="submit" class="cart-action-btn remove" title="Remove">
                                         <i class="fas fa-trash"></i>
@@ -293,7 +600,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span>Total</span>
                         <span id="total-amount">₱0.00</span>
                     </div>
-                    <button type="submit" class="checkout-button" id="checkout-button" disabled>Proceed to Checkout</button>
+                    <button type="submit" class="checkout-button" id="checkout-button" disabled>Proceed to
+                        Checkout</button>
                     <a href="{% url 'products:list' %}" class="continue-shopping">
                         <i class="fas fa-arrow-left"></i> Continue Shopping
                     </a>
