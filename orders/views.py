@@ -119,6 +119,16 @@ def remove_from_cart(request, item_id):
 
 
 @login_required
+def clear_cart(request):
+    """Clear all items from cart"""
+    if request.method == 'POST':
+        cart = Cart.objects.get(user=request.user)
+        cart.items.all().delete()
+        messages.success(request, 'Cart cleared successfully.')
+    return redirect('orders:cart')
+
+
+@login_required
 def buy_now(request, product_id):
     """Buy now - go directly to checkout without modifying cart"""
     product = get_object_or_404(Product, id=product_id, is_active=True)
