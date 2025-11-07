@@ -376,8 +376,8 @@ body {
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: #ef4444;
-    color: white;
+    background-color: #08fe01;
+    color: #1e293b;
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -448,7 +448,7 @@ body {
 }
 
 .notification-item.unread {
-    background-color: #ebf8ff;
+    background-color: #c8e9c7;
 }
 
 .notification-item.unread .notification-title {

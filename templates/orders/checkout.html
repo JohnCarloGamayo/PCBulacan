@@ -6,8 +6,8 @@
 {% block extra_css %}
 <style>
     :root {
-        --primary: #4f46e5;
-        --primary-hover: #4338ca;
+        --primary: #048400;
+        --primary-hover: #035d00;
         --primary-light: #eef2ff;
         --secondary: #64748b;
         --success: #10b981;
@@ -333,8 +333,15 @@
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .payment-instructions-title {
@@ -657,7 +664,7 @@
     .place-order-btn {
         width: 100%;
         padding: 1rem;
-        background-color: var(--primary);
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         color: white;
         border: none;
         border-radius: var(--radius);
@@ -728,8 +735,15 @@
     }
 
     @keyframes zoomIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
+        from {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
     }
 
     .image-modal-img {
@@ -767,7 +781,7 @@
         .checkout-container {
             grid-template-columns: 1fr;
         }
-        
+
         .order-summary {
             position: static;
             margin-top: 2rem;
@@ -775,6 +789,7 @@
     }
 
     @media (max-width: 768px) {
+
         .payment-methods,
         .address-grid {
             grid-template-columns: 1fr;
@@ -794,7 +809,7 @@
     <div class="checkout-header">
         <h1 class="checkout-title">Checkout</h1>
         <p class="checkout-subtitle">Complete your purchase by providing the details below</p>
-        
+
         <div class="checkout-progress">
             <div class="progress-step">
                 <div class="step-number active">1</div>
@@ -814,7 +829,7 @@
     <div class="checkout-form">
         <form method="post" id="checkout-form" enctype="multipart/form-data">
             {% csrf_token %}
-            
+
             <!-- Shipping Address -->
             <div class="checkout-section">
                 <div class="section-header">
@@ -823,36 +838,37 @@
                     </div>
                     <h2 class="section-title">Shipping Address</h2>
                 </div>
-                
+
                 {% if not addresses %}
-                    <p>You don't have any saved addresses. Please add one.</p>
-                    <a href="{% url 'accounts:account' %}?tab=addresses" class="add-address-btn">
-                        <i class="fas fa-plus"></i> Add New Address
-                    </a>
+                <p>You don't have any saved addresses. Please add one.</p>
+                <a href="{% url 'accounts:account' %}?tab=addresses" class="add-address-btn">
+                    <i class="fas fa-plus"></i> Add New Address
+                </a>
                 {% else %}
-                    <div class="address-grid">
-                        {% for address in addresses %}
-                        <div class="address-card {% if forloop.first %}selected{% endif %}" onclick="selectAddress(this)">
-                            <input type="radio" name="shipping_address" value="{{ address.id }}" class="address-card-radio" {% if forloop.first %}checked{% endif %}>
-                            <div class="address-card-check">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="address-card-title">{{ address.label }}</div>
-                            <div class="address-card-content">
-                                {{ address.address_line1 }}<br>
-                                {% if address.address_line2 %}{{ address.address_line2 }}<br>{% endif %}
-                                {{ address.city }}, {{ address.state }} {{ address.postal_code }}
-                            </div>
+                <div class="address-grid">
+                    {% for address in addresses %}
+                    <div class="address-card {% if forloop.first %}selected{% endif %}" onclick="selectAddress(this)">
+                        <input type="radio" name="shipping_address" value="{{ address.id }}" class="address-card-radio"
+                            {% if forloop.first %}checked{% endif %}>
+                        <div class="address-card-check">
+                            <i class="fas fa-check"></i>
                         </div>
-                        {% endfor %}
+                        <div class="address-card-title">{{ address.label }}</div>
+                        <div class="address-card-content">
+                            {{ address.address_line1 }}<br>
+                            {% if address.address_line2 %}{{ address.address_line2 }}<br>{% endif %}
+                            {{ address.city }}, {{ address.state }} {{ address.postal_code }}
+                        </div>
                     </div>
-                    
-                    <a href="{% url 'accounts:account' %}?tab=addresses" class="add-address-btn">
-                        <i class="fas fa-plus"></i> Add New Address
-                    </a>
+                    {% endfor %}
+                </div>
+
+                <a href="{% url 'accounts:account' %}?tab=addresses" class="add-address-btn">
+                    <i class="fas fa-plus"></i> Add New Address
+                </a>
                 {% endif %}
             </div>
-            
+
             <!-- Payment Method -->
             <div class="checkout-section">
                 <div class="section-header">
@@ -861,7 +877,7 @@
                     </div>
                     <h2 class="section-title">Payment Method</h2>
                 </div>
-                
+
                 <div class="payment-methods">
                     <div class="payment-method selected" onclick="selectPayment(this, 'cod')">
                         <input type="radio" name="payment_method" value="cod" class="payment-method-radio" checked>
@@ -876,7 +892,7 @@
                             <div class="payment-method-description">Pay when you receive</div>
                         </div>
                     </div>
-                    
+
                     <div class="payment-method" onclick="selectPayment(this, 'gcash')">
                         <input type="radio" name="payment_method" value="gcash" class="payment-method-radio">
                         <div class="payment-method-check">
@@ -890,7 +906,7 @@
                             <div class="payment-method-description">Pay via GCash</div>
                         </div>
                     </div>
-                    
+
                     <div class="payment-method" onclick="selectPayment(this, 'paymaya')">
                         <input type="radio" name="payment_method" value="paymaya" class="payment-method-radio">
                         <div class="payment-method-check">
@@ -905,42 +921,48 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- GCash Instructions -->
                 <div id="gcash-instructions" class="payment-instructions">
                     <h4 class="payment-instructions-title">
                         <i class="fas fa-info-circle"></i> GCash Payment Instructions
                     </h4>
                     <ul class="payment-instructions-list">
-                        <li><i class="fas fa-circle-check"></i> Send payment to GCash number: <span class="payment-account">09123456789</span></li>
-                        <li><i class="fas fa-circle-check"></i> Include your name and order reference in the message</li>
+                        <li><i class="fas fa-circle-check"></i> Send payment to GCash number: <span
+                                class="payment-account">09123456789</span></li>
+                        <li><i class="fas fa-circle-check"></i> Include your name and order reference in the message
+                        </li>
                         <li><i class="fas fa-circle-check"></i> Take a screenshot of your payment receipt</li>
                         <li><i class="fas fa-circle-check"></i> Upload the screenshot below</li>
                     </ul>
                 </div>
-                
+
                 <!-- PayMaya Instructions -->
                 <div id="paymaya-instructions" class="payment-instructions">
                     <h4 class="payment-instructions-title">
                         <i class="fas fa-info-circle"></i> PayMaya Payment Instructions
                     </h4>
                     <ul class="payment-instructions-list">
-                        <li><i class="fas fa-circle-check"></i> Send payment to PayMaya account: <span class="payment-account">09123456789</span></li>
-                        <li><i class="fas fa-circle-check"></i> Include your name and order reference in the message</li>
+                        <li><i class="fas fa-circle-check"></i> Send payment to PayMaya account: <span
+                                class="payment-account">09123456789</span></li>
+                        <li><i class="fas fa-circle-check"></i> Include your name and order reference in the message
+                        </li>
                         <li><i class="fas fa-circle-check"></i> Take a screenshot of your payment receipt</li>
                         <li><i class="fas fa-circle-check"></i> Upload the screenshot below</li>
                     </ul>
                 </div>
-                
+
                 <!-- Payment Screenshot Upload -->
                 <div id="upload-container" class="upload-container">
                     <h4 class="upload-title">
                         <i class="fas fa-upload"></i> Upload Payment Screenshot
                     </h4>
-                    <p class="upload-description">Please upload a screenshot of your payment receipt for verification.</p>
-                    
+                    <p class="upload-description">Please upload a screenshot of your payment receipt for verification.
+                    </p>
+
                     <div id="upload-area" class="upload-area">
-                        <input type="file" name="payment_screenshot" id="payment-screenshot" class="upload-input" accept="image/*">
+                        <input type="file" name="payment_screenshot" id="payment-screenshot" class="upload-input"
+                            accept="image/*">
                         <div id="upload-placeholder">
                             <div class="upload-icon">
                                 <i class="fas fa-cloud-upload-alt"></i>
@@ -949,10 +971,10 @@
                             <div class="upload-hint">PNG, JPG or JPEG (MAX. 5MB)</div>
                         </div>
                     </div>
-                    
+
                     <div id="image-preview-container" class="image-preview-container">
                         <img id="image-preview" class="image-preview" src="#" alt="Receipt Preview">
-                        
+
                         <div class="preview-actions">
                             <button type="button" class="preview-action view" id="view-image">
                                 <i class="fas fa-eye"></i> View Full Size
@@ -964,29 +986,30 @@
                     </div>
                 </div>
             </div>
-            
+
             <button type="submit" class="place-order-btn">
                 <i class="fas fa-lock"></i>
                 Place Order
             </button>
         </form>
     </div>
-    
+
     <!-- Order Summary -->
     <div class="order-summary">
         <div class="order-summary-header">
             <h3 class="order-summary-title">Order Summary</h3>
-            <p class="order-summary-subtitle">{{ selected_items.count }} item{{ selected_items.count|pluralize }} in your order</p>
+            <p class="order-summary-subtitle">{{ selected_items.count }} item{{ selected_items.count|pluralize }} in
+                your order</p>
         </div>
-        
+
         <div class="order-items">
             {% for item in selected_items %}
             <div class="order-item">
                 <div class="order-item-image">
                     {% if item.product.image %}
-                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
                     {% else %}
-                        <img src="{% static 'images/placeholder.jpg' %}" alt="{{ item.product.name }}">
+                    <img src="{% static 'images/placeholder.jpg' %}" alt="{{ item.product.name }}">
                     {% endif %}
                 </div>
                 <div class="order-item-info">
@@ -999,19 +1022,20 @@
             </div>
             {% endfor %}
         </div>
-        
+
         <div class="order-summary-details">
             <div class="summary-row">
                 <span class="summary-row-label">Subtotal</span>
                 <span id="subtotal-value" class="summary-row-value" data-value="{{ subtotal }}">₱{{ subtotal|floatformat:2 }}</span>
             </div>
             <div class="summary-row">
-                <span class="summary-row-label">Shipping <span id="shipping-details" style="display: none; font-size: 0.75rem; color: #64748b;"></span></span>
+                <span class="summary-row-label">Shipping <span id="shipping-details"
+                        style="display: none; font-size: 0.75rem; color: #64748b;"></span></span>
                 <span id="shipping-fee-value" class="summary-row-value">To be calculated</span>
             </div>
             <div class="summary-total">
                 <span class="summary-total-label">Total</span>
-                <span id="total-value" class="summary-total-value">₱{{ subtotal|floatformat:2 }}</span>
+                <span id="total-value" class="summary-total-value">₱{{ total|floatformat:2 }}</span>
             </div>
             <a href="{% url 'orders:cart' %}" class="back-to-cart">
                 <i class="fas fa-arrow-left"></i>
@@ -1031,8 +1055,14 @@
 
 </script>
 <script>
-// Delivery fee data from Django context
-const deliveryFees = {
+    // Initial order data from Django context
+    const initialSubtotal = {{ subtotal|default:0 }};
+    const initialTotal = {{ total|default:0 }};
+    document.getElementById('subtotal-value').textContent = `₱${initialSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    document.getElementById('total-value').textContent = `₱${initialTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    
+    // Delivery fee data from Django context
+    const deliveryFees = {
     {% for address in addresses %}
     '{{ address.id }}': {
         city: '{{ address.city|escapejs }}',
@@ -1044,199 +1074,199 @@ const deliveryFees = {
     {% endfor %}
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-    // ...existing code...
-    // Address card selection
-    window.selectAddress = function(card) {
-        document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        card.querySelector('input[type="radio"]').checked = true;
-        updateShippingFee();
-    };
-
-    // Update shipping fee and total
-    function updateShippingFee() {
-        const addressRadio = document.querySelector('input[name="shipping_address"]:checked');
-        const subtotal = parseFloat(document.getElementById('subtotal-value').dataset.value);
-        let shippingFee = 0;
-        let shippingText = '';
-        let total = subtotal;
-        if (addressRadio) {
-            const addrId = addressRadio.value;
-            const feeData = deliveryFees[addrId];
-            if (feeData) {
-                if (subtotal >= feeData.min_order_free) {
-                    shippingFee = 0;
-                    shippingText = 'Free delivery (min ₱' + feeData.min_order_free.toLocaleString(undefined, {minimumFractionDigits:2}) + ')';
-                } else {
-                    shippingFee = feeData.fee;
-                    shippingText = '₱' + feeData.fee.toLocaleString(undefined, {minimumFractionDigits:2}) + ' (' + feeData.estimated_days + ')';
-                }
-                total += shippingFee;
-            }
-        }
-        document.getElementById('shipping-fee-value').textContent = shippingFee === 0 ? 'Free' : '₱' + shippingFee.toLocaleString(undefined, {minimumFractionDigits:2});
-        document.getElementById('shipping-details').textContent = shippingText;
-        document.getElementById('shipping-details').style.display = shippingText ? 'inline' : 'none';
-        document.getElementById('total-value').textContent = '₱' + total.toLocaleString(undefined, {minimumFractionDigits:2});
-    }
-
-    // Initial shipping fee calculation
-    updateShippingFee();
-
-    // Recalculate on address change
-    document.querySelectorAll('input[name="shipping_address"]').forEach(radio => {
-        radio.addEventListener('change', updateShippingFee);
-    });
-
-    // Payment method selection
-    window.selectPayment = function(method, type) {
-        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
-        method.classList.add('selected');
-        method.querySelector('input[type="radio"]').checked = true;
-        
-        // Show/hide instructions and upload
-        const uploadContainer = document.getElementById('upload-container');
-        const gcashInstructions = document.getElementById('gcash-instructions');
-        const paymayaInstructions = document.getElementById('paymaya-instructions');
-        
-        uploadContainer.classList.remove('active');
-        gcashInstructions.classList.remove('active');
-        paymayaInstructions.classList.remove('active');
-        
-        if (type === 'gcash') {
-            uploadContainer.classList.add('active');
-            gcashInstructions.classList.add('active');
-        } else if (type === 'paymaya') {
-            uploadContainer.classList.add('active');
-            paymayaInstructions.classList.add('active');
-        }
-    };
-    
-    // File upload handling
-    const uploadArea = document.getElementById('upload-area');
-    const uploadInput = document.getElementById('payment-screenshot');
-    const imagePreview = document.getElementById('image-preview');
-    const uploadPlaceholder = document.getElementById('upload-placeholder');
-    const imagePreviewContainer = document.getElementById('image-preview-container');
-    const viewImageBtn = document.getElementById('view-image');
-    const removeImageBtn = document.getElementById('remove-image');
-    const imageModal = document.getElementById('image-modal');
-    const imageModalImg = document.getElementById('image-modal-img');
-    const imageModalClose = document.getElementById('image-modal-close');
-    
-    // Drag and drop
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }, false);
-    });
-    
-    ['dragenter', 'dragover'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, function() {
-            uploadArea.classList.add('active');
-        }, false);
-    });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, function() {
-            uploadArea.classList.remove('active');
-        }, false);
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        
-        if (files.length) {
-            uploadInput.files = files;
-            handleFiles(files);
-        }
-    }, false);
-    
-    uploadInput.addEventListener('change', function() {
-        if (this.files.length) {
-            handleFiles(this.files);
-        }
-    });
-    
-    function handleFiles(files) {
-        const file = files[0];
-        
-        if (!file.type.match('image.*')) {
-            alert('Please select an image file (JPG, PNG, GIF)');
-            return;
-        }
-        
-        if (file.size > 5 * 1024 * 1024) {
-            alert('File size exceeds 5MB limit');
-            return;
-        }
-        
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result;
-            imagePreviewContainer.classList.add('active');
-            uploadPlaceholder.style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function () {
+        // ...existing code...
+        // Address card selection
+        window.selectAddress = function (card) {
+            document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            card.querySelector('input[type="radio"]').checked = true;
+            updateShippingFee();
         };
-        
-        reader.readAsDataURL(file);
-    }
-    
-    // View image in modal
-    viewImageBtn.addEventListener('click', function() {
-        imageModalImg.src = imagePreview.src;
-        imageModal.classList.add('active');
-    });
-    
-    // Close modal
-    imageModalClose.addEventListener('click', function() {
-        imageModal.classList.remove('active');
-    });
-    
-    imageModal.addEventListener('click', function(e) {
-        if (e.target === imageModal) {
-            imageModal.classList.remove('active');
+
+        // Update shipping fee and total
+        function updateShippingFee() {
+            const addressRadio = document.querySelector('input[name="shipping_address"]:checked');
+            const subtotal = parseFloat(document.getElementById('subtotal-value').dataset.value);
+            let shippingFee = 0;
+            let shippingText = '';
+            let total = subtotal;
+            if (addressRadio) {
+                const addrId = addressRadio.value;
+                const feeData = deliveryFees[addrId];
+                if (feeData) {
+                    if (subtotal >= feeData.min_order_free) {
+                        shippingFee = 0;
+                        shippingText = 'Free delivery (min ₱' + feeData.min_order_free.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ')';
+                    } else {
+                        shippingFee = feeData.fee;
+                        shippingText = '₱' + feeData.fee.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' (' + feeData.estimated_days + ')';
+                    }
+                    total += shippingFee;
+                }
+            }
+            document.getElementById('shipping-fee-value').textContent = shippingFee === 0 ? 'Free' : '₱' + shippingFee.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            document.getElementById('shipping-details').textContent = shippingText;
+            document.getElementById('shipping-details').style.display = shippingText ? 'inline' : 'none';
+            document.getElementById('total-value').textContent = '₱' + total.toLocaleString(undefined, { minimumFractionDigits: 2 });
         }
-    });
-    
-    // Remove image
-    removeImageBtn.addEventListener('click', function() {
-        imagePreview.src = '';
-        imagePreviewContainer.classList.remove('active');
-        uploadPlaceholder.style.display = 'block';
-        uploadInput.value = '';
-    });
-    
-    // Form validation
-    document.getElementById('checkout-form').addEventListener('submit', function(e) {
-        const addressSelected = document.querySelector('input[name="shipping_address"]:checked');
-        if (!addressSelected && document.querySelectorAll('.address-card').length > 0) {
-            e.preventDefault();
-            alert('Please select a shipping address');
-            return false;
-        }
-        
-        const paymentSelected = document.querySelector('input[name="payment_method"]:checked');
-        if (!paymentSelected) {
-            e.preventDefault();
-            alert('Please select a payment method');
-            return false;
-        }
-        
-        // Check screenshot for GCash and PayMaya
-        if (paymentSelected.value === 'gcash' || paymentSelected.value === 'paymaya') {
-            if (!uploadInput.files || uploadInput.files.length === 0) {
+
+        // Initial shipping fee calculation
+        updateShippingFee();
+
+        // Recalculate on address change
+        document.querySelectorAll('input[name="shipping_address"]').forEach(radio => {
+            radio.addEventListener('change', updateShippingFee);
+        });
+
+        // Payment method selection
+        window.selectPayment = function (method, type) {
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+            method.classList.add('selected');
+            method.querySelector('input[type="radio"]').checked = true;
+
+            // Show/hide instructions and upload
+            const uploadContainer = document.getElementById('upload-container');
+            const gcashInstructions = document.getElementById('gcash-instructions');
+            const paymayaInstructions = document.getElementById('paymaya-instructions');
+
+            uploadContainer.classList.remove('active');
+            gcashInstructions.classList.remove('active');
+            paymayaInstructions.classList.remove('active');
+
+            if (type === 'gcash') {
+                uploadContainer.classList.add('active');
+                gcashInstructions.classList.add('active');
+            } else if (type === 'paymaya') {
+                uploadContainer.classList.add('active');
+                paymayaInstructions.classList.add('active');
+            }
+        };
+
+        // File upload handling
+        const uploadArea = document.getElementById('upload-area');
+        const uploadInput = document.getElementById('payment-screenshot');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const viewImageBtn = document.getElementById('view-image');
+        const removeImageBtn = document.getElementById('remove-image');
+        const imageModal = document.getElementById('image-modal');
+        const imageModalImg = document.getElementById('image-modal-img');
+        const imageModalClose = document.getElementById('image-modal-close');
+
+        // Drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, function (e) {
                 e.preventDefault();
-                alert('Please upload a payment screenshot for ' + paymentSelected.value.toUpperCase());
+                e.stopPropagation();
+            }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, function () {
+                uploadArea.classList.add('active');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, function () {
+                uploadArea.classList.remove('active');
+            }, false);
+        });
+
+        uploadArea.addEventListener('drop', function (e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length) {
+                uploadInput.files = files;
+                handleFiles(files);
+            }
+        }, false);
+
+        uploadInput.addEventListener('change', function () {
+            if (this.files.length) {
+                handleFiles(this.files);
+            }
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF)');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size exceeds 5MB limit');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreviewContainer.classList.add('active');
+                uploadPlaceholder.style.display = 'none';
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // View image in modal
+        viewImageBtn.addEventListener('click', function () {
+            imageModalImg.src = imagePreview.src;
+            imageModal.classList.add('active');
+        });
+
+        // Close modal
+        imageModalClose.addEventListener('click', function () {
+            imageModal.classList.remove('active');
+        });
+
+        imageModal.addEventListener('click', function (e) {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('active');
+            }
+        });
+
+        // Remove image
+        removeImageBtn.addEventListener('click', function () {
+            imagePreview.src = '';
+            imagePreviewContainer.classList.remove('active');
+            uploadPlaceholder.style.display = 'block';
+            uploadInput.value = '';
+        });
+
+        // Form validation
+        document.getElementById('checkout-form').addEventListener('submit', function (e) {
+            const addressSelected = document.querySelector('input[name="shipping_address"]:checked');
+            if (!addressSelected && document.querySelectorAll('.address-card').length > 0) {
+                e.preventDefault();
+                alert('Please select a shipping address');
                 return false;
             }
-        }
-        
-        return true;
+
+            const paymentSelected = document.querySelector('input[name="payment_method"]:checked');
+            if (!paymentSelected) {
+                e.preventDefault();
+                alert('Please select a payment method');
+                return false;
+            }
+
+            // Check screenshot for GCash and PayMaya
+            if (paymentSelected.value === 'gcash' || paymentSelected.value === 'paymaya') {
+                if (!uploadInput.files || uploadInput.files.length === 0) {
+                    e.preventDefault();
+                    alert('Please upload a payment screenshot for ' + paymentSelected.value.toUpperCase());
+                    return false;
+                }
+            }
+
+            return true;
+        });
     });
-});
 </script>
 {% endblock %}

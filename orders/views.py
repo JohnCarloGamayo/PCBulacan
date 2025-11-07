@@ -327,10 +327,17 @@ def checkout_view(request):
             messages.error(request, f'Error processing order: {str(e)}')
             return redirect('orders:checkout')
     
+    # Calculate total for selected items
+    if is_buy_now:
+        total = selected_items[0].total_price  # For buy now, just one item
+    else:
+        total = sum(item.total_price for item in selected_items)
+
     context = {
         'selected_items': selected_items,
         'addresses': addresses,
-        'subtotal': subtotal,
+        'subtotal': total,  # Use the calculated total as subtotal
+        'total': total,     # Initial total (before delivery fee)
         'is_buy_now': is_buy_now,
     }
     

@@ -8,17 +8,17 @@
 <style>
     /* Cart Page Styles (CyberZone-inspired, PCBulacan branding) */
     .page-header {
-        background-color: #f1f5f9;
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         padding: 2rem 0;
         margin-bottom: 2rem;
-        border-radius: 12px;
+        /* border-radius: 12px; */
         text-align: center;
     }
 
     .page-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
-        color: #048400;
+        color: #1e293b;
         margin-bottom: 0.5rem;
     }
 
@@ -31,16 +31,22 @@
     }
 
     .breadcrumb a {
-        color: #048400;
+        color: #1e293b;
         transition: all 0.3s ease;
+        text-decoration: none;
+        font-size: 0.875rem;
     }
 
     .breadcrumb a:hover {
-        color: #048400;
+        color: #1e293b;
     }
 
     .breadcrumb-separator {
-        color: #94a3b8;
+        color: #1e293b;
+    }
+
+    .breadcrumb span {
+        color: #1e293b;
     }
 
     .cart-layout {
@@ -89,15 +95,16 @@
         justify-content: center;
         gap: 0.5rem;
         padding: 0.75rem 1.5rem;
-        background-color: #2563eb;
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         color: white;
         border-radius: 8px;
         font-weight: 600;
         transition: all 0.3s ease;
+        text-decoration: none;
     }
 
     .cart-empty-button:hover {
-        background-color: #1d4ed8;
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
     }
 
     .cart-item {
@@ -136,7 +143,7 @@
 
     .cart-item-name {
         font-weight: 600;
-        color: #1e3a8a;
+        color: #1e293b;
         margin-bottom: 0.5rem;
         font-size: 1.1rem;
     }
@@ -217,7 +224,7 @@
 
     .cart-item-total {
         font-weight: 600;
-        color: #1e3a8a;
+        color: #1e293b;
         font-size: 1.1rem;
         text-align: right;
         min-width: 100px;
@@ -235,7 +242,7 @@
     .cart-summary-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1e3a8a;
+        color: #048400;
         margin-bottom: 1.5rem;
         padding-bottom: 0.75rem;
         border-bottom: 1px solid #e2e8f0;
@@ -274,7 +281,7 @@
 
     .cart-summary-row.total {
         font-weight: 600;
-        color: #1e3a8a;
+        color: #048400;
         font-size: 1.1rem;
         padding-top: 1rem;
         margin-top: 1rem;
@@ -284,7 +291,7 @@
     .checkout-button {
         width: 100%;
         padding: 1rem;
-        background-color: #2563eb;
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         color: white;
         border: none;
         border-radius: 8px;
@@ -299,7 +306,8 @@
     }
 
     .checkout-button:hover {
-        background-color: #1d4ed8;
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
+        transform: translateY(-5px);
     }
 
     .checkout-button:disabled {
@@ -312,13 +320,14 @@
         align-items: center;
         gap: 0.5rem;
         margin-top: 1rem;
-        color: #2563eb;
+        color: #048400;
         font-weight: 500;
         transition: all 0.3s ease;
+        text-decoration: none;
     }
 
     .continue-shopping:hover {
-        color: #1d4ed8;
+        color: #048400;
     }
 
     .cart-error {
@@ -348,6 +357,10 @@
         width: 18px;
         height: 18px;
         cursor: pointer;
+    }
+
+    input[type=checkbox] {
+        accent-color: #048400;
     }
 
     .clear-cart-btn {
@@ -414,16 +427,16 @@
     document.addEventListener('DOMContentLoaded', function () {
         // Delete item functionality
         document.querySelectorAll('.remove-item-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 if (!confirm('Are you sure you want to remove this item from cart?')) {
                     return;
                 }
-                
+
                 const formData = new FormData(this);
                 const url = this.action;
-                
+
                 fetch(url, {
                     method: 'POST',
                     body: formData,
@@ -431,63 +444,63 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Remove the item from DOM
-                        const cartItem = this.closest('.cart-item');
-                        cartItem.style.opacity = '0';
-                        setTimeout(() => {
-                            cartItem.remove();
-                            
-                            // Check if cart is empty
-                            const remainingItems = document.querySelectorAll('.cart-item');
-                            if (remainingItems.length === 0) {
-                                location.reload();
-                            } else {
-                                updateOrderSummary();
-                            }
-                        }, 300);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error removing item from cart');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the item from DOM
+                            const cartItem = this.closest('.cart-item');
+                            cartItem.style.opacity = '0';
+                            setTimeout(() => {
+                                cartItem.remove();
+
+                                // Check if cart is empty
+                                const remainingItems = document.querySelectorAll('.cart-item');
+                                if (remainingItems.length === 0) {
+                                    location.reload();
+                                } else {
+                                    updateOrderSummary();
+                                }
+                            }, 300);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error removing item from cart');
+                    });
             });
         });
 
         // Clear cart functionality - Delete only selected items
         const clearCartBtn = document.getElementById('clear-cart-btn');
         if (clearCartBtn) {
-            clearCartBtn.addEventListener('click', function(e) {
+            clearCartBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                
+
                 // Get selected items
                 const selectedCheckboxes = Array.from(itemCheckboxes).filter(cb => cb.checked);
-                
+
                 if (selectedCheckboxes.length === 0) {
                     alert('Please select items to delete.');
                     return;
                 }
-                
+
                 const itemCount = selectedCheckboxes.length;
-                const confirmMessage = itemCount === itemCheckboxes.length 
-                    ? 'Are you sure you want to delete all items from cart?' 
-                    : `Are you sure you want to delete ${itemCount} selected item(s)?`;
-                
+                const confirmMessage = itemCount === itemCheckboxes.length
+                    ? 'Are you sure you want to remove all items from cart?'
+                    : `Are you sure you want to remove ${itemCount} selected item(s)?`;
+
                 if (!confirm(confirmMessage)) {
                     return;
                 }
-                
+
                 // Delete selected items one by one
                 let deletedCount = 0;
                 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                
+
                 selectedCheckboxes.forEach((checkbox, index) => {
                     const itemId = checkbox.value;
                     const cartItem = checkbox.closest('.cart-item');
-                    
+
                     fetch(`/orders/remove-from-cart/${itemId}/`, {
                         method: 'POST',
                         headers: {
@@ -495,23 +508,23 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            deletedCount++;
-                            cartItem.style.opacity = '0';
-                            
-                            // After all items processed
-                            if (deletedCount === selectedCheckboxes.length) {
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 300);
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                deletedCount++;
+                                cartItem.style.opacity = '0';
+
+                                // After all items processed
+                                if (deletedCount === selectedCheckboxes.length) {
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 300);
+                                }
                             }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 });
             });
         }
@@ -717,11 +730,11 @@
                     <div class="cart-header-actions">
                         <div class="select-all-container">
                             <input type="checkbox" id="select-all" class="cart-checkbox">
-                            <label for="select-all" class="select-all-label">Select All Items</label>
+                            <label for="select-all" class="select-all-label">Select All</label>
                         </div>
                         <button type="button" id="clear-cart-btn" class="clear-cart-btn" disabled>
                             <i class="fas fa-trash-alt"></i>
-                            Delete Selected
+                            Remove
                         </button>
                     </div>
                     {% for item in cart.items.all %}
@@ -748,7 +761,8 @@
                                 <form method="post" action="{% url 'orders:remove_from_cart' item.id %}"
                                     class="remove-item-form" style="display:inline;">
                                     {% csrf_token %}
-                                    <button type="submit" class="cart-action-btn remove" title="Remove">
+                                    <button type="submit" class="cart-action-btn remove" title="Remove"
+                                        style="display: no;">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
