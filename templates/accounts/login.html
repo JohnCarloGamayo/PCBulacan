@@ -5,59 +5,39 @@
 
 {% block extra_css %}
 <style>
-    /* Remove default container padding for full-width layout */
+    /* Remove default padding and set background */
     body {
         overflow-x: hidden;
     }
 
-    /* Main split-screen container */
+    /* Full-screen background container */
     .auth-split-container {
-        display: flex;
+        position: relative;
         min-height: 100vh;
         width: 100%;
-    }
-
-    /* Left side - Background Image (Desktop only) */
-    .auth-image-side {
-        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 2rem;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        position: relative;
     }
 
-    /* Optional overlay for better text readability */
-    .auth-image-side::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(8, 254, 1, 0.1) 0%, rgba(4, 132, 0, 0.2) 100%);
-    }
-
-    /* Right side - Form */
-    .auth-form-side {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-        background: white;
-    }
-
+    /* Floating form card - Shopee style */
     .auth-form-wrapper {
         width: 100%;
-        max-width: 450px;
+        max-width: 400px;
+        margin-right: 5%;
     }
 
     .auth-card {
-        background: white;
-        border-radius: 0;
-        padding: 0;
-        box-shadow: none;
-        border: none;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
     .auth-header {
@@ -66,7 +46,7 @@
     }
 
     .auth-header h2 {
-        font-size: 2rem;
+        font-size: 1.75rem;
         font-weight: 700;
         color: #048400;
         margin-bottom: 0.5rem;
@@ -74,26 +54,29 @@
 
     .auth-header p {
         color: #64748b;
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .form-label {
         font-weight: 600;
         color: #1e293b;
         margin-bottom: 0.5rem;
+        font-size: 0.9rem;
     }
 
     .form-control {
         padding: 0.75rem 1rem;
-        border: 2px solid #e2e8f0;
+        border: 1px solid #e2e8f0;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 0.95rem;
         transition: all 0.3s ease;
+        background: white;
     }
 
     .form-control:focus {
         border-color: #048400;
         box-shadow: 0 0 0 3px rgba(4, 132, 0, 0.1);
+        outline: none;
     }
 
     .btn-primary {
@@ -103,11 +86,16 @@
         font-weight: 600;
         border-radius: 8px;
         transition: all 0.3s ease;
+        font-size: 1rem;
     }
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(4, 132, 0, 0.3);
+        box-shadow: 0 10px 25px rgba(4, 132, 0, 0.4);
+    }
+
+    .text-center {
+        font-size: 0.9rem;
     }
 
     .text-center a {
@@ -122,87 +110,100 @@
         text-decoration: underline;
     }
 
-    /* Mobile View - Hide image, show only form */
-    @media (max-width: 768px) {
-        .auth-image-side {
-            display: none;
-        }
+    .text-center p {
+        margin-bottom: 0.5rem;
+    }
 
-        .auth-form-side {
-            flex: 1;
-            min-height: 100vh;
+    /* Mobile View - Center form, lighter background */
+    @media (max-width: 768px) {
+        .auth-split-container {
+            background-image: none !important;
+            background-color: #f8fafc;
+            justify-content: center;
+            padding: 1rem;
         }
 
         .auth-form-wrapper {
             max-width: 100%;
+            margin-right: 0;
+        }
+
+        .auth-card {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .auth-header h2 {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
         }
     }
 
     /* Tablet View */
     @media (min-width: 769px) and (max-width: 1024px) {
-        .auth-image-side {
-            flex: 0.8;
+        .auth-form-wrapper {
+            max-width: 380px;
+            margin-right: 3%;
         }
 
-        .auth-form-side {
-            flex: 1.2;
+        .auth-card {
+            padding: 2rem 1.75rem;
+        }
+    }
+
+    /* Large screens - smaller form */
+    @media (min-width: 1400px) {
+        .auth-form-wrapper {
+            max-width: 420px;
+            margin-right: 8%;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="auth-split-container">
-    <!-- Left Side - Background Image (Desktop only) -->
-    <div class="auth-image-side" style="background-image: url('/media/login_signup/Main.jpg');"></div>
-    <!-- Right Side - Login Form -->
-    <div class="auth-form-side">
-        <div class="auth-form-wrapper">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
-                    <p>Welcome back to PCBulacan</p>
+<div class="auth-split-container" style="background-image: url('/media/login_signup/Main.jpg');">
+    <!-- Floating Login Form - Shopee Style -->
+    <div class="auth-form-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <p>Welcome back to PCBulacan</p>
+            </div>
+            
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Email</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+                    {% endif %}
                 </div>
                 
-                <form method="post" class="auth-form">
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="form-label">Email</label>
-                        {{ form.username }}
-                        {% if form.username.errors %}
-                            <div class="text-danger">{{ form.username.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                        {{ form.password }}
-                        {% if form.password.errors %}
-                            <div class="text-danger">{{ form.password.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
-                        </div>
+                <div class="mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="text-danger small mt-1">{{ form.password.errors }}</div>
                     {% endif %}
-                    
-                    <button type="submit" class="btn btn-primary w-100 mb-3">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </button>
-                    
-                    <div class="text-center">
-                        <p><a href="#" id="forgotPasswordLink" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a></p>
-                        <p>Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up here</a></p>
+                </div>
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger alert-sm">
+                        {{ form.non_field_errors }}
                     </div>
-                </form>
-            </div>
+                {% endif %}
+                
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div class="text-center">
+                    <p><a href="#" id="forgotPasswordLink" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a></p>
+                    <p>Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up here</a></p>
+                </div>
+            </form>
         </div>
     </div>
 </div>
