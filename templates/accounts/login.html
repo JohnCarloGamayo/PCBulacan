@@ -3,52 +3,207 @@
 
 {% block title %}Login - PCBulacan{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Remove default container padding for full-width layout */
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Main split-screen container */
+    .auth-split-container {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    /* Left side - Background Image (Desktop only) */
+    .auth-image-side {
+        flex: 1;
+        background-image: url('{% static "media/login_signup/Main.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+
+    /* Optional overlay for better text readability */
+    .auth-image-side::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(8, 254, 1, 0.1) 0%, rgba(4, 132, 0, 0.2) 100%);
+    }
+
+    /* Right side - Form */
+    .auth-form-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: white;
+    }
+
+    .auth-form-wrapper {
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .auth-card {
+        background: white;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #048400;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #048400;
+        box-shadow: 0 0 0 3px rgba(4, 132, 0, 0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
+        border: none;
+        padding: 0.875rem 1.5rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(4, 132, 0, 0.3);
+    }
+
+    .text-center a {
+        color: #048400;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .text-center a:hover {
+        color: #036300;
+        text-decoration: underline;
+    }
+
+    /* Mobile View - Hide image, show only form */
+    @media (max-width: 768px) {
+        .auth-image-side {
+            display: none;
+        }
+
+        .auth-form-side {
+            flex: 1;
+            min-height: 100vh;
+        }
+
+        .auth-form-wrapper {
+            max-width: 100%;
+        }
+
+        .auth-header h2 {
+            font-size: 1.75rem;
+        }
+    }
+
+    /* Tablet View */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .auth-image-side {
+            flex: 0.8;
+        }
+
+        .auth-form-side {
+            flex: 1.2;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="auth-container">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-5">
-                <div class="auth-card">
-                    <div class="auth-header">
-                        <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
-                        <p>Welcome back to PCBulacan</p>
+<div class="auth-split-container">
+    <!-- Left Side - Background Image (Desktop only) -->
+    <div class="auth-image-side"></div>
+    
+    <!-- Right Side - Login Form -->
+    <div class="auth-form-side">
+        <div class="auth-form-wrapper">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                    <p>Welcome back to PCBulacan</p>
+                </div>
+                
+                <form method="post" class="auth-form">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Email</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                        {% endif %}
                     </div>
                     
-                    <form method="post" class="auth-form">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">Email</label>
-                            {{ form.username }}
-                            {% if form.username.errors %}
-                                <div class="text-danger">{{ form.username.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                            {{ form.password }}
-                            {% if form.password.errors %}
-                                <div class="text-danger">{{ form.password.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {{ form.non_field_errors }}
-                            </div>
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="text-danger">{{ form.password.errors }}</div>
                         {% endif %}
-                        
-                        <button type="submit" class="btn btn-primary w-100 mb-3">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </button>
-                        
-                        <div class="text-center">
-                            <p><a href="#" id="forgotPasswordLink" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a></p>
-                            <p>Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up here</a></p>
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
                         </div>
-                    </form>
-                </div>
+                    {% endif %}
+                    
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    
+                    <div class="text-center">
+                        <p><a href="#" id="forgotPasswordLink" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a></p>
+                        <p>Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up here</a></p>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
