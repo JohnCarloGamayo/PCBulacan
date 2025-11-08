@@ -146,8 +146,8 @@ function renderSalesOverviewChart(data) {
                 {
                     label: 'This Week',
                     data: data.currentWeek,
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderColor: '#048400',
+                    backgroundColor: 'rgba(4, 132, 0, 0.1)',
                     tension: 0.4,
                     fill: true
                 },

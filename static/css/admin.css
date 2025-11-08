@@ -1,6 +1,7 @@
 /* Admin Dashboard Styles */
 :root {
-    --primary-color: #2563eb;
+    --primary-color: #048400;
+    --primary-light: #08fe01;
     --secondary-color: #64748b;
     --success-color: #10b981;
     --warning-color: #f59e0b;
@@ -34,7 +35,7 @@ body {
 /* Sidebar */
 .admin-sidebar {
     width: var(--sidebar-width);
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    background: linear-gradient(180deg, #036300 0%, #024800 100%);
     color: white;
     position: fixed;
     left: 0;
@@ -91,9 +92,9 @@ body {
 }
 
 .menu-item.active {
-    background-color: rgba(37, 99, 235, 0.1);
+    background-color: rgba(8, 254, 1, 0.15);
     color: white;
-    border-left-color: var(--primary-color);
+    border-left-color: var(--primary-light);
 }
 
 .menu-item i {
@@ -128,7 +129,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+    background: linear-gradient(135deg, #08fe01, #048400);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -212,11 +213,11 @@ body {
 }
 
 .sidebar-toggle:hover {
-    background-color: #2563eb;
+    background-color: #048400;
     color: white;
-    border-color: #2563eb;
+    border-color: #048400;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 8px rgba(4, 132, 0, 0.3);
 }
 
 .breadcrumb {
@@ -228,14 +229,14 @@ body {
 }
 
 .breadcrumb a {
-    color: #2563eb;
+    color: #048400;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
 }
 
 .breadcrumb a:hover {
-    color: #1d4ed8;
+    color: #036300;
 }
 
 .breadcrumb span {
@@ -281,8 +282,8 @@ body {
 
 .header-search input:focus {
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    border-color: #048400;
+    box-shadow: 0 0 0 4px rgba(4, 132, 0, 0.1);
     width: 380px;
 }
 
@@ -314,11 +315,11 @@ body {
 }
 
 .header-icon:hover {
-    background-color: #e0e7ff;
-    color: #2563eb;
-    border-color: #c7d2fe;
+    background-color: #e6ffe6;
+    color: #048400;
+    border-color: #b8f5b8;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 4px 8px rgba(4, 132, 0, 0.2);
 }
 
 .header-icon .badge {
@@ -379,9 +380,9 @@ body {
 }
 
 .dropdown-toggle:hover {
-    background-color: #e0e7ff;
-    color: #2563eb;
-    border-color: #c7d2fe;
+    background-color: #e6ffe6;
+    color: #048400;
+    border-color: #b8f5b8;
     transform: translateY(-2px);
 }
 
@@ -421,8 +422,8 @@ body {
 }
 
 .dropdown-menu a:hover {
-    background-color: #f1f5f9;
-    color: #2563eb;
+    background-color: #e6ffe6;
+    color: #048400;
 }
 
 .dropdown-menu a i {
@@ -536,7 +537,7 @@ body {
 }
 
 .stat-icon.sales {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #08fe01, #048400);
     color: white;
 }
 
@@ -697,8 +698,8 @@ table tbody tr:hover {
 }
 
 .status-badge.processing {
-    background-color: #dbeafe;
-    color: #1e40af;
+    background-color: #e6ffe6;
+    color: #036300;
 }
 
 .status-badge.shipped {
@@ -732,12 +733,14 @@ table tbody tr:hover {
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #1d4ed8;
+    background: linear-gradient(135deg, #06d001 0%, #036300 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(4, 132, 0, 0.3);
 }
 
 .btn-sm {
