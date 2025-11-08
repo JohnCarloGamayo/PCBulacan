@@ -20,7 +20,6 @@
     /* Left side - Background Image (Desktop only) */
     .auth-image-side {
         flex: 1;
-        background-image: url('{{ MEDIA_URL }}login_signup/Main.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -159,7 +158,7 @@
 {% block content %}
 <div class="auth-split-container">
     <!-- Left Side - Background Image (Desktop only) -->
-    <div class="auth-image-side"></div>
+    <div class="auth-image-side" style="background-image: url('{{ MEDIA_URL }}login_signup/Main.jpg');"></div>
     
     <!-- Right Side - Login Form -->
     <div class="auth-form-side">
