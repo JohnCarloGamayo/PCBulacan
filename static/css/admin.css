@@ -50,7 +50,8 @@ body {
 
 .sidebar-header {
     padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(8, 254, 1, 0.2);
+    background: linear-gradient(135deg, rgba(8, 254, 1, 0.1) 0%, rgba(4, 132, 0, 0.05) 100%);
 }
 
 .sidebar-header .logo {
@@ -63,8 +64,18 @@ body {
 }
 
 .sidebar-header .logo i {
-    color: var(--primary-color);
+    color: var(--primary-light);
     font-size: 2rem;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px var(--primary-light), 0 0 10px var(--primary-light);
+    }
+    to {
+        text-shadow: 0 0 10px var(--primary-light), 0 0 20px var(--primary-light), 0 0 30px var(--primary-color);
+    }
 }
 
 /* Sidebar Menu */
@@ -72,6 +83,24 @@ body {
     flex: 1;
     padding: 1rem 0;
     overflow-y: auto;
+}
+
+/* Custom Scrollbar for Sidebar */
+.sidebar-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #08fe01 0%, #048400 100%);
+    border-radius: 10px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #06d001 0%, #036300 100%);
 }
 
 .menu-item {
@@ -83,24 +112,53 @@ body {
     text-decoration: none;
     transition: all 0.3s ease;
     border-left: 3px solid transparent;
+    position: relative;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(90deg, rgba(8, 254, 1, 0.2) 0%, transparent 100%);
+    transition: width 0.3s ease;
 }
 
 .menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: white;
-    border-left-color: var(--primary-color);
+    background-color: rgba(8, 254, 1, 0.08);
+    color: var(--primary-light);
+    border-left-color: var(--primary-light);
+    transform: translateX(5px);
+}
+
+.menu-item:hover::before {
+    width: 100%;
 }
 
 .menu-item.active {
-    background-color: rgba(8, 254, 1, 0.15);
-    color: white;
+    background: linear-gradient(90deg, rgba(8, 254, 1, 0.2) 0%, rgba(4, 132, 0, 0.1) 100%);
+    color: var(--primary-light);
     border-left-color: var(--primary-light);
+    font-weight: 600;
+    box-shadow: inset 0 0 10px rgba(8, 254, 1, 0.1);
+}
+
+.menu-item.active i {
+    color: var(--primary-light);
+    text-shadow: 0 0 10px var(--primary-light);
 }
 
 .menu-item i {
     font-size: 1.125rem;
     width: 20px;
     text-align: center;
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover i {
+    transform: scale(1.1);
 }
 
 .menu-divider {
@@ -112,7 +170,8 @@ body {
 /* Sidebar Footer */
 .sidebar-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(8, 254, 1, 0.2);
+    background: linear-gradient(135deg, rgba(8, 254, 1, 0.05) 0%, rgba(4, 132, 0, 0.1) 100%);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -133,7 +192,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 15px rgba(8, 254, 1, 0.5), 0 0 30px rgba(4, 132, 0, 0.3);
+    animation: pulse-avatar 2s ease-in-out infinite;
     font-size: 1.125rem;
+}
+
+@keyframes pulse-avatar {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(8, 254, 1, 0.5), 0 0 30px rgba(4, 132, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(8, 254, 1, 0.7), 0 0 40px rgba(4, 132, 0, 0.5);
+        transform: scale(1.05);
+    }
 }
 
 .user-details {
@@ -144,11 +215,13 @@ body {
     font-weight: 600;
     font-size: 0.875rem;
     color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .user-role {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--primary-light);
+    font-weight: 500;
 }
 
 .logout-btn {
@@ -157,11 +230,13 @@ body {
     padding: 0.5rem;
     border-radius: 0.375rem;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .logout-btn:hover {
     background-color: rgba(239, 68, 68, 0.1);
     color: var(--danger-color);
+    transform: scale(1.1);
 }
 
 /* Main Content */
