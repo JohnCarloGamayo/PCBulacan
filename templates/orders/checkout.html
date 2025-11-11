@@ -1015,9 +1015,22 @@
                 <div class="order-item-info">
                     <h4 class="order-item-name">{{ item.product.name }}</h4>
                     <div class="order-item-meta">
-                        <span class="order-item-price">₱{{ item.product.price|floatformat:2 }}</span>
+                        <span class="order-item-price">
+                            {% if item.product.has_active_deal %}
+                                <span style="text-decoration: line-through; color: #94a3b8; margin-right: 8px;">₱{{ item.product.original_price|floatformat:2 }}</span>
+                                <span style="color: #e74c3c; font-weight: 600;">₱{{ item.product.final_price|floatformat:2 }}</span>
+                                <span style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem; margin-left: 4px;">-{{ item.product.savings_percentage }}%</span>
+                            {% else %}
+                                ₱{{ item.product.price|floatformat:2 }}
+                            {% endif %}
+                        </span>
                         <span class="order-item-quantity">Qty: {{ item.quantity }}</span>
                     </div>
+                    {% if item.product.has_active_deal and item.product.active_deal %}
+                    <div style="font-size: 0.75rem; color: #27ae60; margin-top: 4px;">
+                        <i class="fas fa-tag"></i> {{ item.product.active_deal.title }}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -1028,6 +1041,12 @@
                 <span class="summary-row-label">Subtotal</span>
                 <span id="subtotal-value" class="summary-row-value" data-value="{{ subtotal }}">₱{{ subtotal|floatformat:2 }}</span>
             </div>
+            {% if total_savings > 0 %}
+            <div class="summary-row" style="color: #27ae60;">
+                <span class="summary-row-label">💰 Total Savings</span>
+                <span class="summary-row-value">-₱{{ total_savings|floatformat:2 }}</span>
+            </div>
+            {% endif %}
             <div class="summary-row">
                 <span class="summary-row-label">Shipping <span id="shipping-details"
                         style="display: none; font-size: 0.75rem; color: #64748b;"></span></span>

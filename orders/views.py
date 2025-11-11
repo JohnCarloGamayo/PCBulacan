@@ -330,14 +330,17 @@ def checkout_view(request):
     # Calculate total for selected items
     if is_buy_now:
         total = selected_items[0].total_price  # For buy now, just one item
+        total_savings = selected_items[0].total_savings if hasattr(selected_items[0], 'total_savings') else 0
     else:
         total = sum(item.total_price for item in selected_items)
+        total_savings = sum(item.total_savings for item in selected_items)
 
     context = {
         'selected_items': selected_items,
         'addresses': addresses,
         'subtotal': total,  # Use the calculated total as subtotal
         'total': total,     # Initial total (before delivery fee)
+        'total_savings': total_savings,
         'is_buy_now': is_buy_now,
     }
     
