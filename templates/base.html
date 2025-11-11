@@ -408,6 +408,70 @@
             font-weight: 600;
         }
         
+        /* Mobile Notification Dropdown */
+        .mobile-notification-dropdown {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            max-height: calc(100vh - 140px);
+            background: white;
+            z-index: 999;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mobile-notification-dropdown.active {
+            display: block;
+        }
+        
+        .mobile-notification-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
+            color: white;
+        }
+        
+        .mobile-notification-header h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .mobile-notification-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+        
+        .mobile-notification-list {
+            padding: 0;
+        }
+        
+        .mobile-notification-empty {
+            padding: 2rem;
+            text-align: center;
+            color: #64748b;
+        }
+        
+        .mobile-notification-empty i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+        
         .mobile-bottom-nav {
             display: none;
             position: fixed;
@@ -574,12 +638,16 @@
                 </button>
                 <div class="mobile-search-suggestions" id="mobileSearchSuggestions"></div>
             </div>
-            <button class="mobile-icon-btn" onclick="window.location.href='{% url 'accounts:account' %}'">
+            {% if user.is_authenticated %}
+            <button class="mobile-icon-btn" id="mobileNotificationBtn">
                 <i class="fas fa-bell"></i>
-                {% if user.is_authenticated %}
                 <span class="badge" id="mobileNotificationBadge" style="display: none;">0</span>
-                {% endif %}
             </button>
+            {% else %}
+            <button class="mobile-icon-btn" onclick="window.location.href='{% url 'accounts:login' %}'">
+                <i class="fas fa-bell"></i>
+            </button>
+            {% endif %}
             <button class="mobile-icon-btn" onclick="window.location.href='{% url 'orders:cart' %}'">
                 <i class="fas fa-shopping-cart"></i>
                 {% if user.is_authenticated %}
@@ -588,6 +656,23 @@
             </button>
         </div>
     </div>
+    
+    <!-- Mobile Notification Dropdown -->
+    {% if user.is_authenticated %}
+    <div class="mobile-notification-dropdown" id="mobileNotificationDropdown">
+        <div class="mobile-notification-header">
+            <h4>Notifications</h4>
+            <button class="mobile-notification-close" id="mobileNotificationClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-notification-list" id="mobileNotificationList">
+            <div class="notification-loading" style="padding: 2rem; text-align: center;">
+                <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
+        </div>
+    </div>
+    {% endif %}
     
     <!-- Mobile Bottom Navigation -->
     <div class="mobile-bottom-nav">
@@ -964,6 +1049,121 @@
             
             // Refresh badge every 30 seconds
             setInterval(updateMobileNotificationBadge, 30000);
+            
+            // Mobile notification dropdown
+            const mobileNotificationBtn = document.getElementById('mobileNotificationBtn');
+            const mobileNotificationDropdown = document.getElementById('mobileNotificationDropdown');
+            const mobileNotificationClose = document.getElementById('mobileNotificationClose');
+            const mobileNotificationList = document.getElementById('mobileNotificationList');
+            
+            if (mobileNotificationBtn && mobileNotificationDropdown) {
+                // Toggle dropdown
+                mobileNotificationBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isActive = mobileNotificationDropdown.classList.contains('active');
+                    
+                    if (isActive) {
+                        mobileNotificationDropdown.classList.remove('active');
+                    } else {
+                        mobileNotificationDropdown.classList.add('active');
+                        fetchMobileNotifications();
+                    }
+                });
+                
+                // Close button
+                if (mobileNotificationClose) {
+                    mobileNotificationClose.addEventListener('click', function() {
+                        mobileNotificationDropdown.classList.remove('active');
+                    });
+                }
+                
+                // Close when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!mobileNotificationBtn.contains(e.target) && 
+                        !mobileNotificationDropdown.contains(e.target)) {
+                        mobileNotificationDropdown.classList.remove('active');
+                    }
+                });
+                
+                // Fetch and display mobile notifications
+                function fetchMobileNotifications() {
+                    fetch('/accounts/api/notifications/')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                displayMobileNotifications(data.notifications);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching mobile notifications:', error);
+                            mobileNotificationList.innerHTML = `
+                                <div class="mobile-notification-empty">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <p>Failed to load notifications</p>
+                                </div>
+                            `;
+                        });
+                }
+                
+                // Display notifications in mobile dropdown
+                function displayMobileNotifications(notifications) {
+                    if (notifications.length === 0) {
+                        mobileNotificationList.innerHTML = `
+                            <div class="mobile-notification-empty">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No notifications yet</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    mobileNotificationList.innerHTML = '';
+                    notifications.forEach(notif => {
+                        const notifElement = document.createElement('div');
+                        notifElement.className = `notification-item ${notif.is_read ? 'read' : 'unread'}`;
+                        notifElement.innerHTML = `
+                            <div class="notification-icon ${notif.type}">
+                                <i class="${notif.icon}"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">${notif.title}</div>
+                                <div class="notification-message">${notif.message}</div>
+                                <div class="notification-time">${notif.time_ago}</div>
+                            </div>
+                        `;
+                        
+                        // Mark as read and redirect when clicked
+                        notifElement.addEventListener('click', function() {
+                            markMobileNotificationAsRead(notif.id);
+                            if (notif.link && notif.link !== '#') {
+                                window.location.href = notif.link;
+                            }
+                        });
+                        
+                        mobileNotificationList.appendChild(notifElement);
+                    });
+                }
+                
+                // Mark notification as read
+                function markMobileNotificationAsRead(notificationId) {
+                    fetch(`/accounts/api/notifications/${notificationId}/read/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateMobileNotificationBadge();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error marking mobile notification as read:', error);
+                    });
+                }
+            }
             {% endif %}
         });
     </script>
