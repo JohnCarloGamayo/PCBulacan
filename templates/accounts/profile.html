@@ -4,6 +4,27 @@
 {% block title %}My Profile - PCBulacan{% endblock %}
 
 {% block content %}
+
+<style>
+    @media (max-width: 768px) {
+        .chat-messages {
+            margin-top: 4vh;
+        }
+
+        .chat-input-area {
+            padding: 1.25rem 5.5rem 1.25rem 1.25rem !important;
+        }
+    }
+
+    .bg-primary{
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
+    }
+
+    .btn-primary{
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
+        border: none;
+    }
+</style>
 <div class="container my-5">
     <div class="row">
         <div class="col-md-8 mx-auto">
@@ -14,52 +35,52 @@
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">First Name</label>
                                 {{ form.first_name }}
                             </div>
-                            
+
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Last Name</label>
                                 {{ form.last_name }}
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" value="{{ user.email }}" disabled>
                             <small class="text-muted">Email cannot be changed</small>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
                             {{ form.phone }}
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Address</label>
                             {{ form.address }}
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">City</label>
                                 {{ form.city }}
                             </div>
-                            
+
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">State</label>
                                 {{ form.state }}
                             </div>
-                            
+
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Zip Code</label>
                                 {{ form.zip_code }}
                             </div>
                         </div>
-                        
+
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Update Profile
                         </button>

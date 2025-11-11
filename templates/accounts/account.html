@@ -127,7 +127,8 @@
     }
 
     .account-nav li.active {
-        background-color: #e6ffe6;
+        /* background: linear-gradient(90deg, #c8e9c7 0%, white 100%); */
+        background-color: #c8e9c7;
     }
 
     .account-nav-link {
@@ -275,6 +276,7 @@
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1.5rem;
         margin-bottom: 1.5rem;
+        margin-top: 4vh;
     }
 
     .address-card {
@@ -298,8 +300,9 @@
 
     .primary-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
-        color: white;
+        /* background: transparent; */
+        border: 1px solid #048400;
+        color: #048400;
         padding: 0.25rem 0.625rem;
         border-radius: 4px;
         font-size: 0.75rem;
@@ -325,6 +328,32 @@
         padding: 1.5rem;
         margin-bottom: 1.5rem;
     }
+
+    .primary-address {
+        display: inline-flex !important;
+        /* places checkbox + text side by side */
+        align-items: center;
+        /* vertical alignment */
+        gap: 0.5rem;
+        /* space between checkbox and text */
+        white-space: nowrap;
+        /* prevents text from wrapping */
+        width: auto !important;
+        /* don’t stretch to parent width */
+        margin: 0 !important;
+        /* remove inherited block margin */
+        cursor: pointer;
+        /* better UX */
+        color: inherit;
+        font-weight: normal;
+    }
+
+    .primary-address input[type="checkbox"] {
+        margin: 0;
+        /* removes browser’s default margin */
+        accent-color: #048400;
+    }
+
 
     .order-filters {
         display: flex;
@@ -570,12 +599,12 @@
     }
 
     .tracking-step.active .step-icon {
-        background-color: #10b981;
+        background-color: #048400;
         color: white;
     }
 
     .tracking-step.active .step-label {
-        color: #10b981;
+        color: #048400;
         font-weight: 600;
     }
 
@@ -1014,6 +1043,14 @@
             align-items: center;
             text-align: center;
         }
+
+        .chat-messages {
+            margin-top: 4vh;
+        }
+
+        .chat-input-area {
+            padding: 1.25rem 5.5rem 1.25rem 1.25rem !important;
+        }
     }
 </style>
 {% endblock %}
@@ -1213,9 +1250,10 @@
                         </div>
 
                         <div class="form-group">
-                            <label>
+                            <label class="primary-address"
+                                style="display:inline-flex;align-items:center;gap:.5rem;margin:0;cursor:pointer;">
                                 <input type="checkbox" name="is_primary" id="is_primary">
-                                Set as primary address
+                                <span>Set as primary address</span>
                             </label>
                         </div>
 
@@ -1290,7 +1328,8 @@
                             <div class="order-summary">
                                 <p><strong>Total:</strong> ₱{{ order.total|floatformat:2 }}</p>
                                 {% if order.total_savings > 0 %}
-                                <p style="color: #27ae60;"><strong>💰 Total Savings:</strong> -₱{{ order.total_savings|floatformat:2 }}</p>
+                                <p style="color: #27ae60;"><strong>💰 Total Savings:</strong> -₱{{
+                                    order.total_savings|floatformat:2 }}</p>
                                 {% endif %}
                                 <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
                             </div>
@@ -1323,11 +1362,16 @@
                                         <h5 class="order-item-name">{{ item.product.name }}</h5>
                                         <p class="order-item-price">
                                             {% if item.had_discount %}
-                                                <span style="text-decoration: line-through; color: #94a3b8; margin-right: 8px; font-size: 0.85rem;">₱{{ item.original_price|floatformat:2 }}</span>
-                                                <span style="color: #e74c3c; font-weight: 600;">₱{{ item.price|floatformat:2 }}</span>
-                                                <span style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem; margin-left: 4px;">-{{ item.savings_percentage }}%</span>
+                                            <span
+                                                style="text-decoration: line-through; color: #94a3b8; margin-right: 8px; font-size: 0.85rem;">₱{{
+                                                item.original_price|floatformat:2 }}</span>
+                                            <span style="color: #e74c3c; font-weight: 600;">₱{{ item.price|floatformat:2
+                                                }}</span>
+                                            <span
+                                                style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem; margin-left: 4px;">-{{
+                                                item.savings_percentage }}%</span>
                                             {% else %}
-                                                ₱{{ item.price|floatformat:2 }}
+                                            ₱{{ item.price|floatformat:2 }}
                                             {% endif %}
                                         </p>
                                         <p class="order-item-quantity">Qty: {{ item.quantity }}</p>

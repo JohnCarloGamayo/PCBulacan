@@ -136,7 +136,7 @@
     .filter-checkbox input[type="checkbox"] {
         width: 16px;
         height: 16px;
-        accent-color: #2563eb;
+        accent-color: #08fe01;
         cursor: pointer;
     }
     
@@ -147,7 +147,7 @@
     }
     
     .filter-checkbox:hover label {
-        color: #1e3a8a;
+        color: #035d00;
     }
     
     .price-range {
@@ -167,7 +167,7 @@
     .filter-button {
         width: 100%;
         padding: 0.75rem;
-        background-color: #2563eb;
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         color: white;
         border: none;
         border-radius: 8px;
@@ -247,7 +247,7 @@
     }
     
     .view-option:hover, .view-option.active {
-        background-color: #2563eb;
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         color: white;
     }
     
@@ -939,7 +939,7 @@
     .filter-toggle-button {
         width: 100%;
         padding: 0.75rem;
-        background-color: #2563eb;
+        background-color: #048400;
         color: white;
         border: none;
         border-radius: 8px;
@@ -953,7 +953,7 @@
     }
     
     .filter-toggle-button:hover {
-        background-color: #1d4ed8;
+        background-color: #035d00;
     }
     
     /* Responsive */
@@ -996,9 +996,24 @@
     }
     
     @media (max-width: 768px) {
+        /* Header adjustments */
+        .page-header {
+            padding: 1.5rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+        }
+        
+        /* Toolbar */
         .products-toolbar {
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+        }
+        
+        .products-count {
+            font-size: 0.8125rem;
         }
         
         .products-sort {
@@ -1008,78 +1023,248 @@
         
         .sort-select {
             flex: 1;
+            padding: 0.625rem;
+            font-size: 0.8125rem;
         }
         
+        /* Products Grid - Shopee style */
         .products-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+        }
+        
+        /* Product Card - Clean Shopee style */
+        .product-card {
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        
+        .product-card:hover {
+            transform: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         }
         
         .product-image {
-            height: 140px;
+            height: 160px;
+            padding: 0.5rem;
+        }
+        
+        .product-badge {
+            top: 0.375rem;
+            left: 0.375rem;
+            padding: 0.15rem 0.4rem;
+            font-size: 0.625rem;
+        }
+        
+        /* Hide action buttons on mobile for cleaner look */
+        .product-actions {
+            display: none;
         }
         
         .product-content {
-            padding: 0.75rem;
-        }
-        
-        .product-title {
-            font-size: 0.8rem;
-            height: 2.4rem;
+            padding: 0.625rem;
         }
         
         .product-category {
-            font-size: 0.65rem;
+            font-size: 0.625rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .product-title {
+            font-size: 0.8125rem;
+            height: 2.6rem;
+            line-height: 1.3;
+            margin-bottom: 0.375rem;
+        }
+        
+        .product-rating {
+            margin-bottom: 0.375rem;
+        }
+        
+        .product-rating i {
+            font-size: 0.625rem;
+        }
+        
+        .product-rating span {
+            font-size: 0.625rem;
+        }
+        
+        .product-price {
+            margin-bottom: 0.625rem;
+            flex-wrap: wrap;
         }
         
         .current-price {
             font-size: 1rem;
         }
         
+        .old-price {
+            font-size: 0.6875rem;
+        }
+        
+        .discount-badge {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+        }
+        
         .product-button {
             padding: 0.5rem;
             font-size: 0.75rem;
+            border-radius: 4px;
         }
         
-        .product-action {
-            width: 28px;
-            height: 28px;
-            font-size: 0.7rem;
+        /* Modal adjustments */
+        .product-modal-content {
+            width: 95%;
+            margin: 2% auto;
+        }
+        
+        .product-modal-close {
+            width: 32px;
+            height: 32px;
+            font-size: 24px;
+            right: 15px;
+            top: 15px;
+        }
+
+        .chat-messages {
+            margin-top: 4vh;
+        }
+
+        .chat-input-area {
+            padding: 1.25rem 5.5rem 1.25rem 1.25rem !important;
         }
     }
     
     @media (max-width: 480px) {
+        /* Very small screens - ultra compact */
+        .page-header {
+            padding: 1rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+        
+        .breadcrumb {
+            font-size: 0.75rem;
+        }
+        
+        .products-toolbar {
+            padding: 0.75rem 0.875rem;
+        }
+        
+        .products-count {
+            font-size: 0.75rem;
+        }
+        
+        .sort-select {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Compact grid */
         .products-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
+            gap: 0.375rem;
+            padding: 0.375rem 0;
+        }
+        
+        .product-card {
+            border-radius: 6px;
         }
         
         .product-image {
-            height: 120px;
-            padding: 0.5rem;
+            height: 140px;
+            padding: 0.375rem;
+        }
+        
+        .product-badge {
+            top: 0.25rem;
+            left: 0.25rem;
+            padding: 0.125rem 0.375rem;
+            font-size: 0.5625rem;
+            border-radius: 10px;
         }
         
         .product-content {
-            padding: 0.6rem;
+            padding: 0.5rem;
+        }
+        
+        .product-category {
+            font-size: 0.5625rem;
+            margin-bottom: 0.25rem;
         }
         
         .product-title {
             font-size: 0.75rem;
-            height: 2.2rem;
+            height: 2.4rem;
+            line-height: 1.2;
+            margin-bottom: 0.25rem;
+        }
+        
+        .product-rating {
+            margin-bottom: 0.25rem;
+        }
+        
+        .product-rating i {
+            font-size: 0.5625rem;
+        }
+        
+        .product-rating span {
+            font-size: 0.5625rem;
+        }
+        
+        .product-price {
+            margin-bottom: 0.5rem;
+            gap: 0.25rem;
         }
         
         .current-price {
-            font-size: 0.95rem;
+            font-size: 0.9375rem;
         }
         
-        .product-badge {
-            font-size: 0.6rem;
-            padding: 0.15rem 0.4rem;
+        .old-price {
+            font-size: 0.625rem;
+        }
+        
+        .discount-badge {
+            font-size: 0.5625rem;
+            padding: 0.125rem 0.3rem;
         }
         
         .product-button {
-            padding: 0.45rem;
-            font-size: 0.7rem;
+            padding: 0.4375rem;
+            font-size: 0.6875rem;
+            border-radius: 4px;
+        }
+        
+        /* Modal */
+        .product-modal-content {
+            width: 98%;
+            margin: 1% auto;
+            border-radius: 8px;
+        }
+        
+        .product-modal-details {
+            padding: 1.5rem 1rem;
+        }
+        
+        .product-modal-title {
+            font-size: 1.25rem;
+        }
+        
+        .modal-current-price {
+            font-size: 1.5rem;
+        }
+
+        .chat-messages {
+            margin-top: 4vh;
+        }
+
+        .chat-input-area {
+            padding: 1.25rem 5.5rem 1.25rem 1.25rem !important;
         }
     }
 </style>

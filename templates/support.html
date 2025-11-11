@@ -54,7 +54,7 @@
         font-size: 3rem;
         font-weight: 800;
         margin-bottom: 1.5rem;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .support-hero p {
@@ -79,13 +79,13 @@
         border: none;
         border-radius: 50px;
         font-size: 1.1rem;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease;
     }
 
     .search-box input:focus {
         outline: none;
-        box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
         transform: translateY(-2px);
     }
 
@@ -178,7 +178,7 @@
         border-radius: 20px;
         padding: 2.5rem;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         border: 2px solid transparent;
         cursor: pointer;
@@ -186,7 +186,7 @@
 
     .category-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         border-color: var(--primary);
     }
 
@@ -327,12 +327,12 @@
         border-radius: 15px;
         margin-bottom: 1.5rem;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
     }
 
     .faq-item:hover {
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
 
     .faq-question {
@@ -401,7 +401,7 @@
         background: white;
         border-radius: 20px;
         padding: 3rem;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
         border: 2px solid var(--border);
     }
 
@@ -475,13 +475,13 @@
         }
 
         .search-box input {
-            padding: 1rem 3rem 1rem 2.5rem;
-            font-size: 1rem;
+            padding: 1rem 4rem 1rem 3rem;
+            font-size: 0.7rem;
         }
 
         .search-btn {
             padding: 0.75rem 1.5rem;
-            font-size: 0.9rem;
+            font-size: 0.5rem;
         }
 
         .categories-grid {
@@ -500,6 +500,14 @@
         .ticket-form-container {
             padding: 2rem 1.5rem;
         }
+
+        .chat-messages {
+            margin-top: 4vh;
+        }
+
+        .chat-input-area {
+            padding: 1.25rem 5.5rem 1.25rem 1.25rem !important;
+        }
     }
 </style>
 {% endblock %}
@@ -511,7 +519,7 @@
         <div class="support-hero-content">
             <h1><i class="fas fa-headset"></i> How can we help you?</h1>
             <p>Get instant answers from FAQs or chat with our AI assistant</p>
-            
+
             <div class="search-box">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" id="supportSearch" placeholder="Search for help articles, FAQs, or guides...">
@@ -685,7 +693,9 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        You can track your order by logging into your account and visiting the "My Orders" section. Each order will have a tracking number that you can use to see the real-time status and location of your package. You'll also receive email updates with tracking information.
+                        You can track your order by logging into your account and visiting the "My Orders" section. Each
+                        order will have a tracking number that you can use to see the real-time status and location of
+                        your package. You'll also receive email updates with tracking information.
                     </div>
                 </div>
             </div>
@@ -699,7 +709,9 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Standard shipping takes 3-5 business days within Metro Manila and nearby provinces. For other areas, delivery may take 5-7 business days. Shipping fees vary by location. Use our AI assistant to check delivery time and fees for your specific area.
+                        Standard shipping takes 3-5 business days within Metro Manila and nearby provinces. For other
+                        areas, delivery may take 5-7 business days. Shipping fees vary by location. Use our AI assistant
+                        to check delivery time and fees for your specific area.
                     </div>
                 </div>
             </div>
@@ -713,7 +725,10 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        We accept returns within 30 days of purchase for most items. Products must be unused, in original packaging, with all accessories and tags attached. Some items like software and opened electronics may not be eligible for return. Please check the product page for specific return information.
+                        We accept returns within 30 days of purchase for most items. Products must be unused, in
+                        original packaging, with all accessories and tags attached. Some items like software and opened
+                        electronics may not be eligible for return. Please check the product page for specific return
+                        information.
                     </div>
                 </div>
             </div>
@@ -727,7 +742,9 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        We accept Bank Transfer (BDO, BPI, Metrobank, etc.), GCash, PayMaya, and Cash on Delivery (COD). For bank transfers, please upload your payment screenshot after ordering. COD is available for select locations only.
+                        We accept Bank Transfer (BDO, BPI, Metrobank, etc.), GCash, PayMaya, and Cash on Delivery (COD).
+                        For bank transfers, please upload your payment screenshot after ordering. COD is available for
+                        select locations only.
                     </div>
                 </div>
             </div>
@@ -741,7 +758,9 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Yes, all products sold on PCBulacan are 100% authentic and brand new. We source directly from authorized distributors and manufacturers. Every product comes with an official warranty and original packaging.
+                        Yes, all products sold on PCBulacan are 100% authentic and brand new. We source directly from
+                        authorized distributors and manufacturers. Every product comes with an official warranty and
+                        original packaging.
                     </div>
                 </div>
             </div>
@@ -755,7 +774,9 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Yes, all products come with a manufacturer's warranty. The warranty period varies by product and brand, typically ranging from 1 to 3 years. Extended warranty options are also available for select items at checkout.
+                        Yes, all products come with a manufacturer's warranty. The warranty period varies by product and
+                        brand, typically ranging from 1 to 3 years. Extended warranty options are also available for
+                        select items at checkout.
                     </div>
                 </div>
             </div>
@@ -769,7 +790,9 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Click on "Forgot Password" on the login page. Enter your registered email address and we'll send you a secure link to reset your password. The link is valid for 24 hours. If you don't receive the email, check your spam folder or contact support.
+                        Click on "Forgot Password" on the login page. Enter your registered email address and we'll send
+                        you a secure link to reset your password. The link is valid for 24 hours. If you don't receive
+                        the email, check your spam folder or contact support.
                     </div>
                 </div>
             </div>
@@ -783,7 +806,9 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Try clearing your browser cache and cookies, then refresh the page. Make sure you're using an updated browser version. If the problem persists, try using a different browser or device. You can also chat with our AI assistant for immediate help.
+                        Try clearing your browser cache and cookies, then refresh the page. Make sure you're using an
+                        updated browser version. If the problem persists, try using a different browser or device. You
+                        can also chat with our AI assistant for immediate help.
                     </div>
                 </div>
             </div>
@@ -792,55 +817,55 @@
 </section>
 
 <script>
-// FAQ Accordion
-document.querySelectorAll('.faq-question').forEach(question => {
-    question.addEventListener('click', () => {
-        const item = question.parentElement;
-        const isActive = item.classList.contains('active');
-        
-        // Close all FAQs
-        document.querySelectorAll('.faq-item').forEach(faq => {
-            faq.classList.remove('active');
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentElement;
+            const isActive = item.classList.contains('active');
+
+            // Close all FAQs
+            document.querySelectorAll('.faq-item').forEach(faq => {
+                faq.classList.remove('active');
+            });
+
+            // Open clicked FAQ if it wasn't active
+            if (!isActive) {
+                item.classList.add('active');
+            }
         });
-        
-        // Open clicked FAQ if it wasn't active
-        if (!isActive) {
-            item.classList.add('active');
-        }
     });
-});
 
-// Filter FAQs by category
-function filterFAQ(category) {
-    const faqItems = document.querySelectorAll('.faq-item');
-    
-    faqItems.forEach(item => {
-        if (category === 'all' || item.dataset.category === category) {
-            item.style.display = 'block';
-        } else {
-            item.style.display = 'none';
-        }
-    });
-    
-    // Scroll to FAQs section
-    document.getElementById('faqs').scrollIntoView({ behavior: 'smooth' });
-}
+    // Filter FAQs by category
+    function filterFAQ(category) {
+        const faqItems = document.querySelectorAll('.faq-item');
 
-// Search functionality
-document.getElementById('supportSearch').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const faqItems = document.querySelectorAll('.faq-item');
-    
-    faqItems.forEach(item => {
-        const question = item.querySelector('h4').textContent.toLowerCase();
-        const answer = item.querySelector('.faq-answer-content').textContent.toLowerCase();
-        
-        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
-            item.style.display = 'block';
-        } else {
-            item.style.display = 'none';
-        }
+        faqItems.forEach(item => {
+            if (category === 'all' || item.dataset.category === category) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Scroll to FAQs section
+        document.getElementById('faqs').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Search functionality
+    document.getElementById('supportSearch').addEventListener('input', function (e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('h4').textContent.toLowerCase();
+            const answer = item.querySelector('.faq-answer-content').textContent.toLowerCase();
+
+            if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
     });
-});
 </script>
 {% endblock %}
