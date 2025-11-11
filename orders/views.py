@@ -229,7 +229,7 @@ def checkout_view(request):
             address.estimated_days = 'To be determined'
     
     # Calculate subtotal for selected items
-    subtotal = sum(item.total_price for item in selected_items)
+    subtotal = Decimal(str(sum(item.total_price for item in selected_items)))
     
     if request.method == 'POST':
         # Get form data
@@ -330,11 +330,11 @@ def checkout_view(request):
     
     # Calculate total for selected items
     if is_buy_now:
-        total = selected_items[0].total_price  # For buy now, just one item
-        total_savings = selected_items[0].total_savings if hasattr(selected_items[0], 'total_savings') else 0
+        total = Decimal(str(selected_items[0].total_price))  # For buy now, just one item
+        total_savings = Decimal(str(selected_items[0].total_savings)) if hasattr(selected_items[0], 'total_savings') else Decimal('0')
     else:
-        total = sum(item.total_price for item in selected_items)
-        total_savings = sum(item.total_savings for item in selected_items)
+        total = Decimal(str(sum(item.total_price for item in selected_items)))
+        total_savings = Decimal(str(sum(item.total_savings for item in selected_items)))
 
     context = {
         'selected_items': selected_items,
