@@ -1328,8 +1328,7 @@
                             <div class="order-summary">
                                 <p><strong>Total:</strong> ₱{{ order.total|floatformat:2 }}</p>
                                 {% if order.total_savings > 0 %}
-                                <p style="color: #27ae60;"><strong>💰 Total Savings:</strong> -₱{{
-                                    order.total_savings|floatformat:2 }}</p>
+                                <p style="color: #27ae60;"><strong>💰 Total Savings:</strong> -₱{{ order.total_savings|floatformat:2 }}</p>
                                 {% endif %}
                                 <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
                             </div>
@@ -1362,14 +1361,9 @@
                                         <h5 class="order-item-name">{{ item.product.name }}</h5>
                                         <p class="order-item-price">
                                             {% if item.had_discount %}
-                                            <span
-                                                style="text-decoration: line-through; color: #94a3b8; margin-right: 8px; font-size: 0.85rem;">₱{{
-                                                item.original_price|floatformat:2 }}</span>
-                                            <span style="color: #e74c3c; font-weight: 600;">₱{{ item.price|floatformat:2
-                                                }}</span>
-                                            <span
-                                                style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem; margin-left: 4px;">-{{
-                                                item.savings_percentage }}%</span>
+                                            <span style="text-decoration: line-through; color: #94a3b8; margin-right: 8px; font-size: 0.85rem;">₱{{ item.original_price|floatformat:2 }}</span>
+                                            <span style="color: #e74c3c; font-weight: 600;">₱{{ item.price|floatformat:2 }}</span>
+                                            <span style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem; margin-left: 4px;">-{{ item.savings_percentage }}%</span>
                                             {% else %}
                                             ₱{{ item.price|floatformat:2 }}
                                             {% endif %}
@@ -1400,13 +1394,13 @@
                                 <div class="step-icon"><i class="fas fa-home"></i></div>
                                 <div class="step-label">Delivered</div>
                             </div>
-                            <div
-                                class="tracking-step {% if order.status == 'received' %}active{% elif order.status == 'cancelled' %}cancelled{% endif %}">
-                                <div class="step-icon"><i
-                                        class="fas {% if order.status == 'cancelled' %}fa-times{% else %}fa-star{% endif %}"></i>
+                            <div class="tracking-step {% if order.status == 'received' %}active{% elif order.status == 'cancelled' %}cancelled{% endif %}">
+                                <div class="step-icon">
+                                    <i class="fas {% if order.status == 'cancelled' %}fa-times{% else %}fa-star{% endif %}"></i>
                                 </div>
-                                <div class="step-label">{% if order.status == 'cancelled' %}Cancelled{% else
-                                    %}Received{% endif %}</div>
+                                <div class="step-label">
+                                    {% if order.status == 'cancelled' %}Cancelled{% else %}Received{% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
