@@ -1418,7 +1418,7 @@
         </div>
         <div class="products-grid">
             {% for product in all_products %}
-            <div class="product-card">
+            <div class="product-card" data-product-id="{{ product.id }}">
                 {% if product.created_at|timesince < "7 days" %}
                 <span class="product-badge new">New</span>
                 {% endif %}
@@ -1735,6 +1735,19 @@
             e.stopPropagation();
             const productCard = this.closest('.product-card');
             const productId = productCard.querySelector('.add-to-cart').getAttribute('data-product-id');
+            openProductModal(productId);
+        });
+    });
+    
+    // Product card click for mobile (since quick-view is hidden on mobile)
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Don't open modal if clicking on the Add to Cart button
+            if (e.target.closest('.add-to-cart')) {
+                return;
+            }
+            
+            const productId = this.dataset.productId;
             openProductModal(productId);
         });
     });
