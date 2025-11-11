@@ -58,6 +58,11 @@ class Order(models.Model):
             import uuid
             self.order_number = f'ORD-{uuid.uuid4().hex[:10].upper()}'
         super().save(*args, **kwargs)
+    
+    @property
+    def total_savings(self):
+        """Calculate total savings from all items in this order"""
+        return sum(item.savings_per_item * item.quantity for item in self.items.all())
 
 
 class OrderItem(models.Model):
@@ -65,7 +70,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # This stores the actual price paid (with discount if applicable)
     
     class Meta:
         verbose_name = 'Order Item'
@@ -81,6 +86,30 @@ class OrderItem(models.Model):
     @property
     def item_total(self):
         return self.quantity * self.price
+    
+    @property
+    def had_discount(self):
+        """Check if this item was purchased at a discount"""
+        return float(self.price) < float(self.product.price)
+    
+    @property
+    def original_price(self):
+        """Original product price at time of display"""
+        return float(self.product.price)
+    
+    @property
+    def savings_per_item(self):
+        """Amount saved per item"""
+        if self.had_discount:
+            return float(self.product.price) - float(self.price)
+        return 0
+    
+    @property
+    def savings_percentage(self):
+        """Percentage discount"""
+        if self.had_discount:
+            return int(((float(self.product.price) - float(self.price)) / float(self.product.price)) * 100)
+        return 0
 
 
 class Cart(models.Model):

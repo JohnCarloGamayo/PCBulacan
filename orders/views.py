@@ -185,7 +185,8 @@ def checkout_view(request):
             def __init__(self, product, quantity):
                 self.product = product
                 self.quantity = quantity
-                self.total_price = product.price * quantity
+                self.total_price = product.final_price * quantity
+                self.total_savings = product.savings_amount * quantity
         
         selected_items = [TempItem(product, buy_now_data['quantity'])]
         is_buy_now = True
@@ -304,7 +305,7 @@ def checkout_view(request):
                     order=order,
                     product=item.product,
                     quantity=item.quantity,
-                    price=item.product.price
+                    price=item.product.final_price  # Use discounted price
                 )
                 
                 # Note: Stock will be deducted when order status is changed to 'shipped' by admin
