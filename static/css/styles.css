@@ -145,7 +145,7 @@ body {
 .search-input input:focus {
     outline: none;
     background: white;
-    border-color: #3b82f6;
+    border-color: #048400;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -774,6 +774,7 @@ body {
     .search-input input {
         padding: 0.75rem 2.5rem 0.75rem 2.5rem;
         font-size: 0.9rem;
+        margin-top: 1vh;
     }
 }
 
@@ -838,7 +839,7 @@ body {
 /* Main Content */
 .main-content {
     min-height: calc(100vh - 300px);
-    padding: 2rem 0;
+    /* padding: 2rem 0; */
 }
 
 /* Footer Styles */
@@ -846,7 +847,7 @@ body {
     background: radial-gradient(circle at 30% 70%, rgba(155, 236, 0, 0.2) 0%, transparent 40%), radial-gradient(circle at 80% 23%, rgba(22, 163, 74, 0.15) 0%, transparent 70%), #0d0d0d;
     color: #fff;
     padding: 3rem 0 1rem;
-    margin-top: 3rem;
+    /* margin-top: 3rem; */
 }
 
 .footer h5 {
@@ -861,11 +862,12 @@ body {
 
 .footer-links li {
     margin-bottom: 0.75rem;
+    text-decoration: none;
 }
 
 .footer-links a {
     color: #cbd5e1;
-    text-decoration: none;
+    text-decoration:none;
     transition: color 0.2s ease;
 }
 
@@ -904,6 +906,7 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
     transition: all 0.2s ease;
+    text-decoration: none;
 }
 
 .social-links a:hover {
