@@ -577,13 +577,16 @@ def product_detail_api(request, product_id):
             'reviews': reviews,
             # Deal information
             'has_active_deal': product.has_active_deal,
-            'final_price': float(product.final_price),
-            'original_price': float(product.original_price),
-            'savings_amount': float(product.savings_amount),
-            'savings_percentage': int(product.savings_percentage),
+            'final_price': float(product.final_price) if product.final_price else float(product.price),
+            'original_price': float(product.original_price) if product.original_price else float(product.price),
+            'savings_amount': float(product.savings_amount) if product.savings_amount else 0.0,
+            'savings_percentage': int(product.savings_percentage) if product.savings_percentage else 0,
             'active_deal_name': active_deal.title if active_deal else None,
         }
         
         return JsonResponse(data)
     except Exception as e:
+        import traceback
+        print("Error in product_detail_api:")
+        print(traceback.format_exc())
         return JsonResponse({'error': str(e)}, status=500)

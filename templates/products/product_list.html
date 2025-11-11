@@ -1304,7 +1304,7 @@
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
-                    <div class="product-modal-thumbnails" id="modalThumbnails">
+                    <div class="product-modal-thumbnails" id="modalProductThumbnails">
                         <!-- Thumbnails will be loaded here -->
                     </div>
                 </div>
@@ -1551,9 +1551,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Open modal
     function openProductModal(productId) {
+        console.log('Opening modal for product ID:', productId);
+        
+        // Show loading state
+        document.getElementById('modalProductName').textContent = 'Loading...';
+        document.getElementById('modalCurrentPrice').textContent = 'Loading...';
+        document.getElementById('modalDescription').textContent = 'Loading product details...';
+        
+        // Show modal immediately with loading state
+        modal.classList.add('active');
+        
         fetch(`/api/product/${productId}/`)
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(product => {
+                console.log('Product data:', product);
+                
+                // Check if product data is valid
+                if (!product || !product.name) {
+                    throw new Error('Invalid product data received');
+                }
+                
                 currentProduct = product;
                 quantity = 1;
                 
@@ -1603,7 +1626,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Update image gallery
                 const mainImage = document.getElementById('modalProductImage');
-                const thumbnailsContainer = document.getElementById('modalThumbnails');
+                const thumbnailsContainer = document.getElementById('modalProductThumbnails');
                 thumbnailsContainer.innerHTML = '';
                 
                 // Store images globally for navigation
@@ -1722,12 +1745,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('modalAddToCart').disabled = true;
                     document.getElementById('modalBuyNow').disabled = true;
                 }
-                
-                modal.classList.add('active');
             })
             .catch(error => {
                 console.error('Error fetching product:', error);
-                alert('Error loading product details');
+                
+                // Show error in modal
+                document.getElementById('modalProductName').textContent = 'Error Loading Product';
+                document.getElementById('modalDescription').textContent = 'Failed to load product details. Error: ' + error.message;
+                document.getElementById('modalCurrentPrice').textContent = '₱0.00';
+                
+                alert('Error loading product details: ' + error.message);
             });
     }
     
