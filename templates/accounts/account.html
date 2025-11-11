@@ -1498,10 +1498,12 @@
 
         navLinks.forEach(link => {
             link.addEventListener('click', function (e) {
-                e.preventDefault();
-
                 const targetId = this.getAttribute('data-section');
+                
+                // Only prevent default if this is a tab link (has data-section)
                 if (!targetId) return;
+                
+                e.preventDefault();
 
                 sections.forEach(section => section.classList.remove('active'));
                 document.getElementById(targetId).classList.add('active');
