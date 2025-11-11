@@ -557,6 +557,9 @@ def product_detail_api(request, product_id):
                 'is_primary': img.is_primary
             })
         
+        # Get deal information
+        active_deal = product.active_deal
+        
         data = {
             'id': product.id,
             'name': product.name,
@@ -572,6 +575,13 @@ def product_detail_api(request, product_id):
             'rating': float(product.rating),
             'reviews_count': product.reviews_count,
             'reviews': reviews,
+            # Deal information
+            'has_active_deal': product.has_active_deal,
+            'final_price': float(product.final_price),
+            'original_price': float(product.original_price),
+            'savings_amount': float(product.savings_amount),
+            'savings_percentage': int(product.savings_percentage),
+            'active_deal_name': active_deal.title if active_deal else None,
         }
         
         return JsonResponse(data)
