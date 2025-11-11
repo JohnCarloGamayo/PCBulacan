@@ -102,7 +102,18 @@ class Cart(models.Model):
     
     @property
     def subtotal(self):
+        """Subtotal with discounts applied"""
         return sum(item.total_price for item in self.items.all())
+    
+    @property
+    def total_savings(self):
+        """Total savings from all items"""
+        return sum(item.total_savings for item in self.items.all())
+    
+    @property
+    def original_subtotal(self):
+        """Original subtotal before discounts"""
+        return sum(item.quantity * item.original_unit_price for item in self.items.all())
 
 
 class CartItem(models.Model):
@@ -121,8 +132,29 @@ class CartItem(models.Model):
         return f'{self.quantity}x {self.product.name}'
     
     @property
+    def unit_price(self):
+        """Get the unit price (with deal discount if applicable)"""
+        return self.product.final_price
+    
+    @property
+    def original_unit_price(self):
+        """Get original unit price before discount"""
+        return self.product.original_price or self.product.price
+    
+    @property
     def total_price(self):
-        return self.quantity * self.product.price
+        """Total price for this cart item (with discount applied)"""
+        return self.quantity * self.unit_price
+    
+    @property
+    def total_savings(self):
+        """Total savings for this item"""
+        return self.quantity * self.product.savings_amount
+    
+    @property
+    def has_discount(self):
+        """Check if item has discount"""
+        return self.product.has_active_deal or (self.product.old_price and self.product.old_price > self.product.price)
 
 
 class DeliveryFee(models.Model):

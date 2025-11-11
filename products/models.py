@@ -77,6 +77,70 @@ class Product(models.Model):
             return int(((self.old_price - self.price) / self.old_price) * 100)
         return 0
     
+    @property
+    def has_active_deal(self):
+        """Check if product has an active deal"""
+        from django.utils import timezone
+        now = timezone.now()
+        return self.deals.filter(
+            status='active',
+            start_date__lte=now,
+            end_date__gte=now
+        ).exists()
+    
+    @property
+    def active_deal(self):
+        """Get the first active deal for this product"""
+        from django.utils import timezone
+        now = timezone.now()
+        return self.deals.filter(
+            status='active',
+            start_date__lte=now,
+            end_date__gte=now
+        ).first()
+    
+    @property
+    def discounted_price(self):
+        """Get price after applying active deal discount"""
+        deal = self.active_deal
+        if deal:
+            if deal.deal_type == 'percentage' and deal.discount_percentage:
+                discount = float(self.price) * (float(deal.discount_percentage) / 100)
+                return float(self.price) - discount
+            elif deal.deal_type == 'fixed' and deal.discount_amount:
+                return max(0, float(self.price) - float(deal.discount_amount))
+        return float(self.price)
+    
+    @property
+    def original_price(self):
+        """Get original price (for showing strikethrough)"""
+        if self.has_active_deal:
+            return float(self.price)
+        elif self.old_price and self.old_price > self.price:
+            return float(self.old_price)
+        return None
+    
+    @property
+    def final_price(self):
+        """Get final price to display (with deal applied if exists)"""
+        return self.discounted_price
+    
+    @property
+    def savings_amount(self):
+        """Calculate savings amount"""
+        original = self.original_price
+        if original:
+            return original - self.discounted_price
+        return 0
+    
+    @property
+    def savings_percentage(self):
+        """Calculate savings percentage"""
+        original = self.original_price
+        if original and original > 0:
+            return int(((original - self.discounted_price) / original) * 100)
+        return 0
+    
     def update_rating(self):
         """Update product rating and review count"""
         from django.db.models import Avg, Count

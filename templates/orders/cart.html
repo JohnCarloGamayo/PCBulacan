@@ -751,7 +751,15 @@
                         </div>
                         <div class="cart-item-details">
                             <div class="cart-item-name">{{ item.product.name }}</div>
-                            <div class="cart-item-price">₱{{ item.product.price|floatformat:2 }}</div>
+                            <div class="cart-item-price">
+                                {% if item.has_discount %}
+                                    <span style="text-decoration: line-through; color: #999; margin-right: 8px;">₱{{ item.original_unit_price|floatformat:2 }}</span>
+                                    <span style="color: #e74c3c; font-weight: 600;">₱{{ item.unit_price|floatformat:2 }}</span>
+                                    <span style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: 6px;">-{{ item.product.savings_percentage }}%</span>
+                                {% else %}
+                                    ₱{{ item.unit_price|floatformat:2 }}
+                                {% endif %}
+                            </div>
                             <div class="cart-item-actions">
                                 <div class="quantity-control" data-item-id="{{ item.id }}">
                                     <button type="button" class="quantity-btn decrease-btn">-</button>
@@ -779,6 +787,12 @@
                     <div class="cart-summary-items" id="selected-items-container">
                         <p id="empty-selection-message">No items selected</p>
                     </div>
+                    {% if cart.total_savings > 0 %}
+                    <div class="cart-summary-row" style="color: #27ae60; font-weight: 600;">
+                        <span>💰 Total Savings</span>
+                        <span>-₱{{ cart.total_savings|floatformat:2 }}</span>
+                    </div>
+                    {% endif %}
                     <div class="cart-summary-row total">
                         <span>Total</span>
                         <span id="total-amount">₱0.00</span>

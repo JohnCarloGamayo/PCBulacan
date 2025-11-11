@@ -1259,9 +1259,15 @@
                             {% endif %}
                         </div>
                         <div class="product-price">
-                            <span class="current-price">₱{{ product.price|floatformat:2 }}</span>
-                            {% if product.on_sale and product.old_price %}
-                            <span class="old-price">₱{{ product.old_price|floatformat:2 }}</span>
+                            {% if product.has_active_deal or product.savings_percentage > 0 %}
+                                <span class="current-price" style="color: #e74c3c; font-weight: 700;">₱{{ product.final_price|floatformat:2 }}</span>
+                                <span class="old-price">₱{{ product.original_price|floatformat:2 }}</span>
+                                <span class="discount-badge">-{{ product.savings_percentage }}%</span>
+                            {% elif product.on_sale and product.old_price %}
+                                <span class="current-price">₱{{ product.price|floatformat:2 }}</span>
+                                <span class="old-price">₱{{ product.old_price|floatformat:2 }}</span>
+                            {% else %}
+                                <span class="current-price">₱{{ product.price|floatformat:2 }}</span>
                             {% endif %}
                         </div>
                         <button class="product-button add-to-cart" data-product-id="{{ product.id }}">
