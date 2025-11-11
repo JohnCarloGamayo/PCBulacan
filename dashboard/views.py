@@ -1461,9 +1461,16 @@ def manage_deals(request):
     # Update deal statuses based on dates
     now = timezone.now()
     for deal in deals:
+        # Only auto-update if deal is scheduled and should start
         if deal.status == 'scheduled' and deal.start_date <= now:
-            deal.status = 'active'
-            deal.save()
+            # Check if it's not expired yet
+            if deal.end_date >= now:
+                deal.status = 'active'
+                deal.save()
+            else:
+                deal.status = 'expired'
+                deal.save()
+        # Mark active deals as expired only if end date has fully passed
         elif deal.status == 'active' and deal.end_date < now:
             deal.status = 'expired'
             deal.save()
