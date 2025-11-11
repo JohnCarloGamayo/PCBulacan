@@ -335,6 +335,46 @@
             cursor: pointer;
         }
         
+        .mobile-search-suggestions {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1001;
+            display: none;
+        }
+        
+        .mobile-search-suggestion {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s ease;
+        }
+        
+        .mobile-search-suggestion:last-child {
+            border-bottom: none;
+        }
+        
+        .mobile-search-suggestion:hover {
+            background: #f8fafc;
+        }
+        
+        .mobile-search-suggestion strong {
+            color: #048400;
+        }
+        
+        .mobile-no-suggestions {
+            padding: 1rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
         .mobile-icon-btn {
             width: 40px;
             height: 40px;
@@ -514,15 +554,16 @@
     <div class="mobile-top-nav">
         <div class="mobile-top-nav-content">
             <div class="mobile-search-bar">
-                <input type="text" id="mobileSearchInput" placeholder="Search products...">
+                <input type="text" id="mobileSearchInput" placeholder="Search products..." autocomplete="off">
                 <button class="mobile-search-btn" onclick="performMobileSearch()">
                     <i class="fas fa-search"></i>
                 </button>
+                <div class="mobile-search-suggestions" id="mobileSearchSuggestions"></div>
             </div>
             <button class="mobile-icon-btn" onclick="window.location.href='{% url 'accounts:account' %}'">
                 <i class="fas fa-bell"></i>
                 {% if user.is_authenticated %}
-                <span class="badge" id="mobileNotificationBadge">0</span>
+                <span class="badge" id="mobileNotificationBadge" style="display: none;">0</span>
                 {% endif %}
             </button>
             <button class="mobile-icon-btn" onclick="window.location.href='{% url 'orders:cart' %}'">
@@ -791,28 +832,124 @@
             }
         }
         
-        // Allow Enter key to search on mobile
+        // Mobile Search Autocomplete
         document.addEventListener('DOMContentLoaded', function() {
             const mobileSearchInput = document.getElementById('mobileSearchInput');
-            if (mobileSearchInput) {
+            const mobileSearchSuggestions = document.getElementById('mobileSearchSuggestions');
+            let mobileDebounceTimer;
+            
+            if (mobileSearchInput && mobileSearchSuggestions) {
+                // Input event for autocomplete
+                mobileSearchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    
+                    // Clear previous timer
+                    clearTimeout(mobileDebounceTimer);
+                    
+                    // If query is empty, hide suggestions
+                    if (query.length < 1) {
+                        mobileSearchSuggestions.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Debounce the API call
+                    mobileDebounceTimer = setTimeout(function() {
+                        fetchMobileSuggestions(query);
+                    }, 200);
+                });
+                
+                // Enter key to search
                 mobileSearchInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
+                        mobileSearchSuggestions.style.display = 'none';
                         performMobileSearch();
+                    }
+                });
+                
+                // Close suggestions when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!mobileSearchInput.contains(e.target) && !mobileSearchSuggestions.contains(e.target)) {
+                        mobileSearchSuggestions.style.display = 'none';
                     }
                 });
             }
             
-            // Update notification badge (placeholder - you can update this with real data)
-            {% if user.is_authenticated %}
-            const notificationBadge = document.getElementById('mobileNotificationBadge');
-            if (notificationBadge) {
-                // You can update this with real notification count
-                // For now, it will show 0
-                notificationBadge.textContent = '0';
-                if (notificationBadge.textContent === '0') {
-                    notificationBadge.style.display = 'none';
-                }
+            // Fetch mobile search suggestions
+            function fetchMobileSuggestions(query) {
+                fetch(`/api/search-suggestions/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        mobileSearchSuggestions.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            mobileSearchSuggestions.innerHTML = `
+                                <div class="mobile-no-suggestions">
+                                    No products found for "${query}"
+                                </div>
+                            `;
+                        } else {
+                            data.forEach(productName => {
+                                const suggestion = document.createElement('div');
+                                suggestion.className = 'mobile-search-suggestion';
+                                suggestion.innerHTML = highlightMobileMatch(productName, query);
+                                
+                                suggestion.addEventListener('click', function() {
+                                    mobileSearchInput.value = productName;
+                                    mobileSearchSuggestions.style.display = 'none';
+                                    performMobileSearch();
+                                });
+                                
+                                mobileSearchSuggestions.appendChild(suggestion);
+                            });
+                        }
+                        
+                        mobileSearchSuggestions.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching mobile search suggestions:', error);
+                    });
             }
+            
+            // Highlight matching text
+            function highlightMobileMatch(text, query) {
+                const regex = new RegExp(`(${escapeRegExpMobile(query)})`, 'gi');
+                return text.replace(regex, '<strong>$1</strong>');
+            }
+            
+            // Escape special characters for regex
+            function escapeRegExpMobile(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+            
+            // Update mobile notification badge with real data
+            {% if user.is_authenticated %}
+            const mobileNotificationBadge = document.getElementById('mobileNotificationBadge');
+            
+            // Fetch notification count
+            function updateMobileNotificationBadge() {
+                fetch('/accounts/api/notifications/')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && mobileNotificationBadge) {
+                            const count = data.unread_count;
+                            if (count > 0) {
+                                mobileNotificationBadge.textContent = count > 99 ? '99+' : count;
+                                mobileNotificationBadge.style.display = 'inline-flex';
+                            } else {
+                                mobileNotificationBadge.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching mobile notification count:', error);
+                    });
+            }
+            
+            // Update badge on page load
+            updateMobileNotificationBadge();
+            
+            // Refresh badge every 30 seconds
+            setInterval(updateMobileNotificationBadge, 30000);
             {% endif %}
         });
     </script>
