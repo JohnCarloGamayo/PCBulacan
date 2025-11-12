@@ -964,24 +964,18 @@
             margin: 1rem;
         }
         
-        /* Order Summary - Fixed bottom bar style */
+        /* Order Summary - Integrated in flow */
         .order-summary {
-            position: fixed;
-            bottom: 70px;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            background: white;
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            position: static;
             border-radius: 0;
-            max-height: 50vh;
-            overflow-y: auto;
+            box-shadow: none;
+            margin-top: 0;
         }
         
         .order-summary-header {
-            padding: 0.75rem 1rem;
+            padding: 1rem;
             border-bottom: 1px solid var(--border);
-            background: #f8fafc;
+            background: white;
         }
         
         .order-summary-title {
@@ -995,7 +989,8 @@
         
         .order-items {
             padding: 1rem;
-            max-height: 200px;
+            max-height: none;
+            background: white;
         }
         
         .order-item {
@@ -1020,7 +1015,8 @@
         
         .order-summary-details {
             padding: 1rem;
-            background: #f8fafc;
+            background: white;
+            border-top: 1px solid var(--border);
         }
         
         .summary-row {
@@ -1042,13 +1038,26 @@
         }
         
         .back-to-cart {
-            font-size: 0.8125rem;
-            margin-top: 0.75rem;
+            display: none;
         }
         
-        /* Add padding at bottom for fixed summary */
+        /* Place order button - fixed at bottom */
+        .place-order-btn {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            margin: 0;
+            border-radius: 0;
+            padding: 1rem;
+            font-size: 1rem;
+            z-index: 100;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Add padding at bottom for fixed button */
         .checkout-form {
-            padding-bottom: 350px;
+            padding-bottom: 80px;
         }
     }
 
