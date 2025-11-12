@@ -1005,57 +1005,470 @@
     }
 
     @media (max-width: 768px) {
+        /* Mobile Header */
+        .page-header {
+            padding: 1rem 0;
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+        
+        .breadcrumb {
+            font-size: 0.75rem;
+        }
+        
+        /* Mobile Sidebar Toggle */
+        .account-sidebar {
+            position: fixed;
+            left: -100%;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            z-index: 1000;
+            background: white;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            padding-bottom: 70px;
+        }
+        
+        .account-sidebar.show {
+            left: 0;
+        }
+        
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Mobile Sidebar Header */
+        .mobile-sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .mobile-sidebar-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .mobile-sidebar-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .mobile-sidebar-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Mobile Menu Toggle Button */
+        .mobile-menu-toggle {
+            display: block;
+            position: fixed;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            z-index: 998;
+            background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(4,132,0,0.4);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-toggle:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        
+        /* Hide toggle when sidebar is open */
+        .mobile-menu-toggle.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* User Profile in Sidebar */
+        .user-profile {
+            margin: 0;
+            border-radius: 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            font-size: 1.5rem;
+        }
+        
+        .profile-name {
+            font-size: 1rem;
+        }
+        
+        .profile-email {
+            font-size: 0.8125rem;
+        }
+        
+        /* Account Nav */
+        .account-nav {
+            border-radius: 0;
+            box-shadow: none;
+        }
+        
+        .account-nav-link {
+            padding: 1rem 1.25rem;
+            font-size: 0.9375rem;
+        }
+        
+        /* Account Container */
+        .account-container {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        /* Account Content */
+        .account-content {
+            padding: 0;
+        }
+        
+        /* Account Section */
+        .account-section {
+            border-radius: 0;
+            padding: 1rem;
+            box-shadow: none;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Form adjustments */
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            font-size: 0.875rem;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            font-size: 0.875rem;
+            padding: 0.625rem 0.75rem;
+        }
+        
+        .btn {
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Addresses */
+        .addresses-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .address-card {
+            padding: 1rem;
+        }
+        
+        .address-form-container {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Orders */
+        .order-filters {
+            padding: 0.75rem;
+            gap: 0.5rem;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .order-filter-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8125rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .order-card {
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .order-header {
+            padding: 0.875rem 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+        
+        .order-info h3 {
+            font-size: 1rem;
+        }
+        
+        .order-date {
+            font-size: 0.8125rem;
+        }
+        
+        .order-status {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        
         .order-details {
+            padding: 0.875rem 1rem;
             flex-direction: column;
             align-items: flex-start;
         }
-
+        
+        .order-summary p {
+            font-size: 0.875rem;
+            margin: 0.375rem 0;
+        }
+        
         .order-actions {
-            margin-top: 16px;
+            margin-top: 0.75rem;
             width: 100%;
             justify-content: flex-start;
+            flex-wrap: wrap;
         }
-
+        
+        .order-items {
+            padding: 0 1rem 0.875rem;
+        }
+        
+        .order-items-title {
+            font-size: 0.9375rem;
+            margin: 0.875rem 0;
+        }
+        
         .order-items-grid {
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.75rem;
         }
-
+        
+        .order-item-image {
+            height: 100px;
+        }
+        
+        .order-item-details {
+            padding: 0.75rem;
+        }
+        
+        .order-item-name {
+            font-size: 0.8125rem;
+        }
+        
+        .order-item-price,
+        .order-item-quantity {
+            font-size: 0.75rem;
+        }
+        
+        /* Tracking Timeline */
         .tracking-timeline {
-            padding: 0 10px 20px;
+            padding: 0 0.5rem 1rem;
+            margin: 1rem 0;
         }
-
+        
         .tracking-timeline::before {
             left: 20px;
             right: 20px;
         }
-
-        .step-label {
-            font-size: 10px;
+        
+        .step-icon {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
         }
-
+        
+        .step-label {
+            font-size: 0.625rem;
+        }
+        
+        /* Modal */
         .modal-content {
             width: 95%;
-            margin: 20px auto;
+            margin: 1rem auto;
+            max-height: 95vh;
         }
-
+        
+        .modal-header {
+            padding: 1rem;
+        }
+        
+        .modal-title {
+            font-size: 1.125rem;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+        }
+        
+        .modal-footer {
+            padding: 0.75rem 1rem;
+        }
+        
+        .order-info-header h3 {
+            font-size: 1rem;
+        }
+        
+        .order-info-details {
+            gap: 1rem;
+            padding: 0.875rem;
+        }
+        
+        .info-group {
+            min-width: 100%;
+        }
+        
+        .info-group p {
+            font-size: 0.8125rem;
+        }
+        
+        .modal-order-items {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        #modal-shipping-address {
+            padding: 0.875rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Rating Modal */
         .rating-product-header {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            flex-direction: row;
+            align-items: flex-start;
+            text-align: left;
+            gap: 0.75rem;
         }
-
+        
+        .rating-product-image {
+            width: 64px;
+            height: 64px;
+        }
+        
+        .rating-product-name {
+            font-size: 0.875rem;
+        }
+        
+        .rating-product-price {
+            font-size: 0.75rem;
+        }
+        
+        .rating-star {
+            font-size: 28px;
+        }
+        
+        .rating-comment {
+            font-size: 0.8125rem;
+            min-height: 60px;
+        }
+        
+        /* Toast */
+        .toast-container {
+            top: 1rem;
+            right: 1rem;
+            left: 1rem;
+            max-width: none;
+        }
+        
+        .toast {
+            margin-bottom: 0.5rem;
+        }
+        
+        .toast-content {
+            padding: 0.75rem;
+        }
+        
+        .toast-title {
+            font-size: 0.875rem;
+        }
+        
+        .toast-message {
+            font-size: 0.8125rem;
+        }
+        
+        /* Chat adjustments */
         .chat-messages {
             margin-top: 4vh;
         }
-
+        
         .chat-input-area {
             padding: 1.25rem 5.5rem 1.25rem 1.25rem !important;
+        }
+        
+        /* Add padding at bottom for mobile nav */
+        .account-content {
+            padding-bottom: 80px;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Mobile Menu Toggle Button -->
+<button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: none;">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
 <div class="page-header">
     <div class="container">
         <h1 class="page-title">My Account</h1>
@@ -1070,7 +1483,14 @@
 <div class="container">
     <div class="account-container">
         <!-- Account Sidebar -->
-        <div class="account-sidebar">
+        <div class="account-sidebar" id="account-sidebar">
+            <!-- Mobile Sidebar Header -->
+            <div class="mobile-sidebar-header" style="display: none;">
+                <h3 class="mobile-sidebar-title">Menu</h3>
+                <button class="mobile-sidebar-close" id="mobile-sidebar-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <div class="user-profile">
                 <div class="profile-avatar">
                     {% if user.profile_picture %}
@@ -1492,6 +1912,63 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Mobile Sidebar Toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileSidebarClose = document.getElementById('mobile-sidebar-close');
+        const accountSidebar = document.getElementById('account-sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const mobileSidebarHeader = document.querySelector('.mobile-sidebar-header');
+        
+        // Show mobile elements on mobile screens
+        function updateMobileUI() {
+            if (window.innerWidth <= 768) {
+                mobileMenuToggle.style.display = 'flex';
+                mobileSidebarHeader.style.display = 'flex';
+            } else {
+                mobileMenuToggle.style.display = 'none';
+                mobileSidebarHeader.style.display = 'none';
+                accountSidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+                mobileMenuToggle.classList.remove('hide');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Initial check
+        updateMobileUI();
+        
+        // Update on resize
+        window.addEventListener('resize', updateMobileUI);
+        
+        // Open sidebar
+        mobileMenuToggle.addEventListener('click', function() {
+            accountSidebar.classList.add('show');
+            sidebarOverlay.classList.add('show');
+            mobileMenuToggle.classList.add('hide');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Close sidebar
+        function closeSidebar() {
+            accountSidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+            mobileMenuToggle.classList.remove('hide');
+            document.body.style.overflow = 'auto';
+        }
+        
+        mobileSidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+        
+        // Close sidebar when clicking on a nav link (mobile)
+        const mobileNavLinks = document.querySelectorAll('.account-nav-link');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768 && this.getAttribute('data-section')) {
+                    setTimeout(closeSidebar, 300);
+                }
+            });
+        });
+        
         // Tab navigation
         const navLinks = document.querySelectorAll('.account-nav-link');
         const sections = document.querySelectorAll('.account-section');
