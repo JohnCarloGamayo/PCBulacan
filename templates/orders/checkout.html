@@ -789,16 +789,277 @@
     }
 
     @media (max-width: 768px) {
-
-        .payment-methods,
+        /* Shopee-style Mobile Checkout */
+        .checkout-container {
+            margin: 0;
+            padding: 0;
+            gap: 0.5rem;
+        }
+        
+        .checkout-header {
+            background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
+            padding: 1rem;
+            margin: 0;
+            border-radius: 0;
+        }
+        
+        .checkout-title {
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .checkout-subtitle {
+            font-size: 0.875rem;
+            color: white;
+        }
+        
+        .checkout-progress {
+            gap: 1rem;
+            margin: 1rem 0 0;
+        }
+        
+        .progress-step {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .step-number {
+            width: 28px;
+            height: 28px;
+            font-size: 0.875rem;
+        }
+        
+        .step-text {
+            font-size: 0.75rem;
+        }
+        
+        /* Form sections - compact */
+        .checkout-form {
+            border-radius: 0;
+            box-shadow: none;
+        }
+        
+        .checkout-section {
+            padding: 1rem;
+            background: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-header {
+            margin-bottom: 1rem;
+        }
+        
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+            margin-right: 0.75rem;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+        }
+        
+        /* Address cards - compact */
         .address-grid {
             grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+        
+        .address-card {
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .address-card-title {
+            font-size: 0.9375rem;
+        }
+        
+        .address-card-content {
+            font-size: 0.8125rem;
+        }
+        
+        .add-address-btn {
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Payment methods - compact */
+        .payment-methods {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+        
+        .payment-method {
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .payment-method-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+        }
+        
+        .payment-method-title {
+            font-size: 0.9375rem;
+        }
+        
+        .payment-method-description {
+            font-size: 0.8125rem;
+        }
+        
+        /* Payment instructions - compact */
+        .payment-instructions {
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .payment-instructions-title {
+            font-size: 0.9375rem;
+        }
+        
+        .payment-instructions-list li {
+            font-size: 0.8125rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Upload area - compact */
+        .upload-container {
+            margin-top: 1rem;
+        }
+        
+        .upload-title {
+            font-size: 0.9375rem;
+        }
+        
+        .upload-description {
+            font-size: 0.8125rem;
+        }
+        
+        .upload-area {
+            padding: 1.5rem;
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+        }
+        
+        .upload-text {
+            font-size: 0.9375rem;
+        }
+        
+        .upload-hint {
+            font-size: 0.6875rem;
+        }
+        
+        .image-preview {
+            height: 150px;
+        }
+        
+        /* Place order button */
+        .place-order-btn {
+            padding: 0.875rem;
+            font-size: 0.9375rem;
+            margin: 1rem;
+        }
+        
+        /* Order Summary - Fixed bottom bar style */
+        .order-summary {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: white;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 0;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        
+        .order-summary-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+        
+        .order-summary-title {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .order-summary-subtitle {
+            font-size: 0.75rem;
+        }
+        
+        .order-items {
+            padding: 1rem;
+            max-height: 200px;
+        }
+        
+        .order-item {
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        .order-item-image {
+            width: 56px;
+            height: 56px;
+        }
+        
+        .order-item-name {
+            font-size: 0.8125rem;
+        }
+        
+        .order-item-price,
+        .order-item-quantity {
+            font-size: 0.75rem;
+        }
+        
+        .order-summary-details {
+            padding: 1rem;
+            background: #f8fafc;
+        }
+        
+        .summary-row {
+            font-size: 0.8125rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-total {
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        
+        .summary-total-label {
+            font-size: 0.9375rem;
+        }
+        
+        .summary-total-value {
+            font-size: 1.125rem;
+        }
+        
+        .back-to-cart {
+            font-size: 0.8125rem;
+            margin-top: 0.75rem;
+        }
+        
+        /* Add padding at bottom for fixed summary */
+        .checkout-form {
+            padding-bottom: 350px;
         }
     }
 
     @media (max-width: 576px) {
         .checkout-section {
-            padding: 1.5rem;
+            padding: 1rem;
+        }
+        
+        .address-card,
+        .payment-method {
+            padding: 0.875rem;
         }
     }
 </style>

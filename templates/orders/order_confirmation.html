@@ -229,21 +229,180 @@
     }
 
     @media (max-width: 768px) {
+        /* Shopee-style Mobile Order Confirmation */
+        .confirmation-container {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .confirmation-card {
+            border-radius: 0;
+            box-shadow: none;
+        }
+        
+        /* Header - compact */
+        .confirmation-header {
+            padding: 2rem 1rem;
+        }
+        
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .confirmation-title {
+            font-size: 1.5rem;
+        }
+        
+        .confirmation-subtitle {
+            font-size: 1rem;
+        }
+        
+        /* Body - compact sections */
+        .confirmation-body {
+            padding: 1rem;
+            padding-bottom: 150px;
+        }
+        
+        .order-number-box {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .order-number-label {
+            font-size: 0.8125rem;
+        }
+        
+        .order-number {
+            font-size: 1.25rem;
+        }
+        
+        /* Info sections - compact */
+        .info-section {
+            margin-bottom: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .info-title {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
         .info-grid {
             grid-template-columns: 1fr;
+            gap: 0.75rem;
         }
-
-        .action-buttons {
-            flex-direction: column;
+        
+        .info-label {
+            font-size: 0.8125rem;
         }
-
+        
+        .info-value {
+            font-size: 0.9375rem;
+        }
+        
+        /* Order items table - responsive */
         .order-items-table {
+            font-size: 0.8125rem;
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .order-items-table thead {
+            display: none;
+        }
+        
+        .order-items-table tbody {
+            display: block;
+        }
+        
+        .order-items-table tr {
+            display: block;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .order-items-table td {
+            display: block;
+            padding: 0.25rem 0;
+            border: none;
+            text-align: left !important;
+        }
+        
+        .order-items-table td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #64748b;
+            display: inline-block;
+            width: 80px;
+            font-size: 0.75rem;
+        }
+        
+        .item-name {
+            font-size: 0.9375rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Total box - compact */
+        .order-total-box {
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .total-row {
+            font-size: 0.8125rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .total-row.final {
+            font-size: 1rem;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Payment notice - compact */
+        .payment-notice {
+            padding: 0.875rem 1rem;
+            margin-top: 1rem;
+        }
+        
+        .payment-notice-title {
+            font-size: 0.9375rem;
+        }
+        
+        .payment-notice-text {
+            font-size: 0.8125rem;
+        }
+        
+        /* Action buttons - fixed bottom */
+        .action-buttons {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 0.75rem 1rem;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            flex-direction: row;
+            gap: 0.75rem;
+            z-index: 100;
+        }
+        
+        .btn {
+            padding: 0.75rem 1rem;
             font-size: 0.875rem;
         }
-
-        .order-items-table th,
-        .order-items-table td {
-            padding: 0.5rem;
+        
+        .btn-primary,
+        .btn-outline {
+            flex: 1;
         }
     }
 </style>
@@ -320,10 +479,10 @@
                     <tbody>
                         {% for item in order.items.all %}
                         <tr>
-                            <td class="item-name">{{ item.product.name }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>₱{{ item.price|floatformat:2 }}</td>
-                            <td>₱{{ item.total|floatformat:2 }}</td>
+                            <td class="item-name" data-label="Product: ">{{ item.product.name }}</td>
+                            <td data-label="Quantity: ">{{ item.quantity }}</td>
+                            <td data-label="Price: ">₱{{ item.price|floatformat:2 }}</td>
+                            <td data-label="Total: ">₱{{ item.total|floatformat:2 }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
