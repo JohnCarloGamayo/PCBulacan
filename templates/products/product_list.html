@@ -525,8 +525,6 @@
         background-color: #f8fafc;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
         padding: 2rem;
     }
     
@@ -535,7 +533,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
+        margin-bottom: 1rem;
+        overflow: hidden;
         position: relative;
     }
     
@@ -593,23 +592,23 @@
     .product-modal-thumbnails {
         display: flex;
         gap: 0.5rem;
-        margin-top: 1rem;
-        flex-wrap: wrap;
         justify-content: center;
+        flex-wrap: wrap;
+        max-height: 80px;
     }
     
     .product-modal-thumbnail {
         width: 60px;
         height: 60px;
         border: 2px solid #e2e8f0;
-        border-radius: 6px;
-        overflow: hidden;
+        border-radius: 8px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background-color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: white;
     }
     
     .product-modal-thumbnail:hover {
@@ -624,8 +623,8 @@
     }
     
     .product-modal-thumbnail img {
-        width: 100%;
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
     }
     
@@ -1140,11 +1139,16 @@
         /* Modal Image Section - Compact */
         .product-modal-image {
             padding: 0.75rem;
+            height: auto;
         }
         
         .product-modal-main-image {
             height: 250px;
             margin-bottom: 0.75rem;
+        }
+        
+        .product-modal-main-image img {
+            max-height: 220px;
         }
         
         .image-nav-arrow {
@@ -1438,9 +1442,17 @@
             top: 8px;
         }
         
+        .product-modal-image {
+            padding: 0.5rem;
+        }
+        
         .product-modal-main-image {
             height: 200px;
             margin-bottom: 0.5rem;
+        }
+        
+        .product-modal-main-image img {
+            max-height: 180px;
         }
         
         .image-nav-arrow {
