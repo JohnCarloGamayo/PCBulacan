@@ -30,9 +30,9 @@
     }
     
     .filter-btn.active {
-        background: #3b82f6;
+        background: #048400;
         color: white;
-        border-color: #3b82f6;
+        border-color: #048400;
     }
     
     .notifications-container {
@@ -61,7 +61,7 @@
     
     .notification-item.unread {
         background: #eff6ff;
-        border-left: 3px solid #3b82f6;
+        border-left: 3px solid #048400;
     }
     
     .notification-item.unread:hover {
@@ -77,6 +77,9 @@
         justify-content: center;
         flex-shrink: 0;
         font-size: 1.125rem;
+        background-color: #dcfce7;
+        color: #16a34a;
+        display: none;
     }
     
     .notification-icon.order_update {
@@ -138,7 +141,7 @@
     
     .btn-view {
         padding: 0.4rem 0.875rem;
-        background: #3b82f6;
+        background: #048400;
         color: white;
         border: none;
         border-radius: 6px;
@@ -149,7 +152,7 @@
     }
     
     .btn-view:hover {
-        background: #2563eb;
+        background: #048400;
     }
     
     .btn-mark-read {
@@ -196,11 +199,11 @@
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h1 class="h4 mb-1 fw-semibold">Notifications</h1>
-                <p class="text-muted mb-0" style="font-size: 0.875rem;">Manage all your notifications</p>
+                <h1 class="h4 mb-1 fw-semibold" style="color: #0f172a;">Notifications</h1>
+                <p class="text-muted mb-0" style="font-size: 0.875rem; margin-bottom: 3vh;">Manage all your notifications</p>
             </div>
-            <button class="btn btn-sm btn-primary" onclick="markAllAsRead()">
-                <i class="fas fa-check-double me-1"></i> Mark All as Read
+            <button class="btn btn-sm btn-primary" onclick="markAllAsRead()" style="margin-bottom: 2vh;">
+                <i class="fas fa-check-double me-1"></i> <strong>Mark All as Read</strong>
             </button>
         </div>
     
@@ -231,15 +234,15 @@
                  data-read="{{ notif.is_read|yesno:'true,false' }}">
                 <div class="notification-icon {{ notif.notification_type }}">
                     {% if notif.notification_type == 'order_update' %}
-                        <i class="fas fa-shopping-cart"></i>
+                        <i class="fas fa-shopping-cart" style="color: #16a34a;"></i>
                     {% elif notif.notification_type == 'new_user' %}
-                        <i class="fas fa-user-plus"></i>
+                        <i class="fas fa-user-plus" style="color: #16a34a;"></i>
                     {% elif notif.notification_type == 'order_delivered' %}
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-check-circle" style="color: #16a34a;"></i>
                     {% elif notif.notification_type == 'system' %}
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="fas fa-exclamation-triangle" style="color: #16a34a;"></i>
                     {% else %}
-                        <i class="fas fa-bell"></i>
+                        <i class="fas fa-bell" style="color: #16a34a;"></i>
                     {% endif %}
                 </div>
                 

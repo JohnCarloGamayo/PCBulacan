@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
-        --primary-color: #2563eb;
-        --primary-light: #3b82f6;
+        --primary-color: #048400;
+        --primary-light: #08fe01;
         --primary-dark: #1d4ed8;
         --primary-bg: rgba(37, 99, 235, 0.05);
         --success-color: #10b981;
@@ -44,7 +44,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         padding: 2rem;
         border-radius: var(--border-radius);
         color: white;
@@ -62,9 +62,9 @@
     }
     
     .add-slide-btn {
-        padding: 0.875rem 1.5rem;
+        padding: 0.875rem 1rem;
         background: white;
-        color: var(--primary-color);
+        color: #048400;
         border: none;
         border-radius: var(--border-radius);
         font-size: 0.875rem;
@@ -75,6 +75,7 @@
         align-items: center;
         gap: 0.5rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-left: 3vh;
     }
     
     .add-slide-btn:hover {
@@ -288,7 +289,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+        /* background: linear-gradient(135deg, var(--gray-50), var(--gray-100)); */
     }
     
     .modal-header h2 {
@@ -340,7 +341,7 @@
         padding: 0.75rem 1rem;
         border: 1px solid var(--gray-300);
         border-radius: var(--border-radius);
-        background-color: var(--gray-50);
+        /* background-color: var(--gray-50); */
         color: var(--gray-800);
         font-size: 0.875rem;
         transition: all 0.3s ease;
@@ -373,7 +374,7 @@
         display: flex;
         gap: 1rem;
         justify-content: flex-end;
-        background: var(--gray-50);
+        /* background: var(--gray-50); */
     }
     
     .btn {
@@ -567,7 +568,7 @@
 <div id="addModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><i class="fas fa-plus"></i> Add Slideshow Image</h2>
+            <h2>Add Slideshow Image</h2>
             <button class="modal-close" onclick="closeAddModal()">&times;</button>
         </div>
         <form method="post" enctype="multipart/form-data">
@@ -611,7 +612,7 @@
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><i class="fas fa-edit"></i> Edit Slideshow Image</h2>
+            <h2>Edit Slideshow Image</h2>
             <button class="modal-close" onclick="closeEditModal()">&times;</button>
         </div>
         <form method="post" enctype="multipart/form-data">

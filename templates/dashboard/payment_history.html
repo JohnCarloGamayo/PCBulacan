@@ -7,9 +7,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
-        --primary-color: #2563eb;
+        --primary-color: #048400;
         --primary-light: #3b82f6;
-        --primary-dark: #1d4ed8;
+        --primary-dark: #035d00;
         --success-color: #10b981;
         --warning-color: #f59e0b;
         --danger-color: #ef4444;
@@ -31,7 +31,7 @@
     .page-header h1 {
         font-size: 1.875rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #0f172a;
         margin: 0 0 0.5rem 0;
         display: flex;
         align-items: center;
@@ -78,7 +78,7 @@
         left: 0;
         width: 4px;
         height: 100%;
-        background: linear-gradient(to bottom, var(--card-color), transparent);
+        background: var(--card-color);
     }
     
     .summary-card:hover {
@@ -212,15 +212,13 @@
     }
     
     .btn-primary {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         color: white;
-        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
     }
     
     .btn-primary:hover {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(37, 99, 235, 0.25);
     }
     
     .btn-outline {
@@ -393,22 +391,23 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-        color: white;
+        /* background: linear-gradient(165deg, #08fe01 0%, #048400 100%); */
+        color: #;
         border-top-left-radius: var(--border-radius);
         border-top-right-radius: var(--border-radius);
     }
     
     .modal-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: 1.5rem;
+        font-weight: 700;
         margin: 0;
+        color: #1e293b;
     }
     
     .modal-close {
         font-size: 1.5rem;
         font-weight: bold;
-        color: white;
+        color: #1e293b;
         cursor: pointer;
         width: 36px;
         height: 36px;
@@ -416,12 +415,12 @@
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgb(234, 231, 231);
         transition: all 0.3s ease;
     }
     
     .modal-close:hover {
-        background-color: rgba(255, 255, 255, 0.3);
+        background-color: rgb(234, 231, 231);
         transform: rotate(90deg);
     }
     
@@ -734,8 +733,8 @@
     <div class="payments-container">
         <!-- Page Header -->
         <div class="page-header">
-            <h1><i class="fas fa-receipt"></i> Payment History</h1>
-            <div class="page-subtitle">Track and manage all payment transactions</div>
+            <h1>Payment History</h1>
+            <!-- <div class="page-subtitle">Track and manage all payment transactions</div> -->
         </div>
         
         <!-- Summary Cards -->

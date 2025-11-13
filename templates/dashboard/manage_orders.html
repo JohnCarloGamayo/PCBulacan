@@ -6,7 +6,7 @@
 {% block extra_css %}
 <style>
     :root {
-        --primary-color: #2563eb;
+        --primary-color: #048400;
         --primary-light: #3b82f6;
         --primary-dark: #1d4ed8;
         --primary-bg: rgba(37, 99, 235, 0.05);
@@ -85,15 +85,14 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         color: white;
-        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
     }
 
     .btn-primary:hover {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(37, 99, 235, 0.25);
+        box-shadow: #035d00;
     }
 
     .btn-outline {
@@ -171,7 +170,7 @@
 
     .status-shipped {
         background-color: var(--primary-bg);
-        color: var(--primary-color);
+        color: #2563eb;
     }
 
     .status-delivered {
@@ -256,12 +255,12 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-        color: white;
+        /* background: linear-gradient(165deg, #08fe01 0%, #048400 100%); */
+        color: #1e293b;
     }
 
     .modal-title {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: 700;
         display: flex;
         align-items: center;
@@ -272,8 +271,10 @@
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        background-color: rgb(234, 231, 231);
+        color: #1e293b;
         border: none;
         cursor: pointer;
         display: flex;
@@ -283,7 +284,7 @@
     }
 
     .modal-close:hover {
-        background-color: rgba(255, 255, 255, 0.3);
+        background-color: rgb(234, 231, 231);
         transform: rotate(90deg);
     }
 
@@ -828,7 +829,6 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 class="modal-title">
-                <i class="fas fa-file-invoice"></i>
                 <span id="modalOrderNumber">Order Details</span>
             </h2>
             <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -1023,7 +1023,7 @@ function renderOrderDetails(order) {
         html += `
         <div class="status-update-form">
             <h3><i class="fas fa-edit"></i> Update Order Status</h3>
-            ${order.status === 'delivered' ? '<div class="alert alert-info" style="margin-bottom:1rem;background:#dbeafe;color:#1e40af;padding:0.75rem 1rem;border-radius:6px;"><i class="fas fa-info-circle"></i> Waiting for customer to confirm receipt</div>' : ''}
+            ${order.status === 'delivered' ? '<div class="alert alert-info" style="margin-bottom:1rem;background:#d1fae5;color:#048400;padding:0.75rem 1rem;border-radius:6px;"><i class="fas fa-info-circle"></i> Waiting for customer to confirm receipt</div>' : ''}
             <form method="post" action="/dashboard/orders/${order.order_number}/update-status/">
                 <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
                 <div class="form-group">

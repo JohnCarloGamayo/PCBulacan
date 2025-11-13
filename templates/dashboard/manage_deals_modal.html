@@ -62,7 +62,7 @@
     }
     
     .status-badge.active {
-        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         color: white;
     }
     
@@ -149,12 +149,12 @@
     }
     
     .btn-deal-success {
-        background: linear-gradient(135deg, #27ae60, #229954);
+        background: #048400;
         color: white;
     }
     
     .btn-deal-success:hover {
-        background: linear-gradient(135deg, #229954, #1e8449);
+        background: #035d00;
         transform: translateY(-2px);
     }
     
@@ -212,7 +212,7 @@
     }
     
     .add-deal-btn {
-        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         color: white;
         padding: 12px 24px;
         border-radius: 8px;
@@ -227,7 +227,7 @@
     }
     
     .add-deal-btn:hover {
-        background: linear-gradient(135deg, #229954, #27ae60);
+        background: linear-gradient(135deg, #08fe01 0%, #048400 100%);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
     }
@@ -367,8 +367,8 @@
     }
     
     .modal-close:hover {
-        background: #e74c3c;
-        color: white;
+        background: #f0f0f0;
+        color: #666;
         transform: rotate(90deg);
     }
     
@@ -556,7 +556,7 @@
     {% include 'includes/admin_header.html' with page_title="Deals Management" %}
     <div class="dashboard-wrapper">
         <div class="dashboard-header-section" style="margin-bottom: 2rem;">
-            <h1 class="dashboard-title"><i class="fas fa-tags me-2"></i>Manage Deals & Promotions</h1>
+            <h1 class="dashboard-title">Manage Deals & Promotions</h1>
         </div>
     
     <!-- Filter Bar -->
@@ -804,7 +804,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-deal btn-deal-warning" onclick="closeDealModal()">Cancel</button>
+                    <button type="button" class="btn-deal btn-deal-danger" onclick="closeDealModal()">Cancel</button>
                     <button type="submit" class="btn-deal btn-deal-success">
                         <i class="fas fa-save"></i> Save Deal
                     </button>

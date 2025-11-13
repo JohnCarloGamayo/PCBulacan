@@ -1748,7 +1748,7 @@
                             <div class="order-summary">
                                 <p><strong>Total:</strong> ₱{{ order.total|floatformat:2 }}</p>
                                 {% if order.total_savings > 0 %}
-                                <p style="color: #27ae60;"><strong>💰 Total Savings:</strong> -₱{{ order.total_savings|floatformat:2 }}</p>
+                                <p style="color: #27ae60;"><strong>Total Savings:</strong> -₱{{ order.total_savings|floatformat:2 }}</p>
                                 {% endif %}
                                 <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
                             </div>

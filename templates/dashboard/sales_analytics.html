@@ -8,9 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     :root {
-        --primary-color: #2563eb;
-        --primary-light: #3b82f6;
-        --primary-dark: #1d4ed8;
+        --primary-color: #048400;
+        --primary-light: #048400;
+        --primary-dark: #035d00;
         --success-color: #10b981;
         --warning-color: #f59e0b;
         --danger-color: #ef4444;
@@ -31,7 +31,7 @@
     .page-header h1 {
         font-size: 1.875rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #0f172a;
         margin: 0 0 0.5rem 0;
         display: flex;
         align-items: center;
@@ -112,15 +112,13 @@
     }
     
     .btn-primary {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         color: white;
-        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
     }
     
     .btn-primary:hover {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        background: linear-gradient(165deg, #08fe01 0%, #048400 100%);
         transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(37, 99, 235, 0.25);
     }
     
     .btn-outline {
@@ -164,7 +162,7 @@
         left: 0;
         width: 4px;
         height: 100%;
-        background: linear-gradient(to bottom, var(--card-color), transparent);
+        background: var(--card-color);
     }
     
     .summary-card:hover {
@@ -520,8 +518,8 @@
     <div class="analytics-container">
         <!-- Page Header -->
         <div class="page-header">
-            <h1><i class="fas fa-chart-line"></i> Sales Analytics</h1>
-            <div class="page-subtitle">Comprehensive view of your sales performance</div>
+            <h1>Sales Analytics</h1>
+            <!-- <div class="page-subtitle">Comprehensive view of your sales performance</div> -->
         </div>
         
         <!-- Filter Section -->
@@ -613,7 +611,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="summary-details">
-                    <p class="summary-title">Unique Customers</p>
+                    <p class="summary-title">Customers</p>
                     <p class="summary-value">{{ unique_customers }}</p>
                     <small class="summary-subtitle">Total buyers</small>
                 </div>
@@ -737,11 +735,11 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'Daily Revenue',
                 data: {{ revenues|safe }},
-                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                borderColor: '#2563eb',
+                backgroundColor: '#d1fae5',
+                borderColor: '#048400',
                 borderWidth: 3,
                 pointBackgroundColor: '#ffffff',
-                pointBorderColor: '#2563eb',
+                pointBorderColor: '#048400',
                 pointBorderWidth: 2,
                 pointRadius: 5,
                 pointHoverRadius: 7,
@@ -799,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 data: {{ payment_method_data|safe }},
                 backgroundColor: [
-                    '#2563eb',
+                    '#048400',
                     '#10b981',
                     '#f59e0b',
                     '#06b6d4',
@@ -861,8 +859,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 label: 'Revenue by Status',
                 data: {{ status_data|safe }},
                 backgroundColor: [
-                    '#f59e0b',
-                    '#2563eb',
+                    '#048400',
+                    '#10b981',
                     '#0ea5e9',
                     '#10b981',
                     '#ef4444',
@@ -922,7 +920,7 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 data: {{ frequency_data|safe }},
                 backgroundColor: [
-                    '#2563eb',
+                    '#048400',
                     '#10b981',
                     '#f59e0b',
                     '#0ea5e9',
