@@ -453,6 +453,92 @@ def inventory_management(request):
 
 
 @staff_member_required
+def print_inventory_report(request):
+    """Generate printable inventory report"""
+    from django.db.models import F, ExpressionWrapper, DecimalField
+    
+    # Get all products with calculated total value
+    products = Product.objects.all().annotate(
+        total_value=ExpressionWrapper(
+            F('price') * F('stock'),
+            output_field=DecimalField(max_digits=10, decimal_places=2)
+        )
+    ).order_by('name')
+    
+    # Calculate statistics
+    total_products = products.count()
+    in_stock_count = products.filter(stock__gt=10).count()
+    low_stock_count = products.filter(stock__gt=0, stock__lte=10).count()
+    out_of_stock_count = products.filter(stock=0).count()
+    
+    # Calculate total inventory value
+    total_inventory_value = sum(product.price * product.stock for product in products)
+    
+    context = {
+        'products': products,
+        'report_date': timezone.now(),
+        'user': request.user,
+        'total_products': total_products,
+        'in_stock_count': in_stock_count,
+        'low_stock_count': low_stock_count,
+        'out_of_stock_count': out_of_stock_count,
+        'total_inventory_value': total_inventory_value,
+    }
+    
+    return render(request, 'dashboard/inventory_report.html', context)
+
+
+@staff_member_required
+def export_inventory_pdf(request):
+    """Export inventory report as PDF"""
+    from django.template.loader import render_to_string
+    from weasyprint import HTML
+    from django.db.models import F, ExpressionWrapper, DecimalField
+    import tempfile
+    
+    # Get all products with calculated total value
+    products = Product.objects.all().annotate(
+        total_value=ExpressionWrapper(
+            F('price') * F('stock'),
+            output_field=DecimalField(max_digits=10, decimal_places=2)
+        )
+    ).order_by('name')
+    
+    # Calculate statistics
+    total_products = products.count()
+    in_stock_count = products.filter(stock__gt=10).count()
+    low_stock_count = products.filter(stock__gt=0, stock__lte=10).count()
+    out_of_stock_count = products.filter(stock=0).count()
+    
+    # Calculate total inventory value
+    total_inventory_value = sum(product.price * product.stock for product in products)
+    
+    context = {
+        'products': products,
+        'report_date': timezone.now(),
+        'user': request.user,
+        'total_products': total_products,
+        'in_stock_count': in_stock_count,
+        'low_stock_count': low_stock_count,
+        'out_of_stock_count': out_of_stock_count,
+        'total_inventory_value': total_inventory_value,
+    }
+    
+    # Render HTML template
+    html_string = render_to_string('dashboard/inventory_report.html', context)
+    
+    # Generate PDF
+    html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+    pdf_file = html.write_pdf()
+    
+    # Create HTTP response
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="inventory_report_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+    
+    return response
+
+
+@staff_member_required
 def delete_product(request, product_id):
     """Delete product"""
     if request.method == 'POST':

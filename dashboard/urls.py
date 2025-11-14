@@ -33,6 +33,8 @@ urlpatterns = [
 
     # Inventory management
     path('inventory/', views.inventory_management, name='inventory_management'),
+    path('inventory/print-report/', views.print_inventory_report, name='print_inventory_report'),
+    path('inventory/export-pdf/', views.export_inventory_pdf, name='export_inventory_pdf'),
     
     # Order management
     path('orders/', views.manage_orders, name='manage_orders'),
