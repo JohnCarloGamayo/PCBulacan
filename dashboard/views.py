@@ -2039,7 +2039,7 @@ def export_orders_pdf(request):
     shipped_orders = orders.filter(status='shipped').count()
     delivered_orders = orders.filter(status='delivered').count()
     cancelled_orders = orders.filter(status='cancelled').count()
-    total_revenue = sum(o.total_price for o in orders if o.status not in ['cancelled'])
+    total_revenue = sum(o.total for o in orders if o.status not in ['cancelled'])
     
     # Create PDF
     buffer = BytesIO()
@@ -2124,7 +2124,7 @@ def export_orders_pdf(request):
         order_number = order.order_number[:15] + '...' if len(order.order_number) > 15 else order.order_number
         customer_name = order.user.get_full_name()[:25] + '...' if len(order.user.get_full_name()) > 25 else order.user.get_full_name()
         date = order.created_at.strftime('%m/%d/%Y')
-        total = f'₱{order.total_price:,.2f}'
+        total = f'₱{order.total:,.2f}'
         payment = order.payment_method.replace('_', ' ').title()
         status = order.status.title()
         
@@ -2208,7 +2208,7 @@ def export_payment_history_pdf(request):
     completed_payments = orders.filter(status__in=['shipped', 'delivered']).count()
     pending_payments = orders.filter(status='pending').count()
     failed_payments = orders.filter(status='cancelled').count()
-    total_amount = sum(o.total_price for o in orders if o.status not in ['cancelled'])
+    total_amount = sum(o.total for o in orders if o.status not in ['cancelled'])
     
     # Create PDF
     buffer = BytesIO()
@@ -2294,7 +2294,7 @@ def export_payment_history_pdf(request):
         order_number = order.order_number[:15] + '...' if len(order.order_number) > 15 else order.order_number
         customer_name = order.user.get_full_name()[:25] + '...' if len(order.user.get_full_name()) > 25 else order.user.get_full_name()
         payment_method = order.payment_method.replace('_', ' ').title()
-        amount = f'₱{order.total_price:,.2f}'
+        amount = f'₱{order.total:,.2f}'
         status = order.status.title()
         
         table_data.append([date, order_number, customer_name, payment_method, amount, status])
@@ -2526,7 +2526,7 @@ def export_sales_analytics_pdf(request):
     # Get analytics data
     orders = Order.objects.all()
     total_orders = orders.count()
-    total_revenue = orders.filter(status__in=['shipped', 'delivered']).aggregate(Sum('total_price'))['total_price__sum'] or 0
+    total_revenue = orders.filter(status__in=['shipped', 'delivered']).aggregate(Sum('total'))['total__sum'] or 0
     avg_order_value = total_revenue / total_orders if total_orders > 0 else 0
     
     # Status breakdown
