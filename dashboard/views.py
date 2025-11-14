@@ -2458,7 +2458,7 @@ def export_users_pdf(request):
     for user in users:
         name = user.get_full_name()[:30] + '...' if len(user.get_full_name()) > 30 else user.get_full_name()
         email = user.email[:35] + '...' if len(user.email) > 35 else user.email
-        phone = user.phone_number if user.phone_number else 'N/A'
+        phone = user.phone if user.phone else 'N/A'
         date_joined = user.date_joined.strftime('%m/%d/%Y')
         status = 'Active' if user.is_active else 'Inactive'
         role = 'Staff' if user.is_staff else 'Customer'
