@@ -217,22 +217,32 @@ def add_product(request):
             category_id = request.POST.get('category')
             name = request.POST.get('name')
             price = request.POST.get('price')
-            stock = request.POST.get('stock', 0)
+            stock = request.POST.get('stock', '0')
             
             if not category_id or not name or not price:
                 raise ValueError('Category, Name, and Price are required.')
+            
+            # Convert to proper types
+            from decimal import Decimal
+            price = Decimal(str(price))
+            stock = int(stock)
             
             # Handle SKU - convert empty string to None for unique constraint
             sku = request.POST.get('sku', '').strip()
             sku = sku if sku else None
             
             category = Category.objects.get(id=category_id)
+            
+            # Handle old_price conversion
+            old_price = request.POST.get('old_price', '').strip()
+            old_price = Decimal(str(old_price)) if old_price else None
+            
             product = Product.objects.create(
                 category=category,
                 name=name,
                 description=request.POST.get('description', ''),
                 price=price,
-                old_price=request.POST.get('old_price') or None,
+                old_price=old_price,
                 stock=stock,
                 sku=sku,
                 image=request.FILES.get('image'),
@@ -314,12 +324,19 @@ def edit_product(request, product_id):
             sku = request.POST.get('sku', '').strip()
             sku = sku if sku else None
             
+            # Convert types
+            from decimal import Decimal
+            price = Decimal(str(request.POST.get('price')))
+            stock = int(request.POST.get('stock', '0'))
+            old_price = request.POST.get('old_price', '').strip()
+            old_price = Decimal(str(old_price)) if old_price else None
+            
             product.category = Category.objects.get(id=request.POST.get('category'))
             product.name = request.POST.get('name')
             product.description = request.POST.get('description', '')
-            product.price = request.POST.get('price')
-            product.old_price = request.POST.get('old_price') or None
-            product.stock = request.POST.get('stock', 0)
+            product.price = price
+            product.old_price = old_price
+            product.stock = stock
             product.sku = sku
             product.is_featured = request.POST.get('is_featured') == 'on'
             product.is_new = request.POST.get('is_new') == 'on'

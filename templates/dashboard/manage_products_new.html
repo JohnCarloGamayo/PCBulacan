@@ -812,9 +812,9 @@
             const rows = document.querySelectorAll('.products-table tbody tr');
             
             [...cards, ...rows].forEach(item => {
-                const name = item.dataset.name;
-                const category = item.dataset.category;
-                const stock = parseInt(item.dataset.stock);
+                const name = item.dataset.name || '';
+                const category = item.dataset.category || '';
+                const stock = parseInt(item.dataset.stock || '0');
                 
                 let show = true;
                 
