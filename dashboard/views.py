@@ -600,8 +600,11 @@ def export_inventory_pdf(request):
         
         total_value = product.price * product.stock
         
+        # Truncate product name to fit in column (max 35 characters)
+        product_name = product.name[:35] + '...' if len(product.name) > 35 else product.name
+        
         table_data.append([
-            product.name[:40],
+            product_name,
             product.category.name,
             f'{product.price:,.2f}',
             str(product.stock),
