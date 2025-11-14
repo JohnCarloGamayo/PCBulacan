@@ -855,13 +855,22 @@
                     break;
                 case 'date_joined':
                 default:
-                    aVal = a.querySelector('td:nth-child(4)').textContent;
-                    bVal = b.querySelector('td:nth-child(4)').textContent;
+                    // Get the date text and convert to Date object for proper comparison
+                    const aDateText = a.querySelector('td:nth-child(4)').textContent.trim();
+                    const bDateText = b.querySelector('td:nth-child(4)').textContent.trim();
+                    aVal = new Date(aDateText);
+                    bVal = new Date(bDateText);
             }
 
             if (sortOrder === 'asc') {
+                if (aVal instanceof Date && bVal instanceof Date) {
+                    return aVal - bVal;
+                }
                 return aVal > bVal ? 1 : -1;
             } else {
+                if (aVal instanceof Date && bVal instanceof Date) {
+                    return bVal - aVal;
+                }
                 return aVal < bVal ? 1 : -1;
             }
         });
