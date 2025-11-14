@@ -606,12 +606,14 @@
     <div class="dashboard-wrapper">
         <div class="dashboard-header-section">
             <h1 class="dashboard-title">User Accounts</h1>
-            <a href="{% url 'dashboard:export_users_pdf' %}" class="btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">
-                <i class="fas fa-file-pdf"></i> Export PDF Report
-            </a>
-            <button class="btn btn-outline" id="refreshBtn" style="margin-left:1rem; ">
-                <i class="fas fa-sync-alt"></i> Refresh
-            </button>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <a href="{% url 'dashboard:export_users_pdf' %}" class="btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">
+                    <i class="fas fa-file-pdf"></i> Export PDF Report
+                </a>
+                <button class="btn btn-outline" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
         </div>
         <div class="stats-cards">
             <div class="stat-card primary">
