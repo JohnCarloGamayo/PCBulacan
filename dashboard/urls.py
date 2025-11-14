@@ -40,6 +40,7 @@ urlpatterns = [
     path('orders/', views.manage_orders, name='manage_orders'),
     path('orders/<str:order_number>/details/', views.order_details, name='order_details'),
     path('orders/<str:order_number>/update-status/', views.update_order_status, name='update_order_status'),
+    path('orders/export-pdf/', views.export_orders_pdf, name='export_orders_pdf'),
     
     # Category management
     path('categories/', views.manage_categories, name='manage_categories'),
@@ -54,10 +55,15 @@ urlpatterns = [
     
     # Sales analytics
     path('sales-analytics/', views.sales_analytics, name='sales_analytics'),
+    path('sales-analytics/export-pdf/', views.export_sales_analytics_pdf, name='export_sales_analytics_pdf'),
     
     # Payment history
     path('payment-history/', views.payment_history, name='payment_history'),
     path('payment-history/<str:order_number>/details/', views.payment_details_json, name='payment_details_json'),
+    path('payment-history/export-pdf/', views.export_payment_history_pdf, name='export_payment_history_pdf'),
+    
+    # User management exports
+    path('users/export-pdf/', views.export_users_pdf, name='export_users_pdf'),
     
     # Admin account
     path('admin-account/', views.admin_account, name='admin_account'),

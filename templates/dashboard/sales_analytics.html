@@ -517,9 +517,11 @@
     {% include 'includes/admin_header.html' with page_title="Sales Analytics" %}
     <div class="analytics-container">
         <!-- Page Header -->
-        <div class="page-header">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <h1>Sales Analytics</h1>
-            <!-- <div class="page-subtitle">Comprehensive view of your sales performance</div> -->
+            <a href="{% url 'dashboard:export_sales_analytics_pdf' %}" style="padding: 0.875rem 1.75rem; border-radius: 12px; font-size: 0.9375rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; border: none; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3); transition: all 0.3s ease;">
+                <i class="fas fa-file-pdf" style="font-size: 1.125rem;"></i> Export PDF Report
+            </a>
         </div>
         
         <!-- Filter Section -->
