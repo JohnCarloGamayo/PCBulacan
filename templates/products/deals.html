@@ -476,15 +476,14 @@
     }
 
     .empty-state i {
-        font-size: 5rem;
-        color: #cbd5e1;
-        margin-bottom: 1.5rem;
+        font-size: 4rem;
+        color: #048400;
     }
 
     .empty-state h3 {
         font-size: 1.75rem;
         font-weight: 700;
-        color: #1e3a8a;
+        color: #048400;
         margin-bottom: 0.75rem;
     }
 
@@ -496,7 +495,7 @@
 
     .empty-state .btn {
         padding: 0.875rem 2rem;
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        background: linear-gradient(135deg, #08fe01, #048400);
         color: white;
         border-radius: 10px;
         font-weight: 600;
@@ -509,7 +508,6 @@
 
     .empty-state .btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
     }
 
     /* Responsive */
@@ -817,7 +815,7 @@
             <h3>No Deals Available</h3>
             <p>Check back soon for amazing deals and discounts!</p>
             <a href="{% url 'products:list' %}" class="btn">
-                <i class="fas fa-shopping-bag"></i>
+                <i class="fas fa-shopping-bag" style="color: white;"></i>
                 Browse All Products
             </a>
         </div>
