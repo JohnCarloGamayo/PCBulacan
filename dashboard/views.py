@@ -833,6 +833,38 @@ def update_order_status(request, order_number):
             messages.error(request, f'Cannot change status from {old_status} to {new_status}. Invalid transition.')
             return redirect('dashboard:manage_orders')
         
+        # Update deal usage count when order is first processed
+        if new_status == 'processing' and not order.deal_usage_counted:
+            from products.models import Deal
+            from django.db.models import F
+            
+            # Track which deals have been used in this order
+            deals_used = set()
+            
+            for item in order.items.all():
+                product = item.product
+                # Get active deal for this product at order creation time
+                # Check deals that were active when the order was placed
+                active_deal = product.deals.filter(
+                    status='active',
+                    start_date__lte=order.created_at,
+                    end_date__gte=order.created_at
+                ).first()
+                
+                if active_deal and active_deal.id not in deals_used:
+                    deals_used.add(active_deal.id)
+            
+            # Increment usage count for all deals used in this order
+            if deals_used:
+                Deal.objects.filter(id__in=deals_used).update(current_uses=F('current_uses') + 1)
+                order.deal_usage_counted = True
+                order.save()
+                
+                # Get deal names for success message
+                deal_names = Deal.objects.filter(id__in=deals_used).values_list('title', flat=True)
+                deals_str = ', '.join(deal_names)
+                messages.info(request, f'Deal usage updated for: {deals_str}')
+        
         # If status is being changed to shipped, decrease product stock, mark shipped, then send email with PDF receipt
         if old_status != 'shipped' and new_status == 'shipped':
             # Decrease stock
