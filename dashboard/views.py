@@ -1029,13 +1029,25 @@ def export_order_pdf(request, order_number):
     elements.append(Paragraph('ORDER INVOICE', heading_style))
     elements.append(Spacer(1, 0.3*inch))
     
-    # Order and Customer Info Side by Side
+    # Order and Customer Info Side by Side - Convert to Paragraph objects for proper HTML rendering
     info_data = [
         ['ORDER INFORMATION', 'CUSTOMER INFORMATION'],
-        [f'<b>Order Number:</b> #{order.order_number}', f'<b>Name:</b> {order.full_name}'],
-        [f'<b>Date:</b> {order.created_at.strftime("%B %d, %Y - %I:%M %p")}', f'<b>Email:</b> {order.email}'],
-        [f'<b>Payment Method:</b> {order.payment_method.upper()}', f'<b>Phone:</b> {order.phone or "Not provided"}'],
-        [f'<b>Status:</b> {order.get_status_display()}', ''],
+        [
+            Paragraph(f'<b>Order Number:</b> #{order.order_number}', normal_style),
+            Paragraph(f'<b>Name:</b> {order.full_name}', normal_style)
+        ],
+        [
+            Paragraph(f'<b>Date:</b> {order.created_at.strftime("%B %d, %Y - %I:%M %p")}', normal_style),
+            Paragraph(f'<b>Email:</b> {order.email}', normal_style)
+        ],
+        [
+            Paragraph(f'<b>Payment Method:</b> {order.payment_method.upper()}', normal_style),
+            Paragraph(f'<b>Phone:</b> {order.phone or "Not provided"}', normal_style)
+        ],
+        [
+            Paragraph(f'<b>Status:</b> {order.get_status_display()}', normal_style),
+            ''
+        ],
     ]
     
     info_table = Table(info_data, colWidths=[3.5*inch, 3.5*inch])
