@@ -58,12 +58,12 @@ def dashboard_home(request):
     total_orders = orders_in_range.count()
     pending_orders = orders_in_range.filter(status='pending').count()
     
-    # Sales calculation (consistent with sales analytics):
-    # - COD orders only count when status is 'received' (already paid)
-    # - Other payment methods count when not cancelled (pre-paid)
+    # Sales calculation:
+    # - COD orders count when shipped/delivered/received (paid on delivery)
+    # - Other payment methods count when not cancelled/pending (pre-paid)
     revenue_orders = orders_in_range.filter(
-        Q(payment_method='cod', status='received') |
-        Q(~Q(payment_method='cod'), ~Q(status='cancelled'))
+        Q(payment_method='cod', status__in=['shipped', 'delivered', 'received']) |
+        Q(~Q(payment_method='cod'), status__in=['processing', 'shipped', 'delivered', 'received'])
     )
     total_sales = revenue_orders.aggregate(total=Sum('total'))['total'] or 0
     
@@ -1166,18 +1166,18 @@ def sales_analytics(request):
         start_date = today - timedelta(days=30)
         end_date = today
     
-    # Get orders in date range (exclude cancelled orders)
+    # Get orders in date range
     orders = Order.objects.filter(
         created_at__date__gte=start_date,
         created_at__date__lte=end_date
-    ).exclude(status='cancelled')
+    )
     
     # For revenue calculation: 
-    # - COD orders only count when status is 'received'
-    # - Other payment methods count when not cancelled
+    # - COD orders count when shipped/delivered/received (paid on delivery)
+    # - Other payment methods count when processing/shipped/delivered/received (pre-paid)
     revenue_orders = orders.filter(
-        Q(payment_method='cod', status='received') |
-        Q(~Q(payment_method='cod'), ~Q(status='cancelled'))
+        Q(payment_method='cod', status__in=['shipped', 'delivered', 'received']) |
+        Q(~Q(payment_method='cod'), status__in=['processing', 'shipped', 'delivered', 'received'])
     )
     
     # Summary statistics
@@ -1336,12 +1336,12 @@ def payment_history(request):
     # Get summary statistics (consistent with sales analytics)
     all_orders = Order.objects.all()
     
-    # Revenue calculation (consistent logic):
-    # - COD orders only count when status is 'received'
-    # - Other payment methods count when not cancelled
+    # Revenue calculation:
+    # - COD orders count when shipped/delivered/received (paid on delivery)
+    # - Other payment methods count when processing/shipped/delivered/received (pre-paid)
     revenue_orders = all_orders.filter(
-        Q(payment_method='cod', status='received') |
-        Q(~Q(payment_method='cod'), ~Q(status='cancelled'))
+        Q(payment_method='cod', status__in=['shipped', 'delivered', 'received']) |
+        Q(~Q(payment_method='cod'), status__in=['processing', 'shipped', 'delivered', 'received'])
     )
     
     summary = {
@@ -1351,10 +1351,8 @@ def payment_history(request):
             status__in=['shipped', 'delivered', 'received']
         ).count(),
         'completed_amount': all_orders.filter(
-            status__in=['shipped', 'delivered', 'received']
-        ).filter(
-            Q(payment_method='cod', status='received') |
-            Q(~Q(payment_method='cod'))
+            Q(payment_method='cod', status__in=['shipped', 'delivered', 'received']) |
+            Q(~Q(payment_method='cod'), status__in=['processing', 'shipped', 'delivered', 'received'])
         ).aggregate(total=Sum('total'))['total'] or 0,
         'pending_count': all_orders.filter(status='pending').count(),
         'pending_amount': all_orders.filter(
