@@ -7,7 +7,7 @@ def cart_context(request):
         cart, created = Cart.objects.get_or_create(user=request.user)
         return {
             'cart': cart,
-            'cart_count': cart.total_items
+            'cart_count': cart.unique_items_count  # Count unique products, not total quantity
         }
     return {
         'cart': None,

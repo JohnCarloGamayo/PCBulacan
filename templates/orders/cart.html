@@ -807,6 +807,7 @@
 
         function updateOrderSummary() {
             let total = 0;
+            let totalSavings = 0;
             let hasSelectedItems = false;
             let summaryHTML = '';
             itemCheckboxes.forEach(checkbox => {
@@ -821,6 +822,15 @@
                         price = parseFloat(itemTotalElem.textContent.replace(/[^\d.]/g, ''));
                     }
                     total += price;
+                    
+                    // Calculate savings for this item
+                    const savingsElem = cartItem.querySelector('.cart-item-savings');
+                    if (savingsElem) {
+                        const savingsText = savingsElem.textContent.replace(/[^\d.]/g, '');
+                        const savings = parseFloat(savingsText) || 0;
+                        totalSavings += savings;
+                    }
+                    
                     summaryHTML += `<div class=\"cart-summary-item\"><span class=\"cart-summary-item-name\">${name}</span><span>₱${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>`;
                 }
             });
@@ -829,6 +839,16 @@
                 selectedItemsContainer.innerHTML = summaryHTML;
                 cartSummary.style.display = '';
                 checkoutButton.disabled = false;
+                
+                // Update total savings display
+                const totalSavingsRow = document.getElementById('total-savings-row');
+                const totalSavingsAmount = document.getElementById('total-savings-amount');
+                if (totalSavings > 0) {
+                    totalSavingsRow.style.display = 'flex';
+                    totalSavingsAmount.textContent = `-₱${totalSavings.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                } else {
+                    totalSavingsRow.style.display = 'none';
+                }
             } else {
                 emptySelectionMessage.style.display = 'block';
                 selectedItemsContainer.innerHTML = emptySelectionMessage.outerHTML;
@@ -964,6 +984,7 @@
                                     <span style="text-decoration: line-through; color: #999; margin-right: 8px;">₱{{ item.original_unit_price|floatformat:2 }}</span>
                                     <span style="color: #e74c3c; font-weight: 600;">₱{{ item.unit_price|floatformat:2 }}</span>
                                     <span style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: 6px;">-{{ item.product.savings_percentage }}%</span>
+                                    <span class="cart-item-savings" style="display:none;">{{ item.total_savings|floatformat:2 }}</span>
                                 {% else %}
                                     ₱{{ item.unit_price|floatformat:2 }}
                                 {% endif %}
@@ -995,12 +1016,10 @@
                     <div class="cart-summary-items" id="selected-items-container">
                         <p id="empty-selection-message">No items selected</p>
                     </div>
-                    {% if cart.total_savings > 0 %}
-                    <div class="cart-summary-row" style="color: #27ae60; font-weight: 600;">
+                    <div class="cart-summary-row" id="total-savings-row" style="color: #27ae60; font-weight: 600; display: none;">
                         <span>💰 Total Savings</span>
-                        <span>-₱{{ cart.total_savings|floatformat:2 }}</span>
+                        <span id="total-savings-amount">-₱0.00</span>
                     </div>
-                    {% endif %}
                     <div class="cart-summary-row total">
                         <span>Total</span>
                         <span id="total-amount">₱0.00</span>
