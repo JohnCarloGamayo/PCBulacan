@@ -1790,9 +1790,15 @@ def add_deal(request):
             max_uses = request.POST.get('max_uses')
             product_ids = request.POST.getlist('products')
             
-            # Convert datetime strings to datetime objects
-            start_date = parse_datetime(start_date_str) if start_date_str else None
-            end_date = parse_datetime(end_date_str) if end_date_str else None
+            # Convert datetime strings to timezone-aware datetime objects
+            start_date = None
+            end_date = None
+            if start_date_str:
+                parsed_start = parse_datetime(start_date_str)
+                start_date = timezone.make_aware(parsed_start) if parsed_start and timezone.is_naive(parsed_start) else parsed_start
+            if end_date_str:
+                parsed_end = parse_datetime(end_date_str)
+                end_date = timezone.make_aware(parsed_end) if parsed_end and timezone.is_naive(parsed_end) else parsed_end
             
             if title and deal_type and start_date and end_date and product_ids:
                 deal = Deal.objects.create(
@@ -1830,6 +1836,7 @@ def add_deal(request):
 def edit_deal(request, deal_id):
     """Edit an existing deal via AJAX"""
     from products.models import Deal, Product
+    from django.utils import timezone
     from django.utils.dateparse import parse_datetime
     import json
     
@@ -1846,13 +1853,15 @@ def edit_deal(request, deal_id):
             deal.discount_percentage = request.POST.get('discount_percentage') or None
             deal.discount_amount = request.POST.get('discount_amount') or None
             
-            # Convert datetime strings to datetime objects
+            # Convert datetime strings to timezone-aware datetime objects
             start_date_str = request.POST.get('start_date')
             end_date_str = request.POST.get('end_date')
             if start_date_str:
-                deal.start_date = parse_datetime(start_date_str)
+                parsed_start = parse_datetime(start_date_str)
+                deal.start_date = timezone.make_aware(parsed_start) if parsed_start and timezone.is_naive(parsed_start) else parsed_start
             if end_date_str:
-                deal.end_date = parse_datetime(end_date_str)
+                parsed_end = parse_datetime(end_date_str)
+                deal.end_date = timezone.make_aware(parsed_end) if parsed_end and timezone.is_naive(parsed_end) else parsed_end
             
             deal.is_featured = request.POST.get('is_featured') == 'on'
             deal.badge_text = request.POST.get('badge_text', '')
