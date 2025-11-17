@@ -1773,6 +1773,7 @@ def add_deal(request):
     """Add a new deal via AJAX"""
     from products.models import Deal, Product
     from django.utils import timezone
+    from django.utils.dateparse import parse_datetime
     import json
     
     if request.method == 'POST':
@@ -1782,12 +1783,16 @@ def add_deal(request):
             deal_type = request.POST.get('deal_type')
             discount_percentage = request.POST.get('discount_percentage')
             discount_amount = request.POST.get('discount_amount')
-            start_date = request.POST.get('start_date')
-            end_date = request.POST.get('end_date')
+            start_date_str = request.POST.get('start_date')
+            end_date_str = request.POST.get('end_date')
             is_featured = request.POST.get('is_featured') == 'on'
             badge_text = request.POST.get('badge_text', '')
             max_uses = request.POST.get('max_uses')
             product_ids = request.POST.getlist('products')
+            
+            # Convert datetime strings to datetime objects
+            start_date = parse_datetime(start_date_str) if start_date_str else None
+            end_date = parse_datetime(end_date_str) if end_date_str else None
             
             if title and deal_type and start_date and end_date and product_ids:
                 deal = Deal.objects.create(
@@ -1825,6 +1830,7 @@ def add_deal(request):
 def edit_deal(request, deal_id):
     """Edit an existing deal via AJAX"""
     from products.models import Deal, Product
+    from django.utils.dateparse import parse_datetime
     import json
     
     try:
@@ -1839,8 +1845,15 @@ def edit_deal(request, deal_id):
             deal.deal_type = request.POST.get('deal_type', deal.deal_type)
             deal.discount_percentage = request.POST.get('discount_percentage') or None
             deal.discount_amount = request.POST.get('discount_amount') or None
-            deal.start_date = request.POST.get('start_date', deal.start_date)
-            deal.end_date = request.POST.get('end_date', deal.end_date)
+            
+            # Convert datetime strings to datetime objects
+            start_date_str = request.POST.get('start_date')
+            end_date_str = request.POST.get('end_date')
+            if start_date_str:
+                deal.start_date = parse_datetime(start_date_str)
+            if end_date_str:
+                deal.end_date = parse_datetime(end_date_str)
+            
             deal.is_featured = request.POST.get('is_featured') == 'on'
             deal.badge_text = request.POST.get('badge_text', '')
             deal.max_uses = request.POST.get('max_uses') or None
