@@ -1042,16 +1042,6 @@ TRAINING_DATA = [
         "keywords": ["gaano katagal", "ilang taon", "lifespan"],
         "answer": "PC Lifespan:\n\n⏳ **Gaming lifespan:**\n\n💰 **Budget (₱30k):**\n• 2-3 years medium-high\n• GPU upgrade year 2-3\n\n💰 **Mid-range (₱50-60k):**\n• 4-5 years high settings\n• 3-4 years for new games\n\n💰 **High-end (₱100k+):**\n• 5-7 years ultra\n• Future-proof\n\n🔧 **Physical (with care):**\n• PSU: 7-10 years\n• Case: 10+ years\n• CPU: 5-10 years\n• GPU: 3-7 years\n• RAM: 10+ years\n• SSD: 5-10 years\n\n💡 **Para tumagal:**\n• Regular cleaning\n• Good cooling\n• Upgrade GPU every 3-4 years\n• Quality PSU\n\n**Upgrade GPU mid-life = best value!**"
     },
-    {
-        "question": "Gago ka ba?",
-        "keywords": ["gago", "tangina", "ulol", "tanga", "bobo", "peste", "loko", "fuck you"],
-        "answer": "Bakit ka nagmumura anong problem mo?"
-    },
-    {
-        "question": "Pake mo ba?",
-        "keywords": ["pake", "ano", "bakit", "tangina"],
-        "answer": "Wala akong pake sa'yo."
-    },
 ]
 
 
@@ -1105,7 +1095,7 @@ def get_ai_response(user_message):
         # Common city names to look for
         cities = ['pandi', 'pulilan', 'malolos', 'meycauayan', 'baliuag', 'bocaue', 
                   'san jose del monte', 'sjdm', 'caloocan', 'manila', 'quezon city', 
-                  'qc', 'valenzuela']
+                  'qc', 'valenzuela', 'bustos', 'plaridel', 'marilao', 'guiguinto']
         
         for city in cities:
             if city in user_message_lower:
