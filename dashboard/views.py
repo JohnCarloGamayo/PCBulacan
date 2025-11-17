@@ -1787,8 +1787,13 @@ def add_deal(request):
             end_date_str = request.POST.get('end_date')
             is_featured = request.POST.get('is_featured') == 'on'
             badge_text = request.POST.get('badge_text', '')
-            max_uses = request.POST.get('max_uses')
+            max_uses_str = request.POST.get('max_uses')
             product_ids = request.POST.getlist('products')
+            
+            # Convert numeric fields to proper types
+            max_uses = int(max_uses_str) if max_uses_str and max_uses_str.strip() else None
+            discount_percentage = float(discount_percentage) if discount_percentage and discount_percentage.strip() else None
+            discount_amount = float(discount_amount) if discount_amount and discount_amount.strip() else None
             
             # Convert datetime strings to timezone-aware datetime objects
             start_date = None
@@ -1805,13 +1810,13 @@ def add_deal(request):
                     title=title,
                     description=description,
                     deal_type=deal_type,
-                    discount_percentage=discount_percentage if discount_percentage else None,
-                    discount_amount=discount_amount if discount_amount else None,
+                    discount_percentage=discount_percentage,
+                    discount_amount=discount_amount,
                     start_date=start_date,
                     end_date=end_date,
                     is_featured=is_featured,
                     badge_text=badge_text,
-                    max_uses=max_uses if max_uses else None,
+                    max_uses=max_uses,
                     status='draft',
                     created_by=request.user
                 )
@@ -1850,8 +1855,12 @@ def edit_deal(request, deal_id):
             deal.title = request.POST.get('title', deal.title)
             deal.description = request.POST.get('description', '')
             deal.deal_type = request.POST.get('deal_type', deal.deal_type)
-            deal.discount_percentage = request.POST.get('discount_percentage') or None
-            deal.discount_amount = request.POST.get('discount_amount') or None
+            
+            # Convert numeric fields to proper types
+            discount_percentage_str = request.POST.get('discount_percentage')
+            discount_amount_str = request.POST.get('discount_amount')
+            deal.discount_percentage = float(discount_percentage_str) if discount_percentage_str and discount_percentage_str.strip() else None
+            deal.discount_amount = float(discount_amount_str) if discount_amount_str and discount_amount_str.strip() else None
             
             # Convert datetime strings to timezone-aware datetime objects
             start_date_str = request.POST.get('start_date')
@@ -1865,7 +1874,11 @@ def edit_deal(request, deal_id):
             
             deal.is_featured = request.POST.get('is_featured') == 'on'
             deal.badge_text = request.POST.get('badge_text', '')
-            deal.max_uses = request.POST.get('max_uses') or None
+            
+            # Convert max_uses to int
+            max_uses_str = request.POST.get('max_uses')
+            deal.max_uses = int(max_uses_str) if max_uses_str and max_uses_str.strip() else None
+            
             deal.status = request.POST.get('status', deal.status)
             
             if 'banner_image' in request.FILES:
