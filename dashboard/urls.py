@@ -40,6 +40,7 @@ urlpatterns = [
     path('orders/', views.manage_orders, name='manage_orders'),
     path('orders/<str:order_number>/details/', views.order_details, name='order_details'),
     path('orders/<str:order_number>/update-status/', views.update_order_status, name='update_order_status'),
+    path('orders/<str:order_number>/export-pdf/', views.export_order_pdf, name='export_order_pdf'),
     path('orders/export-pdf/', views.export_orders_pdf, name='export_orders_pdf'),
     
     # Category management

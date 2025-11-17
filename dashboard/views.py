@@ -943,6 +943,261 @@ def update_order_status(request, order_number):
 
 
 @staff_member_required
+def export_order_pdf(request, order_number):
+    """Export individual order as PDF"""
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+    from io import BytesIO
+    from orders.models import Order
+    
+    order = get_object_or_404(Order, order_number=order_number)
+    
+    # Create PDF
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter,
+                           topMargin=40, bottomMargin=40,
+                           leftMargin=50, rightMargin=50)
+    
+    elements = []
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=32,
+        textColor=colors.white,
+        spaceAfter=10,
+        alignment=TA_CENTER,
+        fontName='Helvetica-Bold',
+        letterSpacing=3
+    )
+    
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=18,
+        textColor=colors.HexColor('#048400'),
+        spaceAfter=15,
+        alignment=TA_CENTER,
+        fontName='Helvetica-Bold',
+        letterSpacing=3
+    )
+    
+    subheading_style = ParagraphStyle(
+        'SubHeading',
+        parent=styles['Heading3'],
+        fontSize=13,
+        textColor=colors.HexColor('#048400'),
+        spaceAfter=10,
+        fontName='Helvetica-Bold',
+        borderColor=colors.HexColor('#048400'),
+        borderWidth=2,
+        borderPadding=8,
+        letterSpacing=1
+    )
+    
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontSize=10,
+        alignment=TA_LEFT,
+        spaceAfter=5
+    )
+    
+    # Header with green background
+    header_data = [['PCBULACAN']]
+    header_table = Table(header_data, colWidths=[7*inch])
+    header_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#048400')),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 25),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 25),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 32),
+    ]))
+    elements.append(header_table)
+    elements.append(Spacer(1, 0.3*inch))
+    
+    # Invoice Title
+    elements.append(Paragraph('ORDER INVOICE', heading_style))
+    elements.append(Spacer(1, 0.3*inch))
+    
+    # Order and Customer Info Side by Side
+    info_data = [
+        ['ORDER INFORMATION', 'CUSTOMER INFORMATION'],
+        [f'<b>Order Number:</b> #{order.order_number}', f'<b>Name:</b> {order.full_name}'],
+        [f'<b>Date:</b> {order.created_at.strftime("%B %d, %Y - %I:%M %p")}', f'<b>Email:</b> {order.email}'],
+        [f'<b>Payment Method:</b> {order.payment_method.upper()}', f'<b>Phone:</b> {order.phone or "Not provided"}'],
+        [f'<b>Status:</b> {order.get_status_display()}', ''],
+    ]
+    
+    info_table = Table(info_data, colWidths=[3.5*inch, 3.5*inch])
+    info_table.setStyle(TableStyle([
+        # Header row
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#048400')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        
+        # Data rows
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('ALIGN', (0, 1), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 1), (-1, -1), 'TOP'),
+        ('TOPPADDING', (0, 1), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 8),
+        ('LEFTPADDING', (0, 1), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 1), (-1, -1), 10),
+        
+        # Grid
+        ('GRID', (0, 0), (-1, -1), 2, colors.HexColor('#048400')),
+        ('LINEBELOW', (0, 1), (-1, -2), 1, colors.HexColor('#d1d5db')),
+    ]))
+    elements.append(info_table)
+    elements.append(Spacer(1, 0.2*inch))
+    
+    # Shipping Address
+    address_data = [
+        ['SHIPPING ADDRESS'],
+        [f'{order.address}, {order.city}, {order.state} {order.zip_code}']
+    ]
+    
+    address_table = Table(address_data, colWidths=[7*inch])
+    address_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#048400')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('ALIGN', (0, 1), (-1, -1), 'LEFT'),
+        ('TOPPADDING', (0, 1), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
+        ('LEFTPADDING', (0, 1), (-1, -1), 10),
+        ('GRID', (0, 0), (-1, -1), 2, colors.HexColor('#048400')),
+    ]))
+    elements.append(address_table)
+    elements.append(Spacer(1, 0.3*inch))
+    
+    # Order Items
+    items_data = [['PRODUCT', 'PRICE', 'QTY', 'TOTAL']]
+    
+    for item in order.items.all():
+        items_data.append([
+            item.product.name,
+            f'₱{item.price:,.2f}',
+            str(item.quantity),
+            f'₱{item.total:,.2f}'
+        ])
+    
+    items_table = Table(items_data, colWidths=[3.5*inch, 1.5*inch, 1*inch, 1*inch])
+    items_table.setStyle(TableStyle([
+        # Header
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#048400')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 11),
+        ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
+        ('ALIGN', (1, 0), (-1, 0), 'CENTER'),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        
+        # Data rows
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+        ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 1), (-1, -1), 'TOP'),
+        ('TOPPADDING', (0, 1), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f9fafb')]),
+        
+        # Grid
+        ('GRID', (0, 0), (-1, -1), 2, colors.HexColor('#048400')),
+        ('LINEBELOW', (0, 1), (-1, -2), 1, colors.HexColor('#d1d5db')),
+    ]))
+    elements.append(items_table)
+    elements.append(Spacer(1, 0.2*inch))
+    
+    # Order Summary
+    summary_data = [
+        ['Subtotal', f'₱{order.subtotal:,.2f}'],
+        ['Shipping Fee', f'₱{order.shipping_cost:,.2f}'],
+        ['TOTAL', f'₱{order.total:,.2f}']
+    ]
+    
+    summary_table = Table(summary_data, colWidths=[5.5*inch, 1.5*inch])
+    summary_table.setStyle(TableStyle([
+        # Normal rows
+        ('FONTNAME', (0, 0), (-1, -2), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -2), 10),
+        ('ALIGN', (0, 0), (0, -2), 'RIGHT'),
+        ('ALIGN', (1, 0), (1, -2), 'RIGHT'),
+        ('TOPPADDING', (0, 0), (-1, -2), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -2), 8),
+        ('LINEBELOW', (0, 0), (-1, -2), 1, colors.HexColor('#e5e7eb')),
+        
+        # Total row
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#e8f5e9')),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, -1), (-1, -1), 14),
+        ('TEXTCOLOR', (0, -1), (-1, -1), colors.HexColor('#048400')),
+        ('ALIGN', (0, -1), (0, -1), 'RIGHT'),
+        ('ALIGN', (1, -1), (1, -1), 'RIGHT'),
+        ('TOPPADDING', (0, -1), (-1, -1), 12),
+        ('BOTTOMPADDING', (0, -1), (-1, -1), 12),
+        
+        # Border
+        ('BOX', (0, 0), (-1, -1), 3, colors.HexColor('#048400')),
+        ('LINEABOVE', (0, -1), (-1, -1), 3, colors.HexColor('#048400')),
+    ]))
+    elements.append(summary_table)
+    elements.append(Spacer(1, 0.4*inch))
+    
+    # Footer
+    footer_text = '''
+    <para alignment="center">
+    <b>Thank you for your purchase!</b><br/>
+    Contact: support@pcbulacan.com | Phone: (123) 456-7890<br/>
+    <i>PCBulacan © 2025 - All Rights Reserved</i>
+    </para>
+    '''
+    footer_style = ParagraphStyle(
+        'Footer',
+        parent=styles['Normal'],
+        fontSize=9,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor('#6b7280'),
+        borderColor=colors.HexColor('#e5e7eb'),
+        borderWidth=1,
+        borderPadding=15
+    )
+    elements.append(Paragraph(footer_text, footer_style))
+    
+    # Build PDF
+    doc.build(elements)
+    
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Order_{order.order_number}.pdf"'
+    
+    return response
+
+
+@staff_member_required
 def manage_categories(request):
     """Manage categories"""
     categories = Category.objects.all().order_by('name')
