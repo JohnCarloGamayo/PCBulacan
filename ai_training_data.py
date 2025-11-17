@@ -3,12 +3,36 @@ AI Chat Support Training Data for PCBulacan
 Comprehensive Q&A pairs in English and Tagalog - 50+ Questions
 """
 
-def get_shipping_fees_from_db():
-    """Dynamically fetch shipping fees from database"""
+def get_shipping_fees_from_db(city_query=None):
+    """Dynamically fetch shipping fees from database
+    
+    Args:
+        city_query: Optional city name to search for specific location
+    """
     try:
         from orders.models import DeliveryFee
         fees = DeliveryFee.objects.filter(is_available=True).order_by('state', 'city')
         
+        # If specific city requested, try to find it
+        if city_query:
+            city_query = city_query.lower().strip()
+            for fee in fees:
+                if city_query in fee.city.lower():
+                    free_text = f"FREE pag ₱{fee.min_order_free_delivery:,.0f}+" if fee.min_order_free_delivery > 0 else ""
+                    days_text = fee.estimated_days
+                    
+                    result = f"📍 **Shipping to {fee.city}, {fee.state}:**\n\n"
+                    result += f"💰 **Delivery Fee:** ₱{fee.fee_amount:,.0f}\n"
+                    if free_text:
+                        result += f"🎁 **Free Shipping:** {free_text}\n"
+                    result += f"⏱️ **Delivery Time:** {days_text}\n\n"
+                    result += "✨ Fee calculated automatically at checkout!"
+                    return result
+            
+            # City not found
+            return f"Sorry, we couldn't find shipping info for '{city_query}'. 😔\n\nPlease check available locations or contact us:\n📧 support@pcbulacan.com\n📞 (044) 123-4567\n\nOr ask: 'What areas do you deliver to?'"
+        
+        # Show all fees if no specific city
         bulacan_fees = []
         metro_fees = []
         
@@ -911,12 +935,31 @@ def get_ai_response(user_message):
     
     # === SPECIAL RESPONSES (Priority) ===
     
+    # Shipping fee questions - HIGHEST PRIORITY (check before greetings)
+    if any(phrase in user_message_lower for phrase in ['shipping fee', 'delivery fee', 'magkano shipping', 'bayad sa delivery', 'delivery cost', 'how much shipping', 'shipping to', 'deliver to', 'delivery sa', 'shipping sa']):
+        # Try to extract city name from question
+        city_query = None
+        
+        # Common city names to look for
+        cities = ['pandi', 'pulilan', 'malolos', 'meycauayan', 'baliuag', 'bocaue', 
+                  'san jose del monte', 'sjdm', 'caloocan', 'manila', 'quezon city', 
+                  'qc', 'valenzuela']
+        
+        for city in cities:
+            if city in user_message_lower:
+                city_query = city
+                break
+        
+        return get_shipping_fees_from_db(city_query)
+    
     # Thank you responses
     if any(word in user_message_lower for word in ['thank you', 'thanks', 'salamat', 'thank u', 'ty', 'tysm']):
         return "You're very welcome! 😊 I'm always here to help with your PC needs. Don't hesitate to ask if you have more questions about PCBulacan! Happy shopping! 🛒✨"
     
-    # Greetings - Time-based
-    if any(word in user_message_lower for word in ['hi', 'hello', 'hey', 'kumusta', 'kamusta', 'hoy', 'sup']):
+    # Greetings - Time-based (check for standalone greetings only)
+    greeting_words = ['hi', 'hello', 'hey', 'kumusta', 'kamusta', 'hoy', 'sup']
+    # Only trigger if message is ONLY a greeting (or very short with greeting)
+    if any(word == user_message_lower.strip() or user_message_lower.strip().startswith(word + ' ') for word in greeting_words):
         current_hour = datetime.now().hour
         
         if 5 <= current_hour < 12:
@@ -942,10 +985,6 @@ def get_ai_response(user_message):
     # Store location questions
     if any(phrase in user_message_lower for phrase in ['where is the store', 'store location', 'saan ang store', 'branch', 'main office', 'physical location', 'nasaan kayo']):
         return "📍 **PCBulacan Main Branch Location:**\n\n🏢 **Malolos, Bulacan**\n\nYou can:\n✅ Visit us in person\n✅ Shop online 24/7 on our website\n✅ Choose store pickup (FREE shipping!)\n\n**Store Hours:**\n📅 Monday - Saturday: 9:00 AM - 6:00 PM\n🚫 Closed on Sundays and holidays\n\n📞 **Contact us for exact address:**\n• Phone: (044) 123-4567\n• Email: support@pcbulacan.com\n\nSee you soon! 🛒"
-    
-    # Shipping fee questions - Use dynamic database data
-    if any(phrase in user_message_lower for phrase in ['shipping fee', 'delivery fee', 'magkano shipping', 'bayad sa delivery', 'delivery cost', 'how much shipping']):
-        return get_shipping_fees_from_db()
     
     # === KEYWORD MATCHING FOR TRAINED Q&A ===
     best_match = None
