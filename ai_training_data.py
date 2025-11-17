@@ -189,8 +189,8 @@ TRAINING_DATA = [
     # ===== SHIPPING & DELIVERY (English) =====
     {
         "question": "How much is the shipping fee?",
-        "keywords": ["shipping fee", "delivery fee", "how much shipping"],
-        "answer": "Shipping fees vary by location! During checkout:\n1. Enter your complete address\n2. Shipping fee will be calculated automatically\n3. Based on your province/city\n\nFees are competitive and transparent! 📦✨"
+        "keywords": ["shipping fee", "delivery fee", "how much shipping", "delivery cost"],
+        "answer": "Shipping fees based on location:\n\n📍 **BULACAN:**\n• Pandi: ₱100 (FREE for orders ₱799+)\n• Pulilan: ₱100 (FREE for orders ₱5,000+)\n• Meycauayan: ₱120 (FREE for orders ₱5,000+)\n• San Jose del Monte: ₱130 (FREE for orders ₱5,000+)\n• Bocaue: ₱140 (FREE for orders ₱5,000+)\n• Malolos: ₱150 (FREE for orders ₱5,000+)\n• Baliuag: ₱160 (FREE for orders ₱5,000+)\n\n📍 **METRO MANILA:**\n• Caloocan, Manila, QC, Valenzuela: ₱100 (FREE for orders ₱5,000+)\n\n✨ Fees calculated automatically at checkout!\n📦 Delivery time: 2-6 days depending on location"
     },
     {
         "question": "Do you ship nationwide?",
@@ -199,8 +199,8 @@ TRAINING_DATA = [
     },
     {
         "question": "How long is the delivery time?",
-        "keywords": ["delivery time", "how long delivery", "shipping time"],
-        "answer": "Delivery time by location:\n📍 Metro Manila: 2-3 days\n📍 Luzon: 3-5 days\n📍 Visayas: 4-6 days\n📍 Mindanao: 5-7 days\n\nTracking information provided once shipped! 📦"
+        "keywords": ["delivery time", "how long delivery", "shipping time", "delivery days"],
+        "answer": "Delivery time based on location:\n\n⏱️ **METRO MANILA:** 2-3 days\n• Caloocan, Manila, Quezon City, Valenzuela\n\n⏱️ **BULACAN:**\n• Pulilan: 2-3 days\n• Pandi: 4-6 days\n• Malolos, Bocaue, Meycauayan, San Jose del Monte, Baliuag: 3-5 days\n\n📦 Tracking information provided once shipped!\n✅ Reliable courier services used"
     },
     {
         "question": "Can I track my order?",
@@ -226,8 +226,8 @@ TRAINING_DATA = [
     # ===== SHIPPING & DELIVERY (Tagalog) =====
     {
         "question": "Magkano ang shipping fee?",
-        "keywords": ["magkano shipping", "shipping fee", "delivery fee"],
-        "answer": "Depende sa location ang shipping! Sa checkout:\n1. I-enter ang complete address\n2. Automatic na maca-calculate\n3. Based sa province/city\n\nCompetitive at transparent ang fees! 📦✨"
+        "keywords": ["magkano shipping", "shipping fee", "delivery fee", "bayad sa delivery"],
+        "answer": "Shipping fees based sa location:\n\n📍 **BULACAN:**\n• Pandi: ₱100 (FREE pag ₱799+)\n• Pulilan: ₱100 (FREE pag ₱5,000+)\n• Meycauayan: ₱120 (FREE pag ₱5,000+)\n• San Jose del Monte: ₱130 (FREE pag ₱5,000+)\n• Bocaue: ₱140 (FREE pag ₱5,000+)\n• Malolos: ₱150 (FREE pag ₱5,000+)\n• Baliuag: ₱160 (FREE pag ₱5,000+)\n\n📍 **METRO MANILA:**\n• Caloocan, Manila, QC, Valenzuela: ₱100 (FREE pag ₱5,000+)\n\n✨ Automatic na maca-calculate sa checkout!\n📦 Delivery: 2-6 days depende sa location"
     },
     {
         "question": "Nag-ship ba kayo nationwide?",
@@ -236,8 +236,8 @@ TRAINING_DATA = [
     },
     {
         "question": "Gaano katagal ang delivery?",
-        "keywords": ["gaano katagal", "delivery time"],
-        "answer": "Delivery time by location:\n📍 Metro Manila: 2-3 days\n📍 Luzon: 3-5 days\n📍 Visayas: 4-6 days\n📍 Mindanao: 5-7 days\n\nMay tracking info once shipped! 📦"
+        "keywords": ["gaano katagal", "delivery time", "ilang araw"],
+        "answer": "Delivery time based sa location:\n\n⏱️ **METRO MANILA:** 2-3 days\n• Caloocan, Manila, Quezon City, Valenzuela\n\n⏱️ **BULACAN:**\n• Pulilan: 2-3 days\n• Pandi: 4-6 days\n• Malolos, Bocaue, Meycauayan, SJDM, Baliuag: 3-5 days\n\n📦 May tracking info once shipped!\n✅ Reliable courier gamit namin"
     },
     {
         "question": "Pwede ba i-track ang order?",
