@@ -15,7 +15,7 @@
         
         <a href="{% url 'dashboard:manage_products' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_products' or request.resolver_match.url_name == 'add_product' or request.resolver_match.url_name == 'edit_product' %}active{% endif %}">
             <i class="fas fa-box"></i>
-            <span>Products</span>
+            <span>Products.</span>
         </a>
         
         <a href="{% url 'dashboard:manage_slideshow' %}" class="menu-item {% if request.resolver_match.url_name == 'manage_slideshow' %}active{% endif %}">
