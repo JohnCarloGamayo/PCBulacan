@@ -3,6 +3,42 @@ AI Chat Support Training Data for PCBulacan
 Comprehensive Q&A pairs in English and Tagalog - 50+ Questions
 """
 
+def get_shipping_fees_from_db():
+    """Dynamically fetch shipping fees from database"""
+    try:
+        from orders.models import DeliveryFee
+        fees = DeliveryFee.objects.filter(is_available=True).order_by('state', 'city')
+        
+        bulacan_fees = []
+        metro_fees = []
+        
+        for fee in fees:
+            free_text = f"FREE pag ₱{fee.min_order_free_delivery:,.0f}+" if fee.min_order_free_delivery > 0 else ""
+            fee_text = f"• {fee.city}: ₱{fee.fee_amount:,.0f}"
+            if free_text:
+                fee_text += f" ({free_text})"
+            
+            if fee.state == "Bulacan":
+                bulacan_fees.append(fee_text)
+            elif fee.state == "Metro Manila":
+                metro_fees.append(fee_text)
+        
+        result = "Shipping fees based on location:\n\n"
+        
+        if bulacan_fees:
+            result += "📍 **BULACAN:**\n" + "\n".join(bulacan_fees) + "\n\n"
+        
+        if metro_fees:
+            result += "📍 **METRO MANILA:**\n" + "\n".join(metro_fees) + "\n\n"
+        
+        result += "✨ Fees calculated automatically at checkout!\n📦 Delivery time: 2-6 days depending on location"
+        
+        return result
+    except Exception as e:
+        # Fallback if database not available
+        return "Shipping fees vary by location! Check our website or contact us for exact rates. 📦"
+
+
 TRAINING_DATA = [
     # ===== GENERAL WEBSITE QUESTIONS (English) =====
     {
@@ -187,10 +223,12 @@ TRAINING_DATA = [
     },
     
     # ===== SHIPPING & DELIVERY (English) =====
+    # NOTE: Shipping fee questions are now handled dynamically by get_shipping_fees_from_db()
+    # This entry is kept for keyword matching but actual data comes from database
     {
         "question": "How much is the shipping fee?",
-        "keywords": ["shipping fee", "delivery fee", "how much shipping", "delivery cost"],
-        "answer": "Shipping fees based on location:\n\n📍 **BULACAN:**\n• Pandi: ₱100 (FREE for orders ₱799+)\n• Pulilan: ₱100 (FREE for orders ₱5,000+)\n• Meycauayan: ₱120 (FREE for orders ₱5,000+)\n• San Jose del Monte: ₱130 (FREE for orders ₱5,000+)\n• Bocaue: ₱140 (FREE for orders ₱5,000+)\n• Malolos: ₱150 (FREE for orders ₱5,000+)\n• Baliuag: ₱160 (FREE for orders ₱5,000+)\n\n📍 **METRO MANILA:**\n• Caloocan, Manila, QC, Valenzuela: ₱100 (FREE for orders ₱5,000+)\n\n✨ Fees calculated automatically at checkout!\n📦 Delivery time: 2-6 days depending on location"
+        "keywords": [],  # Handled by direct check in get_ai_response()
+        "answer": ""  # Dynamic data from get_shipping_fees_from_db()
     },
     {
         "question": "Do you ship nationwide?",
@@ -224,10 +262,11 @@ TRAINING_DATA = [
     },
     
     # ===== SHIPPING & DELIVERY (Tagalog) =====
+    # NOTE: Tagalog shipping fee questions also handled dynamically
     {
         "question": "Magkano ang shipping fee?",
-        "keywords": ["magkano shipping", "shipping fee", "delivery fee", "bayad sa delivery"],
-        "answer": "Shipping fees based sa location:\n\n📍 **BULACAN:**\n• Pandi: ₱100 (FREE pag ₱799+)\n• Pulilan: ₱100 (FREE pag ₱5,000+)\n• Meycauayan: ₱120 (FREE pag ₱5,000+)\n• San Jose del Monte: ₱130 (FREE pag ₱5,000+)\n• Bocaue: ₱140 (FREE pag ₱5,000+)\n• Malolos: ₱150 (FREE pag ₱5,000+)\n• Baliuag: ₱160 (FREE pag ₱5,000+)\n\n📍 **METRO MANILA:**\n• Caloocan, Manila, QC, Valenzuela: ₱100 (FREE pag ₱5,000+)\n\n✨ Automatic na maca-calculate sa checkout!\n📦 Delivery: 2-6 days depende sa location"
+        "keywords": [],  # Handled by direct check in get_ai_response()
+        "answer": ""  # Dynamic data from get_shipping_fees_from_db()
     },
     {
         "question": "Nag-ship ba kayo nationwide?",
@@ -903,6 +942,10 @@ def get_ai_response(user_message):
     # Store location questions
     if any(phrase in user_message_lower for phrase in ['where is the store', 'store location', 'saan ang store', 'branch', 'main office', 'physical location', 'nasaan kayo']):
         return "📍 **PCBulacan Main Branch Location:**\n\n🏢 **Malolos, Bulacan**\n\nYou can:\n✅ Visit us in person\n✅ Shop online 24/7 on our website\n✅ Choose store pickup (FREE shipping!)\n\n**Store Hours:**\n📅 Monday - Saturday: 9:00 AM - 6:00 PM\n🚫 Closed on Sundays and holidays\n\n📞 **Contact us for exact address:**\n• Phone: (044) 123-4567\n• Email: support@pcbulacan.com\n\nSee you soon! 🛒"
+    
+    # Shipping fee questions - Use dynamic database data
+    if any(phrase in user_message_lower for phrase in ['shipping fee', 'delivery fee', 'magkano shipping', 'bayad sa delivery', 'delivery cost', 'how much shipping']):
+        return get_shipping_fees_from_db()
     
     # === KEYWORD MATCHING FOR TRAINED Q&A ===
     best_match = None
