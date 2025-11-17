@@ -3,6 +3,138 @@ AI Chat Support Training Data for PCBulacan
 Comprehensive Q&A pairs in English and Tagalog - 50+ Questions
 """
 
+def get_categories_from_db():
+    """Dynamically fetch all product categories from database"""
+    try:
+        from products.models import Category
+        categories = Category.objects.filter(is_active=True).order_by('name')
+        
+        if not categories:
+            return "We have various PC components and peripherals available! Check our website for the full catalog. 🖥️"
+        
+        result = "📦 **Our Product Categories:**\n\n"
+        cat_list = [f"• {cat.name}" for cat in categories]
+        result += "\n".join(cat_list)
+        result += "\n\n💡 **Want to see specific products?**\nAsk me: \"Show me graphics cards\" or \"What RAM do you have?\"\n\nI can help you find the perfect PC component! 🎯"
+        
+        return result
+    except Exception as e:
+        return "We sell PC components, peripherals, and accessories! Check our Products page for the full catalog. 🖥️"
+
+
+def search_products_from_db(query):
+    """Search for products in database based on query"""
+    try:
+        from products.models import Product, Category
+        from django.db.models import Q
+        
+        query_lower = query.lower().strip()
+        
+        # Search in product name, description, category
+        products = Product.objects.filter(
+            Q(name__icontains=query) | 
+            Q(description__icontains=query) |
+            Q(category__name__icontains=query),
+            is_active=True
+        ).select_related('category')[:10]  # Limit to 10 results
+        
+        if not products:
+            return f"Sorry, we couldn't find any products matching '{query}'. 😔\n\n**Try:**\n• Check spelling\n• Use general terms (e.g., 'GPU' instead of specific model)\n• Ask about categories: \"What products do you sell?\"\n\n📞 **Need help?** Contact us:\n• Email: support@pcbulacan.com\n• Phone: (044) 123-4567"
+        
+        result = f"🔍 **Found {products.count()} product(s) matching '{query}':**\n\n"
+        
+        for product in products:
+            stock_status = "✅ In Stock" if product.stock > 0 else "❌ Out of Stock"
+            price_text = f"₱{product.price:,.2f}"
+            
+            # Check if on sale
+            if product.sale_price and product.sale_price < product.price:
+                price_text = f"~~₱{product.price:,.2f}~~ **₱{product.sale_price:,.2f}** 🔥"
+            
+            result += f"**{product.name}**\n"
+            result += f"💰 Price: {price_text}\n"
+            result += f"📦 Stock: {stock_status}\n"
+            result += f"📂 Category: {product.category.name}\n"
+            
+            if product.description:
+                # Limit description to 100 chars
+                desc = product.description[:100] + "..." if len(product.description) > 100 else product.description
+                result += f"📝 {desc}\n"
+            
+            result += "\n"
+        
+        result += "🛒 **Ready to order?** Add items to cart on our website!\n"
+        result += "❓ **Need more info?** Ask me about specific products!"
+        
+        return result
+    except Exception as e:
+        return f"Having trouble searching for '{query}'. Please try again or contact support. 📞"
+
+
+def get_deals_from_db():
+    """Dynamically fetch active deals and sale products from database"""
+    try:
+        from products.models import Deal, Product
+        from django.utils import timezone
+        
+        now = timezone.now()
+        
+        # Get active deals
+        active_deals = Deal.objects.filter(
+            status='active',
+            start_date__lte=now,
+            end_date__gte=now
+        ).prefetch_related('products')
+        
+        # Get products on sale
+        sale_products = Product.objects.filter(
+            is_active=True,
+            sale_price__isnull=False
+        ).exclude(sale_price=0)[:10]
+        
+        if not active_deals and not sale_products:
+            return "No active sales or deals at the moment. 😔\n\n**Stay tuned!**\n• Check our Deals page regularly\n• Follow us for sale announcements\n• Sign up for email notifications\n\nWe frequently offer great deals! 🎉"
+        
+        result = "🔥 **ACTIVE SALES & DEALS:**\n\n"
+        
+        # Show deals
+        if active_deals:
+            result += "**💎 Special Deals:**\n"
+            for deal in active_deals:
+                deal_products = deal.products.filter(is_active=True)[:5]
+                
+                result += f"\n**{deal.title}**\n"
+                if deal.discount_percentage > 0:
+                    result += f"🎁 Discount: {deal.discount_percentage}% OFF\n"
+                elif deal.discount_amount > 0:
+                    result += f"🎁 Discount: ₱{deal.discount_amount:,.2f} OFF\n"
+                
+                result += f"⏰ Until: {deal.end_date.strftime('%B %d, %Y')}\n"
+                
+                if deal_products:
+                    result += "Products:\n"
+                    for prod in deal_products:
+                        result += f"  • {prod.name}\n"
+                
+                result += "\n"
+        
+        # Show sale products
+        if sale_products:
+            result += "\n**🏷️ Products on Sale:**\n"
+            for product in sale_products[:5]:
+                savings = product.price - product.sale_price
+                result += f"• **{product.name}**\n"
+                result += f"  ~~₱{product.price:,.2f}~~ → **₱{product.sale_price:,.2f}**\n"
+                result += f"  💰 Save ₱{savings:,.2f}!\n\n"
+        
+        result += "🛒 **Shop now and save!** Visit our Deals page for more!\n"
+        result += "⏰ **Limited time offers** - Don't miss out!"
+        
+        return result
+    except Exception as e:
+        return "Check our Deals page for current sales and promotions! 🔥"
+
+
 def get_shipping_fees_from_db(city_query=None):
     """Dynamically fetch shipping fees from database
     
@@ -934,6 +1066,36 @@ def get_ai_response(user_message):
     user_message_lower = user_message.lower()
     
     # === SPECIAL RESPONSES (Priority) ===
+    
+    # Product categories question
+    if any(phrase in user_message_lower for phrase in [
+        'what products', 'anong products', 'ano products', 'products do you sell', 
+        'binebenta', 'available products', 'what do you sell', 'ano binebenta',
+        'categories', 'product categories', 'mga category'
+    ]):
+        return get_categories_from_db()
+    
+    # Deals and sales question
+    if any(phrase in user_message_lower for phrase in [
+        'sale', 'deals', 'discount', 'promo', 'promotion', 'sale ba',
+        'may sale', 'may deals', 'may discount', 'may promo', 'on sale',
+        'naka sale', 'naka discount'
+    ]):
+        return get_deals_from_db()
+    
+    # Product search - Check if asking about specific product
+    product_search_phrases = ['may', 'meron', 'have', 'do you have', 'available ba', 
+                             'stock ba', 'sell', 'nagbebenta', 'meron ba']
+    if any(phrase in user_message_lower for phrase in product_search_phrases):
+        # Extract product query (remove common question words)
+        query = user_message_lower
+        for remove_word in ['may', 'meron', 'ba', 'kayo', 'do you have', 'available', 
+                           'stock', 'nagbebenta', 'ka', 'ng', 'na', '?', 'bang']:
+            query = query.replace(remove_word, '')
+        query = query.strip()
+        
+        if len(query) > 2:  # Only search if query is meaningful
+            return search_products_from_db(query)
     
     # Shipping fee questions - HIGHEST PRIORITY (check before greetings)
     if any(phrase in user_message_lower for phrase in ['shipping fee', 'delivery fee', 'magkano shipping', 'bayad sa delivery', 'delivery cost', 'how much shipping', 'shipping to', 'deliver to', 'delivery sa', 'shipping sa']):
