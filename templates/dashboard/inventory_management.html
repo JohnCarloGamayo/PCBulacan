@@ -241,9 +241,10 @@
     .stock-status { 
         display: inline-flex; 
         align-items: center; 
-        padding: 0.5rem 1rem; 
+        text-align: center;
+        padding: 0.5rem 0.5rem;
         border-radius: 9999px; 
-        font-size: 0.75rem; 
+        font-size: 0.6rem; 
         font-weight: 700; 
         text-transform: uppercase;
         letter-spacing: 0.01rem;
@@ -581,11 +582,11 @@ $(function() {
                         </td>
                         <td>
                             {% if product.stock > 10 %}
-                                <span class="stock-status in-stock"><i class="fas fa-check"></i> In Stock</span>
+                                <span class="stock-status in-stock">In Stock</span>
                             {% elif product.stock > 0 %}
-                                <span class="stock-status low-stock"><i class="fas fa-exclamation"></i> Low Stock</span>
+                                <span class="stock-status low-stock">Low Stock</span>
                             {% else %}
-                                <span class="stock-status out-of-stock"><i class="fas fa-times"></i> Out of Stock</span>
+                                <span class="stock-status out-of-stock">Out of Stock</span>
                             {% endif %}
                         </td>
                         <td>
