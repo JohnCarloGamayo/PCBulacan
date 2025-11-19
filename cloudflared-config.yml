@@ -1,0 +1,7 @@
+tunnel: 1f9886ff-a476-49e4-a291-e602cd1c240c
+credentials-file: C:\cloudflared\.cloudflared\1f9886ff-a476-49e4-a291-e602cd1c240c.json
+
+ingress:
+  - hostname: pcbulacan.yourdomain.com
+    service: http://localhost:8000
+  - service: http_status:404

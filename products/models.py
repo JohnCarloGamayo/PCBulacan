@@ -247,9 +247,6 @@ class Deal(models.Model):
     """Deal/Promotion model for managing special offers"""
     DEAL_TYPE_CHOICES = [
         ('percentage', 'Percentage Discount'),
-        ('fixed', 'Fixed Amount Discount'),
-        ('bogo', 'Buy One Get One'),
-        ('bundle', 'Bundle Deal'),
     ]
     
     STATUS_CHOICES = [
@@ -262,10 +259,10 @@ class Deal(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     deal_type = models.CharField(max_length=20, choices=DEAL_TYPE_CHOICES, default='percentage')
-    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, 
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, 
                                              help_text="Percentage discount (0-100)")
     discount_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
-                                         help_text="Fixed amount discount")
+                                         help_text="Fixed amount discount (deprecated)")
     
     # Products included in the deal
     products = models.ManyToManyField(Product, related_name='deals', blank=True)
@@ -309,27 +306,17 @@ class Deal(models.Model):
     
     def get_discount_display(self):
         """Get formatted discount string"""
-        if self.deal_type == 'percentage' and self.discount_percentage:
+        if self.discount_percentage:
             return f"{self.discount_percentage}% OFF"
-        elif self.deal_type == 'fixed' and self.discount_amount:
-            return f"₱{self.discount_amount} OFF"
-        elif self.deal_type == 'bogo':
-            return "Buy 1 Get 1 FREE"
-        elif self.deal_type == 'bundle':
-            return "Bundle Deal"
         return "Special Offer"
     
     def apply_to_products(self):
         """Apply this deal to all associated products"""
         for product in self.products.all():
-            if self.deal_type == 'percentage' and self.discount_percentage:
+            if self.discount_percentage:
                 discount = float(product.price) * (float(self.discount_percentage) / 100)
                 product.old_price = product.price
                 product.price = product.price - discount
-            elif self.deal_type == 'fixed' and self.discount_amount:
-                product.old_price = product.price
-                product.price = max(0, product.price - self.discount_amount)
-            
-            product.on_sale = True
-            product.save()
+                product.on_sale = True
+                product.save()
 

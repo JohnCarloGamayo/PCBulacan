@@ -309,29 +309,17 @@
                 
                 <div class="mb-3">
                     <label for="deal_type" class="form-label">Deal Type *</label>
-                    <select class="form-select" id="deal_type" name="deal_type" required onchange="toggleDiscountFields()">
-                        <option value="">Select Deal Type</option>
+                    <select class="form-select" id="deal_type" name="deal_type" required>
                         <option value="percentage">Percentage Discount</option>
-                        <option value="fixed">Fixed Amount Discount</option>
-                        <option value="bogo">Buy One Get One (BOGO)</option>
-                        <option value="bundle">Bundle Deal</option>
                     </select>
                 </div>
                 
                 <div class="discount-input-group">
-                    <div id="percentageField" style="display: none;">
-                        <label for="discount_percentage" class="form-label">Discount Percentage</label>
+                    <div id="percentageField">
+                        <label for="discount_percentage" class="form-label">Discount Percentage *</label>
                         <div class="input-group">
-                            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" min="1" max="100" step="0.01">
+                            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" min="1" max="100" step="0.01" required>
                             <span class="input-group-text">%</span>
-                        </div>
-                    </div>
-                    
-                    <div id="amountField" style="display: none;">
-                        <label for="discount_amount" class="form-label">Discount Amount</label>
-                        <div class="input-group">
-                            <span class="input-group-text">₱</span>
-                            <input type="number" class="form-control" id="discount_amount" name="discount_amount" min="1" step="0.01">
                         </div>
                     </div>
                 </div>

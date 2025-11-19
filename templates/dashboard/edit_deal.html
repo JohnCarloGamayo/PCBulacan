@@ -336,28 +336,17 @@
                 
                 <div class="mb-3">
                     <label for="deal_type" class="form-label">Deal Type *</label>
-                    <select class="form-select" id="deal_type" name="deal_type" required onchange="toggleDiscountFields()">
-                        <option value="percentage" {% if deal.deal_type == 'percentage' %}selected{% endif %}>Percentage Discount</option>
-                        <option value="fixed" {% if deal.deal_type == 'fixed' %}selected{% endif %}>Fixed Amount Discount</option>
-                        <option value="bogo" {% if deal.deal_type == 'bogo' %}selected{% endif %}>Buy One Get One (BOGO)</option>
-                        <option value="bundle" {% if deal.deal_type == 'bundle' %}selected{% endif %}>Bundle Deal</option>
+                    <select class="form-select" id="deal_type" name="deal_type" required>
+                        <option value="percentage">Percentage Discount</option>
                     </select>
                 </div>
                 
                 <div class="discount-input-group">
-                    <div id="percentageField" style="display: {% if deal.deal_type == 'percentage' %}block{% else %}none{% endif %};">
-                        <label for="discount_percentage" class="form-label">Discount Percentage</label>
+                    <div id="percentageField">
+                        <label for="discount_percentage" class="form-label">Discount Percentage *</label>
                         <div class="input-group">
-                            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" min="1" max="100" step="0.01" value="{{ deal.discount_percentage|default:'' }}">
+                            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" min="1" max="100" step="0.01" value="{{ deal.discount_percentage|default:'' }}" required>
                             <span class="input-group-text">%</span>
-                        </div>
-                    </div>
-                    
-                    <div id="amountField" style="display: {% if deal.deal_type == 'fixed' %}block{% else %}none{% endif %};">
-                        <label for="discount_amount" class="form-label">Discount Amount</label>
-                        <div class="input-group">
-                            <span class="input-group-text">₱</span>
-                            <input type="number" class="form-control" id="discount_amount" name="discount_amount" min="1" step="0.01" value="{{ deal.discount_amount|default:'' }}">
                         </div>
                     </div>
                 </div>
